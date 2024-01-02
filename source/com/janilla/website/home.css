@@ -1,0 +1,210 @@
+body, html {
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI,
+		Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+		Helvetica Neue, sans-serif;
+	font-size: 16px;
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+header {
+	box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+	padding: .5rem 1rem;
+	position: sticky;
+	top: 0;
+}
+
+header nav {
+	display: flex;
+	justify-content: space-between;
+}
+
+header img {
+	height: 1.5rem;
+}
+
+main {
+	background: rgb(245, 245, 245);
+	flex: 1 0 auto;
+}
+
+.hero {
+	overflow: hidden;
+	padding: 0.5em;
+	position: relative;
+}
+
+.hero section {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	row-gap: 2em;
+	text-align: center;
+}
+
+.default-example {
+	perspective: 30em;
+	perspective-origin: top;
+	margin: 0 0 6em;
+}
+
+.example-element {
+	width: 12em;
+	height: 12em;
+	transform-style: preserve-3d;
+	animation: 5s ease-in-out 0s infinite alternate rotation;
+}
+
+@keyframes rotation {
+	from {
+		transform: rotate3d(0, 1, 0, -60deg);
+	}
+
+	to {
+		transform: rotate3d(0, 1, 0, -50deg);
+	}
+}
+
+.face {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	backface-visibility: inherit;
+	color: #fff;
+	box-sizing: border-box;
+}
+
+.back {
+	background: 0 -.7em/cover no-repeat
+		url('https://hg.openjdk.org/duke/duke/raw-file/e71b60779736/vector/Hips.svg');
+	transform: rotateY(90deg) translateZ(-1.5em);
+}
+
+.bottom {
+	transform: rotateX(-90deg) translateZ(6em);
+	box-shadow: inset 0 -1.5em 1.5em rgba(0, 115, 150, 0.3), 0.15em
+		0.15em 0.45em rgba(237, 139, 0, 0.6);
+}
+
+.card {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 3em;
+	height: 4.5em;
+	position: absolute;
+	backface-visibility: inherit;
+	color: white;
+	background: rgba(255, 255, 255, .7);
+	border-radius: 10px;
+	box-sizing: border-box;
+	text-transform: uppercase;
+}
+
+#card1 {
+	background: rgba(0, 115, 150, .85);
+	transform-origin: 0 bottom;
+	translate: 7.5em 3.3em 1.5em;
+	transform: rotateX(19deg);
+}
+
+#card2 {
+	background: rgba(237, 139, 0, .85);
+	transform: rotateX(-19deg);
+	transform-origin: 0 bottom;
+	translate: 7.5em 3.3em -1.5em;
+}
+
+#card3 {
+	background: rgba(179, 8, 56, .85);
+	transform: rotateX(90deg);
+	translate: 7.5em 5.5em 0;
+}
+
+#card4 {
+	background: rgba(0, 115, 150, .85);
+	transform: rotateX(19deg);
+	transform-origin: 0 bottom;
+	translate: 7.5em 7.5em 3em;
+}
+
+#card5 {
+	background: rgba(237, 139, 0, .85);
+	transform: rotateX(-19deg);
+	transform-origin: 0 bottom;
+	translate: 7.5em 7.5em 0;
+}
+
+#card6 {
+	background: rgba(0, 115, 150, .85);
+	transform: rotateX(19deg);
+	transform-origin: 0 bottom;
+	translate: 7.5em 7.5em 0;
+}
+
+#card7 {
+	background: rgba(237, 139, 0, .85);
+	transform: rotateX(-19deg);
+	transform-origin: 0 bottom;
+	translate: 7.5em 7.5em -3em;
+}
+
+.card span {
+	font-size: 2em;
+}
+
+h1, h2 {
+	font-weight: normal;
+	margin: 0;
+}
+
+h2 {
+	font-size: 2em;
+}
+
+.hero p {
+	display: flex;
+	column-gap: 1em;
+}
+
+.cta {
+	border-radius: 0.5em;
+	color: white;
+	font-weight: bold;
+	padding: 1em 2em;
+	text-decoration: none;
+}
+
+#cta1 {
+	background: rgb(0, 115, 150);
+}
+
+#cta1:hover {
+	box-shadow: 0 0 10px rgba(0, 115, 150, .75);
+}
+
+#cta2 {
+	background: rgb(237, 139, 0);
+}
+
+#cta2:hover {
+	box-shadow: 0 0 10px rgba(237, 139, 0, .75);
+}
+
+footer {
+	display: flex;
+	justify-content: center;
+}
+
+footer p {
+	max-width: 80%;
+}
