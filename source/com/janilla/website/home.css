@@ -85,7 +85,7 @@ main {
 
 .back {
 	background: 0 -.7em/cover no-repeat
-		url('https://hg.openjdk.org/duke/duke/raw-file/e71b60779736/vector/Hips.svg');
+		url('/Hips.svg');
 	transform: rotateY(90deg) translateZ(-1.5em);
 }
 

@@ -27,12 +27,14 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.janilla.conduit.backend.ConduitBackend;
+import com.janilla.conduit.backend.ValidationException;
 import com.janilla.conduit.frontend.ConduitFrontend;
 import com.janilla.http.ExchangeContext;
 import com.janilla.http.HttpHandler;
@@ -40,6 +42,7 @@ import com.janilla.http.HttpRequest;
 import com.janilla.http.HttpResponse;
 import com.janilla.io.IO;
 import com.janilla.net.Net;
+import com.janilla.util.EntryList;
 import com.janilla.util.Lazy;
 import com.janilla.util.Util;
 import com.janilla.web.DelegatingHandlerFactory;
@@ -216,8 +219,13 @@ public class JanillaWebsite {
 
 		@Override
 		protected void handle(HttpHandler handler, HttpRequest request, HttpResponse response) throws IOException {
-			var h = request.getHeaders().get("Host");
-			var c = h.equals(configuration.getProperty("website.demo.backend.host"))
+			EntryList<String, String> h;
+			try {
+				h = request.getHeaders();
+			} catch (NullPointerException e) {
+				h = null;
+			}
+			var c = h != null && Objects.equals(h.get("Host"), configuration.getProperty("website.demo.backend.host"))
 					? backend.get().newExchangeContext()
 					: new ExchangeContext();
 			c.setRequest(request);
@@ -234,7 +242,8 @@ public class JanillaWebsite {
 				e = x;
 			}
 			if (e != null) {
-				e.printStackTrace();
+				if (!(e instanceof ValidationException))
+					e.printStackTrace();
 				c.setException(e);
 				handler.handle(c);
 			}
