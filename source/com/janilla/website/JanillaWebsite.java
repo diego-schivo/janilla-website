@@ -116,10 +116,10 @@ public class JanillaWebsite {
 		b.setToHandler(o -> {
 			var g = switch (o) {
 			case HttpRequest q -> {
-				var h = q.getHeaders().get("Host");
-				if (h.equals(configuration.getProperty("website.demo.backend.host")))
+				var h = q.getHeaders();
+				if (h != null && Objects.equals(h.get("Host"), configuration.getProperty("website.demo.backend.host")))
 					yield backend.get().getHandlerFactory();
-				if (h.equals(configuration.getProperty("website.demo.frontend.host")))
+				if (h != null && Objects.equals(h.get("Host"), configuration.getProperty("website.demo.frontend.host")))
 					yield frontend.get().getHandlerFactory();
 				yield null;
 			}
