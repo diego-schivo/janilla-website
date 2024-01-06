@@ -23,3 +23,8 @@
 hs_err_pid*
 replay_pid*
 /bin/
+/target/
+
+.project
+.classpath
+.settings/

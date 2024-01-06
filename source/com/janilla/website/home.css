@@ -13,10 +13,12 @@ body {
 }
 
 header {
+	background: white;
 	box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
 	padding: .5rem 1rem;
 	position: sticky;
 	top: 0;
+	z-index: 1;
 }
 
 header nav {
@@ -24,28 +26,44 @@ header nav {
 	justify-content: space-between;
 }
 
+header div {
+	align-items: center;
+	column-gap: 1rem;
+	display: flex;
+}
+
 header img {
 	height: 1.5rem;
 }
 
+header a {
+	color: inherit;
+	text-decoration: none;
+}
+
+header a:hover {
+	text-decoration: underline;
+}
+
 main {
 	background: rgb(245, 245, 245);
+	display: flex;
 	flex: 1 0 auto;
+	flex-direction: column;
+	padding: 0 1.5em;
+	row-gap: 4rem;
 }
 
-.hero {
-	overflow: hidden;
-	padding: 0.5em;
-	position: relative;
-}
-
-.hero section {
+main > section {
 	align-items: center;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	row-gap: 2em;
-	text-align: center;
+	row-gap: 2rem;
+}
+
+#hero {
+	position: relative;
 }
 
 .default-example {
@@ -168,19 +186,27 @@ h1, h2 {
 }
 
 h2 {
-	font-size: 2em;
+	font-size: 2rem;
 }
 
-.hero p {
+#hero h1 {
+	font-size: 1.5rem;
+}
+
+#hero h2 {
+	text-align: center;
+}
+
+#hero p {
 	display: flex;
-	column-gap: 1em;
+	column-gap: 1rem;
 }
 
 .cta {
-	border-radius: 0.5em;
+	border-radius: 0.5rem;
 	color: white;
 	font-weight: bold;
-	padding: 1em 2em;
+	padding: 1rem 2rem;
 	text-decoration: none;
 }
 
@@ -200,9 +226,36 @@ h2 {
 	box-shadow: 0 0 10px rgba(237, 139, 0, .75);
 }
 
+dt {
+	font-weight: 600;
+}
+
+dd {
+	margin: 0;
+}
+
+#features dl {
+	column-gap: 2rem;
+	display: grid;
+	grid-template-columns: repeat(1, minmax(0, 1fr));
+	row-gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+	#features dl {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		max-width: 56rem;
+	}
+}
+
+#features dd {
+	margin-top: 0.5rem;
+}
+
 footer {
+	align-items: center;
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
 }
 
 footer p {
