@@ -31,7 +31,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import com.janilla.conduit.backend.ConduitBackend;
 import com.janilla.conduit.backend.ValidationException;
@@ -40,24 +39,12 @@ import com.janilla.http.ExchangeContext;
 import com.janilla.http.HttpHandler;
 import com.janilla.http.HttpRequest;
 import com.janilla.http.HttpResponse;
-import com.janilla.io.IO;
 import com.janilla.net.Net;
 import com.janilla.util.EntryList;
 import com.janilla.util.Lazy;
-import com.janilla.util.Util;
-import com.janilla.web.DelegatingHandlerFactory;
+import com.janilla.web.Handle;
 import com.janilla.web.HandleException;
-import com.janilla.web.Handler;
-import com.janilla.web.HandlerFactory;
-import com.janilla.web.MethodArgumentsResolver;
-import com.janilla.web.MethodHandlerFactory;
-import com.janilla.web.NotFoundException;
 import com.janilla.web.Render;
-import com.janilla.web.ResourceHandlerFactory;
-import com.janilla.web.TemplateHandlerFactory;
-import com.janilla.web.ToEndpointInvocation;
-import com.janilla.web.ToResourceStream;
-import com.janilla.web.ToTemplateReader;
 
 public class JanillaWebsite {
 
@@ -73,7 +60,7 @@ public class JanillaWebsite {
 		w.setConfiguration(c);
 //		c.list(System.out);
 		w.backend.get().populate();
-		w.serve();
+//		w.serve();
 	}
 
 	Properties configuration;
@@ -111,80 +98,69 @@ public class JanillaWebsite {
 		return s;
 	});
 
-	Supplier<HandlerFactory> handlerFactory = Lazy.of(() -> {
-		var b = new DelegatingHandlerFactory();
-		b.setToHandler(o -> {
-			var g = switch (o) {
-			case HttpRequest q -> {
-				var h = q.getHeaders();
-				if (h != null && Objects.equals(h.get("Host"), configuration.getProperty("website.demo.backend.host")))
-					yield backend.get().getHandlerFactory();
-				if (h != null && Objects.equals(h.get("Host"), configuration.getProperty("website.demo.frontend.host")))
-					yield frontend.get().getHandlerFactory();
-				yield null;
-			}
-			case Exception e -> backend.get().getHandlerFactory();
-			default -> null;
-			};
-			return g != null ? g.createHandler(o) : null;
-		});
-
-		var l = Thread.currentThread().getContextClassLoader();
-		var x = Stream.<Path>builder();
-		var y = Stream.<Class<?>>builder();
-		IO.packageFiles(JanillaWebsite.class.getPackageName(), l, f -> {
-			x.add(f);
-			var z = Util.getClass(f);
-			if (z != null)
-				y.add(z);
-		});
-		var f = x.build().toArray(Path[]::new);
-		var c = y.build().toArray(Class[]::new);
-
-		var i = new ToEndpointInvocation() {
-
-			@Override
-			protected Object getInstance(Class<?> c) {
-				if (c == JanillaWebsite.class)
-					return JanillaWebsite.this;
-				return super.getInstance(c);
-			}
-		};
-		i.setClasses(c);
-		var f1 = new MethodHandlerFactory();
-		f1.setToInvocation(i);
-		f1.setArgumentsResolver(new MethodArgumentsResolver());
-		var f2 = new TemplateHandlerFactory();
-		{
-			var s = new ToTemplateReader.Simple();
-			s.setClass1(JanillaWebsite.class);
-			s.setClasses(c);
-			f2.setToReader(s);
-		}
-		var f3 = new ResourceHandlerFactory();
-		{
-			var s = new ToResourceStream.Simple();
-			s.setPaths(f);
-			f3.setToInputStream(s);
-		}
-
-		var f0 = new DelegatingHandlerFactory();
-		{
-			var a = new HandlerFactory[] { b, f1, f2, f3 };
-			f0.setToHandler(o -> {
-				if (a != null)
-					for (var g : a) {
-						var h = g.createHandler(o);
-						if (h != null)
-							return h;
-					}
-				return null;
-			});
-		}
-		f1.setRenderFactory(f0);
-		f2.setIncludeFactory(f0);
-		return f0;
-	});
+//	Supplier<HandlerFactory> handlerFactory = Lazy.of(() -> {
+//		var b = new DelegatingHandlerFactory();
+//		b.setToHandler(o -> {
+//			var g = switch (o) {
+//			case HttpRequest q -> {
+//				var h = q.getHeaders();
+//				if (h != null && Objects.equals(h.get("Host"), configuration.getProperty("website.demo.backend.host")))
+//					yield backend.get().getHandlerFactory();
+//				if (h != null && Objects.equals(h.get("Host"), configuration.getProperty("website.demo.frontend.host")))
+//					yield frontend.get().getHandlerFactory();
+//				yield null;
+//			}
+//			case Exception e -> backend.get().getHandlerFactory();
+//			default -> null;
+//			};
+//			return g != null ? g.createHandler(o) : null;
+//		});
+//
+//		var i = new AnnotationDrivenToInvocation() {
+//
+//			@Override
+//			protected Object getInstance(Class<?> c) {
+//				if (c == JanillaWebsite.class)
+//					return JanillaWebsite.this;
+//				return super.getInstance(c);
+//			}
+//		};
+//		i.setTypes(() -> Util.getPackageClasses("com.janilla.website"));
+//		var f1 = new MethodHandlerFactory();
+//		f1.setToInvocation(i);
+//		f1.setArgumentsResolver(new MethodArgumentsResolver());
+//		var f2 = new TemplateHandlerFactory();
+//		{
+//			var s = new ToTemplateReader.Simple();
+//			s.setResourceClass(JanillaWebsite.class);
+//			s.setTypes(() -> Util.getPackageClasses("com.janilla.website"));
+//			f2.setToReader(s);
+//		}
+//		var f3 = new ResourceHandlerFactory();
+//		{
+//			var s = new ToResourceStream.Simple();
+//			s.setPaths(() -> Stream.concat(IO.getPackageFiles("com.janilla.frontend"),
+//					IO.getPackageFiles("com.janilla.website")));
+//			f3.setToInputStream(s);
+//		}
+//
+//		var f0 = new DelegatingHandlerFactory();
+//		{
+//			var a = new HandlerFactory[] { b, f1, f2, f3 };
+//			f0.setToHandler(o -> {
+//				if (a != null)
+//					for (var g : a) {
+//						var h = g.createHandler(o);
+//						if (h != null)
+//							return h;
+//					}
+//				return null;
+//			});
+//		}
+//		f1.setRenderFactory(f0);
+//		f2.setIncludeFactory(f0);
+//		return f0;
+//	});
 
 	public Properties getConfiguration() {
 		return configuration;
@@ -194,24 +170,24 @@ public class JanillaWebsite {
 		this.configuration = configuration;
 	}
 
-	@Handler(value = "/", method = "GET")
+	@Handle(method = "GET", uri = "/")
 	public Home getHome() {
 		var u = configuration.getProperty("website.demo.frontend.url");
 		return new Home(u);
 	}
 
-	public void serve() throws IOException {
-		httpServer.get().serve(c -> {
-			var e = c.getException();
-			var o = e != null ? e : c.getRequest();
-			var h = handlerFactory.get().createHandler(o);
-			if (h == null)
-				throw new NotFoundException();
-			h.handle(c);
-		});
-	}
+//	public void serve() throws IOException {
+//		httpServer.get().serve(c -> {
+//			var e = c.getException();
+//			var o = e != null ? e : c.getRequest();
+//			var h = handlerFactory.get().createHandler(o);
+//			if (h == null)
+//				throw new NotFoundException();
+//			h.handle(c);
+//		});
+//	}
 
-	@Render("home.html")
+	@Render(template = "home.html")
 	public record Home(String demoUrl) {
 	}
 
