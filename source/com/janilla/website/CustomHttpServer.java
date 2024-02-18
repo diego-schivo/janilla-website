@@ -21,14 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module com.janilla.website {
+package com.janilla.website;
 
-	opens com.janilla.website;
+import java.util.Objects;
 
-	requires com.janilla.conduit.backend;
-	requires com.janilla.conduit.frontend;
-	requires com.janilla.eshopweb.api;
-	requires com.janilla.eshopweb.web;
-	requires com.janilla.petclinic;
-	requires com.janilla.todomvc;
+import com.janilla.http.HttpExchange;
+import com.janilla.http.HttpRequest;
+import com.janilla.http.HttpServer;
+import com.janilla.util.EntryList;
+
+class CustomHttpServer extends HttpServer {
+
+	JanillaWebsite website;
+
+	@Override
+	protected HttpExchange newExchange(HttpRequest request) {
+		EntryList<String, String> h;
+		try {
+			h = request.getHeaders();
+		} catch (NullPointerException e) {
+			h = null;
+		}
+		return h != null
+				&& Objects.equals(h.get("Host"), website.getConfiguration().getProperty("website.demo.backend.host"))
+						? website.getConduitBackend().newExchange()
+						: super.newExchange(request);
+	}
 }
