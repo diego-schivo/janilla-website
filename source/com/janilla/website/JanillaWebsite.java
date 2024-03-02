@@ -29,18 +29,18 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.janilla.conduit.backend.ConduitBackend;
-import com.janilla.conduit.frontend.ConduitFrontend;
+import com.janilla.conduit.backend.ConduitBackendApp;
+import com.janilla.conduit.frontend.ConduitFrontendApp;
 import com.janilla.eshopweb.api.EShopApiApp;
 import com.janilla.eshopweb.web.EShopWebApp;
 import com.janilla.http.HttpExchange;
-import com.janilla.http.HttpRequest;
 import com.janilla.io.IO;
 import com.janilla.net.Net;
 import com.janilla.petclinic.PetClinicApplication;
-import com.janilla.todomvc.TodoMVC;
+import com.janilla.todomvc.TodoMVCApp;
 import com.janilla.util.Lazy;
 import com.janilla.web.ApplicationHandlerBuilder;
 import com.janilla.web.Handle;
@@ -49,47 +49,48 @@ import com.janilla.web.Render;
 public class JanillaWebsite {
 
 	public static void main(String[] args) throws IOException {
-		var c = new Properties();
-		try (var s = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
-			c.load(s);
-			if (args.length > 0)
-				c.load(Files.newInputStream(Path.of(args[0])));
+		var a = new JanillaWebsite();
+		{
+			var c = new Properties();
+			try (var s = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
+				c.load(s);
+				if (args.length > 0)
+					c.load(Files.newInputStream(Path.of(args[0])));
+			}
+			a.setConfiguration(c);
 		}
-
-		var w = new JanillaWebsite();
-		w.setConfiguration(c);
-		w.conduitBackend.get().populate();
+		a.conduitBackend.get().getPersistence();
 
 		var s = new CustomHttpServer();
-		s.website = w;
-		s.setExecutor(Executors.newFixedThreadPool(5));
+		s.setApplication(a);
+		s.setExecutor(Executors.newFixedThreadPool(10));
 		s.setIdleTimerPeriod(10 * 1000);
 		s.setMaxIdleDuration(30 * 1000);
 		s.setMaxMessageLength(512 * 1024);
-		s.setPort(Integer.parseInt(c.getProperty("website.http.port")));
+		s.setPort(Integer.parseInt(a.getConfiguration().getProperty("website.server.port")));
 		{
-			var p = c.getProperty("website.ssl.keystore.path");
+			var p = a.getConfiguration().getProperty("website.ssl.keystore.path");
 			if (p != null && !p.isEmpty()) {
 				if (p.startsWith("~"))
 					p = System.getProperty("user.home") + p.substring(1);
-				var q = c.getProperty("website.ssl.keystore.password");
+				var q = a.getConfiguration().getProperty("website.ssl.keystore.password");
 				s.setSSLContext(Net.getSSLContext(Path.of(p), q.toCharArray()));
 			}
 		}
-		s.setHandler(w.getHandler());
+		s.setHandler(a.getHandler());
 		s.run();
 	}
 
 	Properties configuration;
 
-	Supplier<ConduitBackend> conduitBackend = Lazy.of(() -> {
-		var a = new ConduitBackend();
+	Supplier<ConduitBackendApp> conduitBackend = Lazy.of(() -> {
+		var a = new ConduitBackendApp();
 		a.setConfiguration(configuration);
 		return a;
 	});
 
-	Supplier<ConduitFrontend> conduitFrontend = Lazy.of(() -> {
-		var a = new ConduitFrontend();
+	Supplier<ConduitFrontendApp> conduitFrontend = Lazy.of(() -> {
+		var a = new ConduitFrontendApp();
 		a.setConfiguration(configuration);
 		return a;
 	});
@@ -115,12 +116,12 @@ public class JanillaWebsite {
 		return a;
 	});
 
-	Supplier<TodoMVC> todoMVC = Lazy.of(() -> new TodoMVC());
+	Supplier<TodoMVCApp> todoMVC = Lazy.of(() -> new TodoMVCApp());
 
 	Supplier<IO.Consumer<HttpExchange>> handler = Lazy.of(() -> {
 		var b = new ApplicationHandlerBuilder();
-		b.setApplication(JanillaWebsite.this);
-		var w = b.build();
+		b.setApplication(this);
+		var h = b.build();
 
 		var hh = Map.of(configuration.getProperty("website.conduit.backend.host"), conduitBackend.get().getHandler(),
 				configuration.getProperty("website.conduit.frontend.host"), conduitFrontend.get().getHandler(),
@@ -130,18 +131,12 @@ public class JanillaWebsite {
 				configuration.getProperty("website.todomvc.host"), todoMVC.get().getHandler());
 
 		return c -> {
-			var o = c.getException() != null ? c.getException() : c.getRequest();
-			var h = switch (o) {
-			case HttpRequest q -> {
-				var l = q.getHeaders();
-				var m = l != null ? l.get("Host") : null;
-				var z = m != null ? hh.get(m) : null;
-				yield z != null ? z : w;
-			}
-			case Exception e -> conduitBackend.get().getHandler();
-			default -> null;
-			};
-			h.accept(c);
+			var l = c.getRequest().getHeaders();
+			var i = l != null ? l.get("Host") : null;
+			var j = i != null ? hh.get(i) : null;
+			if (j == null)
+				j = h;
+			j.accept(c);
 		};
 	});
 
@@ -153,11 +148,11 @@ public class JanillaWebsite {
 		this.configuration = configuration;
 	}
 
-	public ConduitBackend getConduitBackend() {
+	public ConduitBackendApp getConduitBackend() {
 		return conduitBackend.get();
 	}
 
-	public ConduitFrontend getConduitFrontend() {
+	public ConduitFrontendApp getConduitFrontend() {
 		return conduitFrontend.get();
 	}
 
@@ -173,7 +168,7 @@ public class JanillaWebsite {
 		return petClinic.get();
 	}
 
-	public TodoMVC getTodoMVC() {
+	public TodoMVCApp getTodoMVC() {
 		return todoMVC.get();
 	}
 
@@ -181,13 +176,12 @@ public class JanillaWebsite {
 		return handler.get();
 	}
 
-	@Handle(method = "GET", uri = "/")
+	@Handle(method = "GET", path = "/")
 	public Home getHome() {
-		var u = configuration.getProperty("website.demo.frontend.url");
-		return new Home(u);
+		return new Home(n -> configuration.getProperty("website." + n + ".url"));
 	}
 
 	@Render(template = "home.html")
-	public record Home(String demoUrl) {
+	public record Home(Function<String, String> demoUrl) {
 	}
 }

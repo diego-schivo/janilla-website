@@ -23,28 +23,40 @@
  */
 package com.janilla.website;
 
-import java.util.Objects;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpRequest;
 import com.janilla.http.HttpServer;
 import com.janilla.util.EntryList;
+import com.janilla.util.Lazy;
 
 class CustomHttpServer extends HttpServer {
 
-	JanillaWebsite website;
+	JanillaWebsite application;
+
+	Supplier<Map<String, Supplier<HttpExchange>>> hostExchange = Lazy.of(() -> {
+		return Map.of(application.getConfiguration().getProperty("website.conduit.backend.host"),
+				() -> application.getConduitBackend().new Exchange(),
+				application.getConfiguration().getProperty("website.eshopweb.api.host"),
+				() -> application.getEShopApi().new Exchange());
+	});
+
+	public void setApplication(JanillaWebsite application) {
+		this.application = application;
+	}
 
 	@Override
 	protected HttpExchange newExchange(HttpRequest request) {
-		EntryList<String, String> h;
+		EntryList<String, String> hh;
 		try {
-			h = request.getHeaders();
+			hh = request.getHeaders();
 		} catch (NullPointerException e) {
-			h = null;
+			hh = null;
 		}
-		return h != null
-				&& Objects.equals(h.get("Host"), website.getConfiguration().getProperty("website.demo.backend.host"))
-						? website.getConduitBackend().newExchange()
-						: super.newExchange(request);
+		var h = hh != null ? hh.get("Host") : null;
+		var s = h != null ? hostExchange.get().get(h) : null;
+		return s != null ? s.get() : super.newExchange(request);
 	}
 }
