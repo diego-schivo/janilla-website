@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import com.janilla.commerce.CommerceApp;
 import com.janilla.conduit.backend.ConduitBackendApp;
 import com.janilla.conduit.frontend.ConduitFrontendApp;
 import com.janilla.eshopweb.api.EShopApiApp;
@@ -83,6 +84,13 @@ public class JanillaWebsite {
 
 	Properties configuration;
 
+	Supplier<CommerceApp> commerce = Lazy.of(() -> {
+		var a = new CommerceApp();
+		a.setConfiguration(configuration);
+		a.getPersistence();
+		return a;
+	});
+
 	Supplier<ConduitBackendApp> conduitBackend = Lazy.of(() -> {
 		var a = new ConduitBackendApp();
 		a.setConfiguration(configuration);
@@ -123,7 +131,8 @@ public class JanillaWebsite {
 		b.setApplication(this);
 		var h = b.build();
 
-		var hh = Map.of(configuration.getProperty("website.conduit.backend.host"), conduitBackend.get().getHandler(),
+		var hh = Map.of(configuration.getProperty("website.commerce.host"), commerce.get().getHandler(),
+				configuration.getProperty("website.conduit.backend.host"), conduitBackend.get().getHandler(),
 				configuration.getProperty("website.conduit.frontend.host"), conduitFrontend.get().getHandler(),
 				configuration.getProperty("website.eshopweb.api.host"), eShopApi.get().getHandler(),
 				configuration.getProperty("website.eshopweb.web.host"), eShopWeb.get().getHandler(),
@@ -146,6 +155,10 @@ public class JanillaWebsite {
 
 	public void setConfiguration(Properties configuration) {
 		this.configuration = configuration;
+	}
+
+	public CommerceApp getCommerce() {
+		return commerce.get();
 	}
 
 	public ConduitBackendApp getConduitBackend() {

@@ -37,7 +37,9 @@ class CustomHttpServer extends HttpServer {
 	JanillaWebsite application;
 
 	Supplier<Map<String, Supplier<HttpExchange>>> hostExchange = Lazy.of(() -> {
-		return Map.of(application.getConfiguration().getProperty("website.conduit.backend.host"),
+		return Map.of(application.getConfiguration().getProperty("website.commerce.host"),
+				() -> application.getCommerce().new Exchange(),
+				application.getConfiguration().getProperty("website.conduit.backend.host"),
 				() -> application.getConduitBackend().new Exchange(),
 				application.getConfiguration().getProperty("website.eshopweb.api.host"),
 				() -> application.getEShopApi().new Exchange());

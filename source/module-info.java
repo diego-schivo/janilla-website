@@ -25,6 +25,7 @@ module com.janilla.website {
 
 	opens com.janilla.website;
 
+	requires com.janilla.commerce;
 	requires com.janilla.conduit.backend;
 	requires com.janilla.conduit.frontend;
 	requires com.janilla.eshopweb.api;
