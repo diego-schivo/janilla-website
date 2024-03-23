@@ -59,7 +59,7 @@
 		</resources>
 	</build>
 	<name>Janilla website</name>
-	<description>Janilla official website: https://www.janilla.com</description>
+	<description>Janilla official website: https://janilla.com</description>
 	<url>https://github.com/diego-schivo/janilla-website</url>
 	<licenses>
 		<license>
@@ -72,7 +72,7 @@
 			<name>Diego Schivo</name>
 			<email>diego.schivo@janilla.com</email>
 			<organization>Janilla</organization>
-			<organizationUrl>https://www.janilla.com</organizationUrl>
+			<organizationUrl>https://janilla.com</organizationUrl>
 		</developer>
 	</developers>
 	<scm>
