@@ -43,6 +43,7 @@ import com.janilla.net.Net;
 import com.janilla.petclinic.PetClinicApplication;
 import com.janilla.todomvc.TodoMVCApp;
 import com.janilla.util.Lazy;
+import com.janilla.uxpatterns.UXPatternsApp;
 import com.janilla.web.ApplicationHandlerBuilder;
 import com.janilla.web.Handle;
 import com.janilla.web.Render;
@@ -126,6 +127,8 @@ public class JanillaWebsite {
 
 	Supplier<TodoMVCApp> todoMVC = Lazy.of(() -> new TodoMVCApp());
 
+	Supplier<UXPatternsApp> uxPatterns = Lazy.of(() -> new UXPatternsApp());
+
 	Supplier<IO.Consumer<HttpExchange>> handler = Lazy.of(() -> {
 		var b = new ApplicationHandlerBuilder();
 		b.setApplication(this);
@@ -137,7 +140,8 @@ public class JanillaWebsite {
 				configuration.getProperty("website.eshopweb.api.host"), eShopApi.get().getHandler(),
 				configuration.getProperty("website.eshopweb.web.host"), eShopWeb.get().getHandler(),
 				configuration.getProperty("website.petclinic.host"), petClinic.get().getHandler(),
-				configuration.getProperty("website.todomvc.host"), todoMVC.get().getHandler());
+				configuration.getProperty("website.todomvc.host"), todoMVC.get().getHandler(),
+				configuration.getProperty("website.uxpatterns.host"), uxPatterns.get().getHandler());
 
 		return c -> {
 			var l = c.getRequest().getHeaders();
@@ -183,6 +187,10 @@ public class JanillaWebsite {
 
 	public TodoMVCApp getTodoMVC() {
 		return todoMVC.get();
+	}
+
+	public UXPatternsApp getUxPatterns() {
+		return uxPatterns.get();
 	}
 
 	public IO.Consumer<HttpExchange> getHandler() {

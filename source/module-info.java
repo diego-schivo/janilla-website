@@ -32,4 +32,5 @@ module com.janilla.website {
 	requires com.janilla.eshopweb.web;
 	requires com.janilla.petclinic;
 	requires com.janilla.todomvc;
+	requires com.janilla.uxpatterns;
 }

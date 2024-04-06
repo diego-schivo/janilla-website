@@ -87,19 +87,19 @@ main {
 	flex-direction: column;
 	padding: 0 1.5em 1.5em;
 	row-gap: 4rem;
-}
 
-main > section {
-	align-items: center;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	row-gap: 3rem;
-}
-
-main > section:not(:first-child) {
-	border-top: 1px solid rgba(0, 0, 0, 0.1);
-	padding-top: 3rem;
+	> section {
+		align-items: center;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		row-gap: 3rem;
+	
+		&:not(:first-child) {
+			border-top: 1px solid rgba(0, 0, 0, 0.1);
+			padding-top: 3rem;
+		}
+	}
 }
 
 #hero {
@@ -290,6 +290,11 @@ dt {
 #example-apps {
 	article {
 		display: flex;
+
+		&:not(:first-of-type) {
+			border-top: 1px solid rgba(0, 0, 0, 0.1);
+			padding-top: 3rem;
+		}
 
 		> div {
 			display: flex;

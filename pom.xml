@@ -41,6 +41,11 @@
 			<artifactId>janilla-todomvc</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.janilla</groupId>
+			<artifactId>janilla-uxpatterns</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<properties>
 		<maven.compiler.source>21</maven.compiler.source>
