@@ -315,8 +315,13 @@ dt {
 		list-style-position: inside;
 	}
 
-	img {
-		width: 35rem;
+	img,
+	iframe {
+		border-radius: 1rem;
+	}
+
+	iframe {
+		aspect-ratio: 16 / 9;
 	}
 }
 
@@ -326,10 +331,11 @@ dt {
 			flex-direction: column;
 			row-gap: 2rem;
 		}
-	}
 
-	img {
-		max-width: 100%;
+		img,
+		iframe {
+			max-width: 100%;
+		}
 	}
 }
 
@@ -343,9 +349,17 @@ dt {
 				flex-flow: row;
 			}
 	
+			/*
 			&:nth-child(even) {
 				flex-flow: row-reverse;
 			}
+			*/
+		}
+
+		img,
+		iframe {
+			flex: 0 0 35rem;
+			max-width: 35rem;
 		}
 	}
 }

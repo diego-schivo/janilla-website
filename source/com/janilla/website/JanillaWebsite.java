@@ -127,7 +127,11 @@ public class JanillaWebsite {
 
 	Supplier<TodoMVCApp> todoMVC = Lazy.of(() -> new TodoMVCApp());
 
-	Supplier<UXPatternsApp> uxPatterns = Lazy.of(() -> new UXPatternsApp());
+	Supplier<UXPatternsApp> uxPatterns = Lazy.of(() -> {
+		var a = new UXPatternsApp();
+		a.setConfiguration(configuration);
+		return a;
+	});
 
 	Supplier<IO.Consumer<HttpExchange>> handler = Lazy.of(() -> {
 		var b = new ApplicationHandlerBuilder();
