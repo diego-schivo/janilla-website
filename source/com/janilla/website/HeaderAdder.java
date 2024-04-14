@@ -37,185 +37,79 @@ import java.util.stream.Stream;
 
 class HeaderAdder {
 
+	private static final String APACHE2 = """
+			/*
+			 * Copyright 2012-2024 the original author or authors.
+			 *
+			 * Licensed under the Apache License, Version 2.0 (the "License");
+			 * you may not use this file except in compliance with the License.
+			 * You may obtain a copy of the License at
+			 *
+			 *      https://www.apache.org/licenses/LICENSE-2.0
+			 *
+			 * Unless required by applicable law or agreed to in writing, software
+			 * distributed under the License is distributed on an "AS IS" BASIS,
+			 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+			 * See the License for the specific language governing permissions and
+			 * limitations under the License.
+			 */""";
+
+	private static final String GPL2 = """
+			/*
+			 * Copyright (c) 2024, Diego Schivo. All rights reserved.
+			 * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+			 *
+			 * This code is free software; you can redistribute it and/or modify it
+			 * under the terms of the GNU General Public License version 2 only, as
+			 * published by the Free Software Foundation.  Diego Schivo designates
+			 * this particular file as subject to the "Classpath" exception as
+			 * provided by Diego Schivo in the LICENSE file that accompanied this
+			 * code.
+			 *
+			 * This code is distributed in the hope that it will be useful, but WITHOUT
+			 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+			 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+			 * version 2 for more details (a copy is included in the LICENSE file that
+			 * accompanied this code).
+			 *
+			 * You should have received a copy of the GNU General Public License version
+			 * 2 along with this work; if not, write to the Free Software Foundation,
+			 * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+			 *
+			 * Please contact Diego Schivo, diego.schivo@janilla.com or visit
+			 * www.janilla.com if you need additional information or have any questions.
+			 */""";
+
+	private static final String MIT = """
+			/*
+			 * MIT License
+			 *
+			 * Copyright (c) 2024 Diego Schivo
+			 *
+			 * Permission is hereby granted, free of charge, to any person obtaining a copy
+			 * of this software and associated documentation files (the "Software"), to deal
+			 * in the Software without restriction, including without limitation the rights
+			 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+			 * copies of the Software, and to permit persons to whom the Software is
+			 * furnished to do so, subject to the following conditions:
+			 *
+			 * The above copyright notice and this permission notice shall be included in all
+			 * copies or substantial portions of the Software.
+			 *
+			 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+			 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+			 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+			 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+			 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+			 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+			 * SOFTWARE.
+			 */""";
+
 	public static void main(String[] args) {
-		var h = Map.of("janilla", """
-				/*
-				 * Copyright (c) 2024, Diego Schivo. All rights reserved.
-				 * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
-				 *
-				 * This code is free software; you can redistribute it and/or modify it
-				 * under the terms of the GNU General Public License version 2 only, as
-				 * published by the Free Software Foundation.  Diego Schivo designates
-				 * this particular file as subject to the "Classpath" exception as
-				 * provided by Diego Schivo in the LICENSE file that accompanied this
-				 * code.
-				 *
-				 * This code is distributed in the hope that it will be useful, but WITHOUT
-				 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-				 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-				 * version 2 for more details (a copy is included in the LICENSE file that
-				 * accompanied this code).
-				 *
-				 * You should have received a copy of the GNU General Public License version
-				 * 2 along with this work; if not, write to the Free Software Foundation,
-				 * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
-				 *
-				 * Please contact Diego Schivo, diego.schivo@janilla.com or visit
-				 * www.janilla.com if you need additional information or have any questions.
-				 */""".split("\n"), "janilla-commerce", """
-				/*
-				 * MIT License
-				 *
-				 * Copyright (c) 2024 Diego Schivo
-				 *
-				 * Permission is hereby granted, free of charge, to any person obtaining a copy
-				 * of this software and associated documentation files (the "Software"), to deal
-				 * in the Software without restriction, including without limitation the rights
-				 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-				 * copies of the Software, and to permit persons to whom the Software is
-				 * furnished to do so, subject to the following conditions:
-				 *
-				 * The above copyright notice and this permission notice shall be included in all
-				 * copies or substantial portions of the Software.
-				 *
-				 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-				 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-				 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-				 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-				 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-				 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-				 * SOFTWARE.
-				 */""".split("\n"), "janilla-conduit", """
-				/*
-				 * MIT License
-				 *
-				 * Copyright (c) 2024 Diego Schivo
-				 *
-				 * Permission is hereby granted, free of charge, to any person obtaining a copy
-				 * of this software and associated documentation files (the "Software"), to deal
-				 * in the Software without restriction, including without limitation the rights
-				 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-				 * copies of the Software, and to permit persons to whom the Software is
-				 * furnished to do so, subject to the following conditions:
-				 *
-				 * The above copyright notice and this permission notice shall be included in all
-				 * copies or substantial portions of the Software.
-				 *
-				 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-				 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-				 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-				 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-				 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-				 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-				 * SOFTWARE.
-				 */""".split("\n"), "janilla-eshopweb", """
-				/*
-				 * MIT License
-				 *
-				 * Copyright (c) 2024 Diego Schivo
-				 *
-				 * Permission is hereby granted, free of charge, to any person obtaining a copy
-				 * of this software and associated documentation files (the "Software"), to deal
-				 * in the Software without restriction, including without limitation the rights
-				 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-				 * copies of the Software, and to permit persons to whom the Software is
-				 * furnished to do so, subject to the following conditions:
-				 *
-				 * The above copyright notice and this permission notice shall be included in all
-				 * copies or substantial portions of the Software.
-				 *
-				 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-				 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-				 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-				 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-				 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-				 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-				 * SOFTWARE.
-				 */""".split("\n"), "janilla-petclinic", """
-				/*
-				 * Copyright 2012-2024 the original author or authors.
-				 *
-				 * Licensed under the Apache License, Version 2.0 (the "License");
-				 * you may not use this file except in compliance with the License.
-				 * You may obtain a copy of the License at
-				 *
-				 *      https://www.apache.org/licenses/LICENSE-2.0
-				 *
-				 * Unless required by applicable law or agreed to in writing, software
-				 * distributed under the License is distributed on an "AS IS" BASIS,
-				 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-				 * See the License for the specific language governing permissions and
-				 * limitations under the License.
-				 */""".split("\n"), "janilla-todomvc", """
-				/*
-				 * MIT License
-				 *
-				 * Copyright (c) 2024 Diego Schivo
-				 *
-				 * Permission is hereby granted, free of charge, to any person obtaining a copy
-				 * of this software and associated documentation files (the "Software"), to deal
-				 * in the Software without restriction, including without limitation the rights
-				 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-				 * copies of the Software, and to permit persons to whom the Software is
-				 * furnished to do so, subject to the following conditions:
-				 *
-				 * The above copyright notice and this permission notice shall be included in all
-				 * copies or substantial portions of the Software.
-				 *
-				 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-				 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-				 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-				 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-				 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-				 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-				 * SOFTWARE.
-				 */""".split("\n"), "janilla-uxpatterns", """
-				/*
-				 * MIT License
-				 *
-				 * Copyright (c) 2024 Diego Schivo
-				 *
-				 * Permission is hereby granted, free of charge, to any person obtaining a copy
-				 * of this software and associated documentation files (the "Software"), to deal
-				 * in the Software without restriction, including without limitation the rights
-				 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-				 * copies of the Software, and to permit persons to whom the Software is
-				 * furnished to do so, subject to the following conditions:
-				 *
-				 * The above copyright notice and this permission notice shall be included in all
-				 * copies or substantial portions of the Software.
-				 *
-				 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-				 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-				 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-				 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-				 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-				 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-				 * SOFTWARE.
-				 */""".split("\n"), "janilla-website", """
-				/*
-				 * MIT License
-				 *
-				 * Copyright (c) 2024 Diego Schivo
-				 *
-				 * Permission is hereby granted, free of charge, to any person obtaining a copy
-				 * of this software and associated documentation files (the "Software"), to deal
-				 * in the Software without restriction, including without limitation the rights
-				 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-				 * copies of the Software, and to permit persons to whom the Software is
-				 * furnished to do so, subject to the following conditions:
-				 *
-				 * The above copyright notice and this permission notice shall be included in all
-				 * copies or substantial portions of the Software.
-				 *
-				 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-				 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-				 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-				 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-				 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-				 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-				 * SOFTWARE.
-				 */""".split("\n"));
+		var h = Map.of("janilla", GPL2.split("\n"), "janilla-commerce", MIT.split("\n"), "janilla-conduit",
+				MIT.split("\n"), "janilla-eshopweb", MIT.split("\n"), "janilla-foodadvisor", MIT.split("\n"),
+				"janilla-petclinic", APACHE2.split("\n"), "janilla-todomvc", MIT.split("\n"), "janilla-uxpatterns",
+				MIT.split("\n"), "janilla-website", MIT.split("\n"));
 		var s = Path.of(System.getProperty("user.home")).resolve("git");
 		try {
 			Files.walkFileTree(s, new SimpleFileVisitor<>() {
