@@ -94,13 +94,13 @@ public class JanillaWebsite {
 
 	Supplier<ConduitBackendApp> conduitBackend = Lazy.of(() -> {
 		var a = new ConduitBackendApp();
-		a.setConfiguration(configuration);
+		a.configuration = configuration;
 		return a;
 	});
 
 	Supplier<ConduitFrontendApp> conduitFrontend = Lazy.of(() -> {
 		var a = new ConduitFrontendApp();
-		a.setConfiguration(configuration);
+		a.configuration = configuration;
 		return a;
 	});
 
@@ -120,7 +120,7 @@ public class JanillaWebsite {
 
 	Supplier<PetClinicApplication> petClinic = Lazy.of(() -> {
 		var a = new PetClinicApplication();
-		a.setConfiguration(configuration);
+		a.configuration = configuration;
 		a.getPersistence();
 		return a;
 	});
@@ -129,7 +129,7 @@ public class JanillaWebsite {
 
 	Supplier<UXPatternsApp> uxPatterns = Lazy.of(() -> {
 		var a = new UXPatternsApp();
-		a.setConfiguration(configuration);
+		a.configuration = configuration;
 		return a;
 	});
 
