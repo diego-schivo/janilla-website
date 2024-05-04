@@ -108,8 +108,8 @@ class HeaderAdder {
 	public static void main(String[] args) {
 		var h = Map.of("janilla", GPL2.split("\n"), "janilla-commerce", MIT.split("\n"), "janilla-conduit",
 				MIT.split("\n"), "janilla-eshopweb", MIT.split("\n"), "janilla-foodadvisor", MIT.split("\n"),
-				"janilla-petclinic", APACHE2.split("\n"), "janilla-todomvc", MIT.split("\n"), "janilla-uxpatterns",
-				MIT.split("\n"), "janilla-website", MIT.split("\n"));
+				"janilla-petclinic", APACHE2.split("\n"), "janilla-store", MIT.split("\n"), "janilla-todomvc",
+				MIT.split("\n"), "janilla-uxpatterns", MIT.split("\n"), "janilla-website", MIT.split("\n"));
 		var s = Path.of(System.getProperty("user.home")).resolve("git");
 		try {
 			Files.walkFileTree(s, new SimpleFileVisitor<>() {

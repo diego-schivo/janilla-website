@@ -41,8 +41,10 @@ import com.janilla.http.HttpExchange;
 import com.janilla.io.IO;
 import com.janilla.net.Net;
 import com.janilla.petclinic.PetClinicApplication;
+import com.janilla.reflect.Factory;
 import com.janilla.todomvc.TodoMVCApp;
 import com.janilla.util.Lazy;
+import com.janilla.util.Util;
 import com.janilla.uxpatterns.UXPatternsApp;
 import com.janilla.web.ApplicationHandlerBuilder;
 import com.janilla.web.Handle;
@@ -84,6 +86,14 @@ public class JanillaWebsite {
 	}
 
 	Properties configuration;
+
+	private Supplier<Factory> factory = Lazy.of(() -> {
+		var f = new Factory();
+		f.setTypes(
+				Util.getPackageClasses(getClass().getPackageName()).toList());
+		f.setEnclosing(this);
+		return f;
+	});
 
 	Supplier<CommerceApp> commerce = Lazy.of(() -> {
 		var a = new CommerceApp();
@@ -134,8 +144,10 @@ public class JanillaWebsite {
 	});
 
 	Supplier<IO.Consumer<HttpExchange>> handler = Lazy.of(() -> {
-		var b = new ApplicationHandlerBuilder();
-		b.setApplication(this);
+//		var b = new ApplicationHandlerBuilder();
+//		b.setApplication(this);
+		var f = getFactory();
+		var b = f.newInstance(ApplicationHandlerBuilder.class);
 		var h = b.build();
 
 		var hh = Map.of(configuration.getProperty("website.commerce.host"), commerce.get().getHandler(),
@@ -163,6 +175,10 @@ public class JanillaWebsite {
 
 	public void setConfiguration(Properties configuration) {
 		this.configuration = configuration;
+	}
+
+	public Factory getFactory() {
+		return factory.get();
 	}
 
 	public CommerceApp getCommerce() {
@@ -206,7 +222,7 @@ public class JanillaWebsite {
 		return new Home(n -> configuration.getProperty("website." + n + ".url"));
 	}
 
-	@Render(template = "home.html")
+	@Render("home.html")
 	public record Home(Function<String, String> demoUrl) {
 	}
 }
