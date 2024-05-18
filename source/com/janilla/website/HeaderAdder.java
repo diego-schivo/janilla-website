@@ -106,10 +106,12 @@ class HeaderAdder {
 			 */""";
 
 	public static void main(String[] args) {
-		var h = Map.of("janilla", GPL2.split("\n"), "janilla-commerce", MIT.split("\n"), "janilla-conduit",
-				MIT.split("\n"), "janilla-eshopweb", MIT.split("\n"), "janilla-foodadvisor", MIT.split("\n"),
-				"janilla-petclinic", APACHE2.split("\n"), "janilla-store", MIT.split("\n"), "janilla-todomvc",
-				MIT.split("\n"), "janilla-uxpatterns", MIT.split("\n"), "janilla-website", MIT.split("\n"));
+		var h = Map.ofEntries(Map.entry("janilla", GPL2.split("\n")), Map.entry("janilla-adyen", MIT.split("\n")),
+				Map.entry("janilla-commerce", MIT.split("\n")), Map.entry("janilla-conduit", MIT.split("\n")),
+				Map.entry("janilla-eshopweb", MIT.split("\n")), Map.entry("janilla-foodadvisor", MIT.split("\n")),
+				Map.entry("janilla-petclinic", APACHE2.split("\n")), Map.entry("janilla-store", MIT.split("\n")),
+				Map.entry("janilla-todomvc", MIT.split("\n")), Map.entry("janilla-uxpatterns", MIT.split("\n")),
+				Map.entry("janilla-website", MIT.split("\n")));
 		var s = Path.of(System.getProperty("user.home")).resolve("git");
 		try {
 			Files.walkFileTree(s, new SimpleFileVisitor<>() {

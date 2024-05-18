@@ -50,7 +50,7 @@ class CustomHttpServer extends HttpServer {
 	}
 
 	@Override
-	protected HttpExchange newExchange(HttpRequest request) {
+	protected HttpExchange createExchange(HttpRequest request) {
 		EntryList<String, String> hh;
 		try {
 			hh = request.getHeaders();
@@ -59,6 +59,6 @@ class CustomHttpServer extends HttpServer {
 		}
 		var h = hh != null ? hh.get("Host") : null;
 		var s = h != null ? hostExchange.get().get(h) : null;
-		return s != null ? s.get() : super.newExchange(request);
+		return s != null ? s.get() : super.createExchange(request);
 	}
 }
