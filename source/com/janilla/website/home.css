@@ -243,10 +243,13 @@ main {
 .cta {
 	border-radius: 0.5rem;
 	color: white;
-	display: inline-block;
 	font-weight: bold;
 	padding: 1rem 2rem;
 	text-decoration: none;
+
+	&:not([hidden]) {
+		display: inline-block;
+	}
 
 	&:nth-child(odd) {
 		background: rgb(0, 115, 150);

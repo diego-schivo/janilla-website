@@ -24,33 +24,41 @@
 package com.janilla.website;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.function.Supplier;
 
 import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpRequest;
+import com.janilla.http.HttpResponse;
 import com.janilla.http.HttpServer;
 import com.janilla.util.EntryList;
 import com.janilla.util.Lazy;
 
-class CustomHttpServer extends HttpServer {
+public class CustomServer extends HttpServer {
 
-	JanillaWebsite application;
+	public Properties configuration;
+
+	public JanillaWebsiteApp application;
 
 	Supplier<Map<String, Supplier<HttpExchange>>> hostExchange = Lazy.of(() -> {
-		return Map.of(application.getConfiguration().getProperty("website.commerce.host"),
-				() -> application.getCommerce().new Exchange(),
-				application.getConfiguration().getProperty("website.conduit.backend.host"),
-				() -> application.getConduitBackend().new Exchange(),
-				application.getConfiguration().getProperty("website.eshopweb.api.host"),
-				() -> application.getEShopApi().new Exchange());
+		return Map.of(configuration.getProperty("website.acmestore.host"),
+				() -> application.getAcmeStore().getFactory().create(HttpExchange.class),
+				configuration.getProperty("website.conduit.backend.host"),
+				() -> application.getConduitBackend().getFactory().create(HttpExchange.class),
+				configuration.getProperty("website.eshopweb.api.host"),
+				() -> application.getEShopApi().getFactory().create(HttpExchange.class),
+				configuration.getProperty("website.foodadvisor.api.host"),
+				() -> application.getFoodAdvisorApi().getFactory().create(HttpExchange.class),
+				configuration.getProperty("website.foodadvisor.client.host"),
+				() -> application.getFoodAdvisorClient().getFactory().create(HttpExchange.class),
+				configuration.getProperty("website.mystore.storefront.host"),
+				() -> application.getMyStoreStorefront().getFactory().create(HttpExchange.class),
+				configuration.getProperty("website.paymentcheckout.host"),
+				() -> application.getPaymentCheckout().getFactory().create(HttpExchange.class));
 	});
 
-	public void setApplication(JanillaWebsite application) {
-		this.application = application;
-	}
-
 	@Override
-	protected HttpExchange createExchange(HttpRequest request) {
+	protected HttpExchange buildExchange(HttpRequest request, HttpResponse response) {
 		EntryList<String, String> hh;
 		try {
 			hh = request.getHeaders();
@@ -59,6 +67,12 @@ class CustomHttpServer extends HttpServer {
 		}
 		var h = hh != null ? hh.get("Host") : null;
 		var s = h != null ? hostExchange.get().get(h) : null;
-		return s != null ? s.get() : super.createExchange(request);
+		if (s != null) {
+			var e = s.get();
+			e.setRequest(request);
+			e.setResponse(response);
+			return e;
+		}
+		return super.buildExchange(request, response);
 	}
 }

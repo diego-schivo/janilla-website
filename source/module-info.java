@@ -25,12 +25,17 @@ module com.janilla.website {
 
 	opens com.janilla.website;
 
-	requires com.janilla.commerce;
+	requires com.janilla.payment.checkout;
+	requires com.janilla.acmestore;
 	requires com.janilla.conduit.backend;
 	requires com.janilla.conduit.frontend;
 	requires com.janilla.eshopweb.api;
 	requires com.janilla.eshopweb.web;
+	requires com.janilla.foodadvisor.api;
+	requires com.janilla.foodadvisor.client;
 	requires com.janilla.petclinic;
+	requires com.janilla.mystore.admin;
+	requires com.janilla.mystore.storefront;
 	requires com.janilla.todomvc;
 	requires com.janilla.uxpatterns;
 }
