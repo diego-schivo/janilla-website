@@ -56,36 +56,40 @@ import com.janilla.web.WebHandler;
 
 public class JanillaWebsiteApp {
 
-	public static void main(String[] args) throws Exception {
-		var a = new JanillaWebsiteApp();
-		{
-			var c = new Properties();
-			try (var s = JanillaWebsiteApp.class.getResourceAsStream("configuration.properties")) {
-				c.load(s);
-				if (args.length > 0)
-					c.load(Files.newInputStream(Path.of(args[0])));
+	public static void main(String[] args) {
+		try {
+			var a = new JanillaWebsiteApp();
+			{
+				var c = new Properties();
+				try (var s = JanillaWebsiteApp.class.getResourceAsStream("configuration.properties")) {
+					c.load(s);
+					if (args.length > 0)
+						c.load(Files.newInputStream(Path.of(args[0])));
+				}
+				a.configuration = c;
 			}
-			a.configuration = c;
-		}
-		a.conduitBackend.get().getPersistence();
+			a.conduitBackend.get().getPersistence();
 
-		var s = (CustomServer) a.getFactory().create(HttpServer.class);
-		s.setExecutor(Executors.newFixedThreadPool(10));
-		s.setIdleTimerPeriod(10 * 1000);
-		s.setMaxIdleDuration(30 * 1000);
-		s.setMaxMessageLength(512 * 1024);
-		s.setPort(Integer.parseInt(a.configuration.getProperty("website.server.port")));
-		{
-			var p = a.configuration.getProperty("website.ssl.keystore.path");
-			if (p != null && !p.isEmpty()) {
-				if (p.startsWith("~"))
-					p = System.getProperty("user.home") + p.substring(1);
-				var q = a.configuration.getProperty("website.ssl.keystore.password");
-				s.setSSLContext(Net.getSSLContext(Path.of(p), q.toCharArray()));
+			var s = (CustomServer) a.getFactory().create(HttpServer.class);
+			s.setExecutor(Executors.newFixedThreadPool(10));
+			s.setIdleTimerPeriod(10 * 1000);
+			s.setMaxIdleDuration(30 * 1000);
+			s.setMaxMessageLength(512 * 1024);
+			s.setPort(Integer.parseInt(a.configuration.getProperty("website.server.port")));
+			{
+				var p = a.configuration.getProperty("website.ssl.keystore.path");
+				if (p != null && !p.isEmpty()) {
+					if (p.startsWith("~"))
+						p = System.getProperty("user.home") + p.substring(1);
+					var q = a.configuration.getProperty("website.ssl.keystore.password");
+					s.setSSLContext(Net.getSSLContext(Path.of(p), q.toCharArray()));
+				}
 			}
+			s.setHandler(a.getHandler());
+			s.run();
+		} catch (Throwable e) {
+			e.printStackTrace();
 		}
-		s.setHandler(a.getHandler());
-		s.run();
 	}
 
 	public Properties configuration;
