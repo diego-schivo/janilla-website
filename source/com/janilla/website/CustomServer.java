@@ -54,7 +54,9 @@ public class CustomServer extends HttpServer {
 				configuration.getProperty("website.mystore.storefront.host"),
 				() -> application.getMyStoreStorefront().getFactory().create(HttpExchange.class),
 				configuration.getProperty("website.paymentcheckout.host"),
-				() -> application.getPaymentCheckout().getFactory().create(HttpExchange.class));
+				() -> application.getPaymentCheckout().getFactory().create(HttpExchange.class),
+				configuration.getProperty("website.petclinic.host"),
+				() -> application.getPetClinic().getFactory().create(HttpExchange.class));
 	});
 
 	@Override
