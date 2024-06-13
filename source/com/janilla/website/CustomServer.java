@@ -23,15 +23,15 @@
  */
 package com.janilla.website;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Supplier;
 
 import com.janilla.http.HttpExchange;
+import com.janilla.http.HttpHeader;
 import com.janilla.http.HttpRequest;
-import com.janilla.http.HttpResponse;
 import com.janilla.http.HttpServer;
-import com.janilla.util.EntryList;
 import com.janilla.util.Lazy;
 
 public class CustomServer extends HttpServer {
@@ -60,21 +60,17 @@ public class CustomServer extends HttpServer {
 	});
 
 	@Override
-	protected HttpExchange buildExchange(HttpRequest request, HttpResponse response) {
-		EntryList<String, String> hh;
+	protected HttpExchange createExchange(HttpRequest request) {
+		Collection<HttpHeader> hh;
 		try {
 			hh = request.getHeaders();
 		} catch (NullPointerException e) {
 			hh = null;
 		}
-		var h = hh != null ? hh.get("Host") : null;
+		var h = hh != null
+				? hh.stream().filter(x -> x.name().equals("Host")).map(HttpHeader::value).findFirst().orElse(null)
+				: null;
 		var s = h != null ? hostExchange.get().get(h) : null;
-		if (s != null) {
-			var e = s.get();
-			e.setRequest(request);
-			e.setResponse(response);
-			return e;
-		}
-		return super.buildExchange(request, response);
+		return s != null ? s.get() : super.createExchange(request);
 	}
 }
