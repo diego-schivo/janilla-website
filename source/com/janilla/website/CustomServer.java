@@ -21,56 +21,56 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.janilla.website;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.Properties;
-import java.util.function.Supplier;
-
-import com.janilla.http.HttpExchange;
-import com.janilla.http.HttpHeader;
-import com.janilla.http.HttpRequest;
-import com.janilla.http.HttpServer;
-import com.janilla.util.Lazy;
-
-public class CustomServer extends HttpServer {
-
-	public Properties configuration;
-
-	public JanillaWebsiteApp application;
-
-	Supplier<Map<String, Supplier<HttpExchange>>> hostExchange = Lazy.of(() -> {
-		return Map.of(configuration.getProperty("website.acmestore.host"),
-				() -> application.getAcmeStore().getFactory().create(HttpExchange.class),
-				configuration.getProperty("website.conduit.backend.host"),
-				() -> application.getConduitBackend().getFactory().create(HttpExchange.class),
-				configuration.getProperty("website.eshopweb.api.host"),
-				() -> application.getEShopApi().getFactory().create(HttpExchange.class),
-				configuration.getProperty("website.foodadvisor.api.host"),
-				() -> application.getFoodAdvisorApi().getFactory().create(HttpExchange.class),
-				configuration.getProperty("website.foodadvisor.client.host"),
-				() -> application.getFoodAdvisorClient().getFactory().create(HttpExchange.class),
-				configuration.getProperty("website.mystore.storefront.host"),
-				() -> application.getMyStoreStorefront().getFactory().create(HttpExchange.class),
-				configuration.getProperty("website.paymentcheckout.host"),
-				() -> application.getPaymentCheckout().getFactory().create(HttpExchange.class),
-				configuration.getProperty("website.petclinic.host"),
-				() -> application.getPetClinic().getFactory().create(HttpExchange.class));
-	});
-
-	@Override
-	protected HttpExchange createExchange(HttpRequest request) {
-		Collection<HttpHeader> hh;
-		try {
-			hh = request.getHeaders();
-		} catch (NullPointerException e) {
-			hh = null;
-		}
-		var h = hh != null
-				? hh.stream().filter(x -> x.name().equals("Host")).map(HttpHeader::value).findFirst().orElse(null)
-				: null;
-		var s = h != null ? hostExchange.get().get(h) : null;
-		return s != null ? s.get() : super.createExchange(request);
-	}
-}
+//package com.janilla.website;
+//
+//import java.util.Collection;
+//import java.util.Map;
+//import java.util.Properties;
+//import java.util.function.Supplier;
+//
+//import com.janilla.http.HttpExchange;
+//import com.janilla.media.HeaderField;
+//import com.janilla.http.HttpRequest;
+//import com.janilla.net.Server;
+//import com.janilla.util.Lazy;
+//
+//public class CustomServer extends Server {
+//
+//	public Properties configuration;
+//
+//	public JanillaWebsiteApp application;
+//
+//	Supplier<Map<String, Supplier<HttpExchange>>> hostExchange = Lazy.of(() -> {
+//		return Map.of(configuration.getProperty("website.acmestore.host"),
+//				() -> application.getAcmeStore().getFactory().create(HttpExchange.class),
+//				configuration.getProperty("website.conduit.backend.host"),
+//				() -> application.getConduitBackend().getFactory().create(HttpExchange.class),
+//				configuration.getProperty("website.eshopweb.api.host"),
+//				() -> application.getEShopApi().getFactory().create(HttpExchange.class),
+//				configuration.getProperty("website.foodadvisor.api.host"),
+//				() -> application.getFoodAdvisorApi().getFactory().create(HttpExchange.class),
+//				configuration.getProperty("website.foodadvisor.client.host"),
+//				() -> application.getFoodAdvisorClient().getFactory().create(HttpExchange.class),
+//				configuration.getProperty("website.mystore.storefront.host"),
+//				() -> application.getMyStoreStorefront().getFactory().create(HttpExchange.class),
+//				configuration.getProperty("website.paymentcheckout.host"),
+//				() -> application.getPaymentCheckout().getFactory().create(HttpExchange.class),
+//				configuration.getProperty("website.petclinic.host"),
+//				() -> application.getPetClinic().getFactory().create(HttpExchange.class));
+//	});
+//
+//	@Override
+//	protected HttpExchange createExchange(HttpRequest request) {
+//		Collection<HeaderField> hh;
+//		try {
+//			hh = request.getHeaders();
+//		} catch (NullPointerException e) {
+//			hh = null;
+//		}
+//		var h = hh != null
+//				? hh.stream().filter(x -> x.name().equals("Host")).map(HeaderField::value).findFirst().orElse(null)
+//				: null;
+//		var s = h != null ? hostExchange.get().get(h) : null;
+//		return s != null ? s.get() : super.createExchange(request);
+//	}
+//}

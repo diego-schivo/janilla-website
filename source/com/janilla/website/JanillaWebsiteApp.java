@@ -23,6 +23,7 @@
  */
 package com.janilla.website;
 
+import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -37,11 +38,12 @@ import com.janilla.eshopweb.api.EShopApiApp;
 import com.janilla.eshopweb.web.EShopWebApp;
 import com.janilla.foodadvisor.api.FoodAdvisorApiApp;
 import com.janilla.foodadvisor.client.FoodAdvisorClientApp;
-import com.janilla.http.HttpHeader;
-import com.janilla.http.HttpServer;
+import com.janilla.http.HttpExchange;
+import com.janilla.media.HeaderField;
 import com.janilla.mystore.admin.MyStoreAdminApp;
 import com.janilla.mystore.storefront.MyStoreStorefrontApp;
 import com.janilla.net.Net;
+import com.janilla.net.Server;
 import com.janilla.payment.checkout.PaymentCheckoutApp;
 import com.janilla.petclinic.PetClinicApplication;
 import com.janilla.reflect.Factory;
@@ -69,12 +71,14 @@ public class JanillaWebsiteApp {
 			}
 			a.conduitBackend.get().getPersistence();
 
-			var s = (CustomServer) a.getFactory().create(HttpServer.class);
+//			var s = (CustomServer) a.getFactory().create(Server.class);
 //			s.setExecutor(Executors.newFixedThreadPool(10));
 //			s.setIdleTimerPeriod(10 * 1000);
 //			s.setMaxIdleDuration(30 * 1000);
 //			s.setMaxMessageLength(512 * 1024);
-			s.setPort(Integer.parseInt(a.configuration.getProperty("website.server.port")));
+			var s = a.getFactory().create(Server.class);
+//			s.setAddress(new InetSocketAddress(Integer.parseInt(a.configuration.getProperty("website.server.port")));
+			s.setAddress(new InetSocketAddress(Integer.parseInt(a.configuration.getProperty("website.server.port"))));
 			{
 				var p = a.configuration.getProperty("website.ssl.keystore.path");
 				if (p != null && !p.isEmpty()) {
@@ -85,7 +89,7 @@ public class JanillaWebsiteApp {
 				}
 			}
 			s.setHandler(a.getHandler());
-			s.run();
+			s.serve();
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -187,7 +191,7 @@ public class JanillaWebsiteApp {
 		return a;
 	});
 
-	Supplier<HttpServer.Handler> handler = Lazy.of(() -> {
+	Supplier<Server.Handler> handler = Lazy.of(() -> {
 		var f = getFactory();
 		var b = f.create(ApplicationHandlerBuilder.class);
 		var h = b.build();
@@ -210,15 +214,16 @@ public class JanillaWebsiteApp {
 				Map.entry(configuration.getProperty("website.todomvc.host"), getTodoMVC().getHandler()),
 				Map.entry(configuration.getProperty("website.uxpatterns.host"), getUxPatterns().getHandler()));
 
-		return c -> {
-			var l = c.getRequest().getHeaders();
+		return x -> {
+			var ex = (HttpExchange) x;
+			var l = ex.getRequest().getHeaders();
 			var i = l != null
-					? l.stream().filter(x -> x.name().equals("Host")).map(HttpHeader::value).findFirst().orElse(null)
+					? l.stream().filter(y -> y.name().equals("Host")).map(HeaderField::value).findFirst().orElse(null)
 					: null;
 			var j = i != null ? hh.get(i) : null;
 			if (j == null)
 				j = h;
-			return j.handle(c);
+			return j.handle(ex);
 		};
 	});
 
@@ -278,7 +283,7 @@ public class JanillaWebsiteApp {
 		return uxPatterns.get();
 	}
 
-	public HttpServer.Handler getHandler() {
+	public Server.Handler getHandler() {
 		return handler.get();
 	}
 
