@@ -29,7 +29,7 @@ import java.util.Properties;
 import java.util.function.Supplier;
 
 import com.janilla.http.HttpRequest;
-import com.janilla.http2.Http2Exchange;
+import com.janilla.http.HttpExchange;
 import com.janilla.http2.Http2Protocol;
 import com.janilla.media.HeaderField;
 import com.janilla.util.Lazy;
@@ -40,27 +40,27 @@ public class CustomHttp2Protocol extends Http2Protocol {
 
 	public JanillaWebsiteApp application;
 
-	Supplier<Map<String, Supplier<Http2Exchange>>> hostExchange = Lazy.of(() -> {
+	Supplier<Map<String, Supplier<HttpExchange>>> hostExchange = Lazy.of(() -> {
 		return Map.of(configuration.getProperty("website.acmestore.host"),
-				() -> application.getAcmeStore().getFactory().create(Http2Exchange.class),
+				() -> application.getAcmeStore().getFactory().create(HttpExchange.class),
 				configuration.getProperty("website.conduit.backend.host"),
-				() -> application.getConduitBackend().getFactory().create(Http2Exchange.class),
+				() -> application.getConduitBackend().getFactory().create(HttpExchange.class),
 				configuration.getProperty("website.eshopweb.api.host"),
-				() -> application.getEShopApi().getFactory().create(Http2Exchange.class),
+				() -> application.getEShopApi().getFactory().create(HttpExchange.class),
 				configuration.getProperty("website.foodadvisor.api.host"),
-				() -> application.getFoodAdvisorApi().getFactory().create(Http2Exchange.class),
+				() -> application.getFoodAdvisorApi().getFactory().create(HttpExchange.class),
 				configuration.getProperty("website.foodadvisor.client.host"),
-				() -> application.getFoodAdvisorClient().getFactory().create(Http2Exchange.class),
+				() -> application.getFoodAdvisorClient().getFactory().create(HttpExchange.class),
 				configuration.getProperty("website.mystore.storefront.host"),
-				() -> application.getMyStoreStorefront().getFactory().create(Http2Exchange.class),
+				() -> application.getMyStoreStorefront().getFactory().create(HttpExchange.class),
 				configuration.getProperty("website.paymentcheckout.host"),
-				() -> application.getPaymentCheckout().getFactory().create(Http2Exchange.class),
+				() -> application.getPaymentCheckout().getFactory().create(HttpExchange.class),
 				configuration.getProperty("website.petclinic.host"),
-				() -> application.getPetClinic().getFactory().create(Http2Exchange.class));
+				() -> application.getPetClinic().getFactory().create(HttpExchange.class));
 	});
 
 	@Override
-	protected Http2Exchange createExchange(HttpRequest request) {
+	protected HttpExchange createExchange(HttpRequest request) {
 		Collection<HeaderField> hh;
 		try {
 			hh = request.getHeaders();

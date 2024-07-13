@@ -39,6 +39,7 @@ import com.janilla.eshopweb.web.EShopWebApp;
 import com.janilla.foodadvisor.api.FoodAdvisorApiApp;
 import com.janilla.foodadvisor.client.FoodAdvisorClientApp;
 import com.janilla.http.HttpExchange;
+import com.janilla.http.HttpHandler;
 import com.janilla.media.HeaderField;
 import com.janilla.mystore.admin.MyStoreAdminApp;
 import com.janilla.mystore.storefront.MyStoreStorefrontApp;
@@ -77,7 +78,6 @@ public class JanillaWebsiteApp {
 //			s.setMaxIdleDuration(30 * 1000);
 //			s.setMaxMessageLength(512 * 1024);
 			var s = a.getFactory().create(Server.class);
-//			s.setAddress(new InetSocketAddress(Integer.parseInt(a.configuration.getProperty("website.server.port")));
 			s.setAddress(new InetSocketAddress(Integer.parseInt(a.configuration.getProperty("website.server.port"))));
 			{
 				var p = a.configuration.getProperty("website.ssl.keystore.path");
@@ -85,10 +85,11 @@ public class JanillaWebsiteApp {
 					if (p.startsWith("~"))
 						p = System.getProperty("user.home") + p.substring(1);
 					var q = a.configuration.getProperty("website.ssl.keystore.password");
-					s.setSslContext(Net.getSSLContext(Path.of(p), q.toCharArray()));
+//					s.setSslContext(Net.getSSLContext(p.toLowerCase().endsWith(".p12") ? "PKCS12" : "JKS",
+//							Files.newInputStream(Path.of(p)), q.toCharArray()));
 				}
 			}
-			s.setHandler(a.getHandler());
+			// s.setHandler(a.getHandler());
 			s.serve();
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -191,7 +192,7 @@ public class JanillaWebsiteApp {
 		return a;
 	});
 
-	Supplier<Server.Handler> handler = Lazy.of(() -> {
+	Supplier<HttpHandler> handler = Lazy.of(() -> {
 		var f = getFactory();
 		var b = f.create(ApplicationHandlerBuilder.class);
 		var h = b.build();
@@ -283,7 +284,7 @@ public class JanillaWebsiteApp {
 		return uxPatterns.get();
 	}
 
-	public Server.Handler getHandler() {
+	public HttpHandler getHandler() {
 		return handler.get();
 	}
 
