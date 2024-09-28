@@ -29,12 +29,12 @@ import java.util.Properties;
 import java.util.function.Supplier;
 
 import com.janilla.http.HttpRequest;
+import com.janilla.http.HttpProtocol;
+import com.janilla.http.HeaderField;
 import com.janilla.http.HttpExchange;
-import com.janilla.http2.Http2Protocol;
-import com.janilla.media.HeaderField;
 import com.janilla.util.Lazy;
 
-public class CustomHttp2Protocol extends Http2Protocol {
+public class CustomHttp2Protocol extends HttpProtocol {
 
 	public Properties configuration;
 
