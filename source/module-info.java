@@ -25,7 +25,7 @@ module com.janilla.website {
 
 	opens com.janilla.website;
 
-	requires com.janilla.payment.checkout;
+	requires com.janilla.acmedashboard;
 	requires com.janilla.acmestore;
 	requires com.janilla.conduit.backend;
 	requires com.janilla.conduit.frontend;
@@ -33,6 +33,7 @@ module com.janilla.website {
 	requires com.janilla.eshopweb.web;
 	requires com.janilla.foodadvisor.api;
 	requires com.janilla.foodadvisor.client;
+	requires com.janilla.payment.checkout;
 	requires com.janilla.petclinic;
 	requires com.janilla.mystore.admin;
 	requires com.janilla.mystore.storefront;

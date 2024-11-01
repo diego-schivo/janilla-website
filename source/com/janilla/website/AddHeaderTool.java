@@ -105,7 +105,8 @@ class AddHeaderTool {
 			 */""";
 
 	public static void main(String[] args) throws Exception {
-		var h = Map.ofEntries(Map.entry("janilla", GPL2.split("\n")), Map.entry("janilla-acmestore", MIT.split("\n")),
+		var h = Map.ofEntries(Map.entry("janilla", GPL2.split("\n")),
+				Map.entry("janilla-acmedashboard", MIT.split("\n")), Map.entry("janilla-acmestore", MIT.split("\n")),
 				Map.entry("janilla-conduit", MIT.split("\n")), Map.entry("janilla-eshopweb", MIT.split("\n")),
 				Map.entry("janilla-foodadvisor", MIT.split("\n")), Map.entry("janilla-mystore", MIT.split("\n")),
 				Map.entry("janilla-payment", MIT.split("\n")), Map.entry("janilla-petclinic", APACHE2.split("\n")),

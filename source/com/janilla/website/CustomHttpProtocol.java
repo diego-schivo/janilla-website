@@ -23,54 +23,45 @@
  */
 package com.janilla.website;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Supplier;
 
-import com.janilla.http.HttpRequest;
-import com.janilla.http.HttpProtocol;
-import com.janilla.http.HeaderField;
 import com.janilla.http.HttpExchange;
+import com.janilla.http.HttpProtocol;
+import com.janilla.http.HttpRequest;
 import com.janilla.util.Lazy;
 
-public class CustomHttp2Protocol extends HttpProtocol {
+public class CustomHttpProtocol extends HttpProtocol {
 
 	public Properties configuration;
 
 	public JanillaWebsiteApp application;
 
 	Supplier<Map<String, Supplier<HttpExchange>>> hostExchange = Lazy.of(() -> {
-		return Map.of(configuration.getProperty("website.acmestore.host"),
-				() -> application.getAcmeStore().getFactory().create(HttpExchange.class),
+		return Map.of(configuration.getProperty("website.acmedashboard.host"),
+				() -> application.acmeDashboard.factory.create(HttpExchange.class),
+				configuration.getProperty("website.acmestore.host"),
+				() -> application.acmeStore.factory.create(HttpExchange.class),
 				configuration.getProperty("website.conduit.backend.host"),
-				() -> application.getConduitBackend().getFactory().create(HttpExchange.class),
+				() -> application.conduitBackend.factory.create(HttpExchange.class),
 				configuration.getProperty("website.eshopweb.api.host"),
-				() -> application.getEShopApi().getFactory().create(HttpExchange.class),
+				() -> application.eShopApi.factory.create(HttpExchange.class),
 				configuration.getProperty("website.foodadvisor.api.host"),
-				() -> application.getFoodAdvisorApi().getFactory().create(HttpExchange.class),
+				() -> application.foodAdvisorApi.factory.create(HttpExchange.class),
 				configuration.getProperty("website.foodadvisor.client.host"),
-				() -> application.getFoodAdvisorClient().getFactory().create(HttpExchange.class),
+				() -> application.foodAdvisorClient.factory.create(HttpExchange.class),
 				configuration.getProperty("website.mystore.storefront.host"),
-				() -> application.getMyStoreStorefront().getFactory().create(HttpExchange.class),
+				() -> application.myStoreStorefront.factory.create(HttpExchange.class),
 				configuration.getProperty("website.paymentcheckout.host"),
-				() -> application.getPaymentCheckout().getFactory().create(HttpExchange.class),
+				() -> application.paymentCheckout.factory.create(HttpExchange.class),
 				configuration.getProperty("website.petclinic.host"),
-				() -> application.getPetClinic().getFactory().create(HttpExchange.class));
+				() -> application.petClinic.factory.create(HttpExchange.class));
 	});
 
 	@Override
 	protected HttpExchange createExchange(HttpRequest request) {
-		Collection<HeaderField> hh;
-		try {
-			hh = request.getHeaders();
-		} catch (NullPointerException e) {
-			hh = null;
-		}
-		var h = hh != null
-				? hh.stream().filter(x -> x.name().equals("Host")).map(HeaderField::value).findFirst().orElse(null)
-				: null;
-		var s = h != null ? hostExchange.get().get(h) : null;
+		var s = hostExchange.get().get(request.getAuthority());
 		return s != null ? s.get() : super.createExchange(request);
 	}
 }

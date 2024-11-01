@@ -23,14 +23,16 @@
  */
 package com.janilla.website;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
+import com.janilla.acmedashboard.AcmeDashboard;
 import com.janilla.acmestore.AcmeStoreApp;
 import com.janilla.conduit.backend.ConduitBackendApp;
 import com.janilla.conduit.frontend.ConduitFrontendApp;
@@ -38,9 +40,9 @@ import com.janilla.eshopweb.api.EShopApiApp;
 import com.janilla.eshopweb.web.EShopWebApp;
 import com.janilla.foodadvisor.api.FoodAdvisorApiApp;
 import com.janilla.foodadvisor.client.FoodAdvisorClientApp;
-import com.janilla.http.HeaderField;
 import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpHandler;
+import com.janilla.http.HttpProtocol;
 import com.janilla.mystore.admin.MyStoreAdminApp;
 import com.janilla.mystore.storefront.MyStoreStorefrontApp;
 import com.janilla.net.Net;
@@ -49,7 +51,6 @@ import com.janilla.payment.checkout.PaymentCheckoutApp;
 import com.janilla.petclinic.PetClinicApplication;
 import com.janilla.reflect.Factory;
 import com.janilla.todomvc.TodoMVCApp;
-import com.janilla.util.Lazy;
 import com.janilla.util.Util;
 import com.janilla.uxpatterns.UXPatternsApp;
 import com.janilla.web.ApplicationHandlerBuilder;
@@ -60,36 +61,37 @@ public class JanillaWebsiteApp {
 
 	public static void main(String[] args) {
 		try {
-			var a = new JanillaWebsiteApp();
-			{
-				var c = new Properties();
-				try (var s = JanillaWebsiteApp.class.getResourceAsStream("configuration.properties")) {
-					c.load(s);
-					if (args.length > 0)
-						c.load(Files.newInputStream(Path.of(args[0])));
-				}
-				a.configuration = c;
-			}
-			a.conduitBackend.get().getPersistence();
-
-//			var s = (CustomServer) a.getFactory().create(Server.class);
-//			s.setExecutor(Executors.newFixedThreadPool(10));
-//			s.setIdleTimerPeriod(10 * 1000);
-//			s.setMaxIdleDuration(30 * 1000);
-//			s.setMaxMessageLength(512 * 1024);
-			var s = a.getFactory().create(Server.class);
-			s.setAddress(new InetSocketAddress(Integer.parseInt(a.configuration.getProperty("website.server.port"))));
-			{
-				var p = a.configuration.getProperty("website.ssl.keystore.path");
-				if (p != null && !p.isEmpty()) {
+			var pp = new Properties();
+			try (var is = JanillaWebsiteApp.class.getResourceAsStream("configuration.properties")) {
+				pp.load(is);
+				if (args.length > 0) {
+					var p = args[0];
 					if (p.startsWith("~"))
 						p = System.getProperty("user.home") + p.substring(1);
-					var q = a.configuration.getProperty("website.ssl.keystore.password");
-//					s.setSslContext(Net.getSSLContext(p.toLowerCase().endsWith(".p12") ? "PKCS12" : "JKS",
-//							Files.newInputStream(Path.of(p)), q.toCharArray()));
+					pp.load(Files.newInputStream(Path.of(p)));
 				}
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
 			}
-			// s.setHandler(a.getHandler());
+			var a = new JanillaWebsiteApp(pp);
+
+			var hp = a.factory.create(HttpProtocol.class);
+			var p = a.configuration.getProperty("website.ssl.keystore.path");
+			var q = a.configuration.getProperty("website.ssl.keystore.password");
+			if (p != null && p.startsWith("~"))
+				p = System.getProperty("user.home") + p.substring(1);
+			try (var is = p != null && p.length() > 0 ? Files.newInputStream(Path.of(p))
+					: Net.class.getResourceAsStream("testkeys")) {
+				hp.setSslContext(Net.getSSLContext(p != null && p.toLowerCase().endsWith(".p12") ? "PKCS12" : "JKS", is,
+						(q != null && q.length() > 0 ? q : "passphrase").toCharArray()));
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+			hp.setHandler(a.handler);
+
+			var s = new Server();
+			s.setAddress(new InetSocketAddress(Integer.parseInt(a.configuration.getProperty("website.server.port"))));
+			s.setProtocol(hp);
 			s.serve();
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -98,194 +100,91 @@ public class JanillaWebsiteApp {
 
 	public Properties configuration;
 
+	public Factory factory;
+
+	public HttpHandler handler;
+
+	public AcmeDashboard acmeDashboard;
+
+	public AcmeStoreApp acmeStore;
+
+	public ConduitBackendApp conduitBackend;
+
+	public ConduitFrontendApp conduitFrontend;
+
+	public EShopApiApp eShopApi;
+
+	public EShopWebApp eShopWeb;
+
+	public FoodAdvisorApiApp foodAdvisorApi;
+
+	public FoodAdvisorClientApp foodAdvisorClient;
+
+	public MyStoreAdminApp myStoreAdmin;
+
+	public MyStoreStorefrontApp myStoreStorefront;
+
+	public PaymentCheckoutApp paymentCheckout;
+
+	public PetClinicApplication petClinic;
+
+	public TodoMVCApp todoMVC;
+
+	public UXPatternsApp uxPatterns;
+
+	public JanillaWebsiteApp(Properties configuration) {
+		this.configuration = configuration;
+
+		factory = new Factory();
+		factory.setTypes(Util.getPackageClasses(getClass().getPackageName()).toList());
+		factory.setSource(this);
+
+		acmeDashboard = new AcmeDashboard(configuration);
+		acmeStore = new AcmeStoreApp(configuration);
+		conduitBackend = new ConduitBackendApp(configuration);
+		conduitFrontend = new ConduitFrontendApp(configuration);
+		eShopApi = new EShopApiApp(configuration);
+		eShopWeb = new EShopWebApp(configuration);
+		foodAdvisorApi = new FoodAdvisorApiApp(configuration);
+		foodAdvisorClient = new FoodAdvisorClientApp(configuration);
+		myStoreAdmin = new MyStoreAdminApp(configuration);
+		myStoreStorefront = new MyStoreStorefrontApp(configuration);
+		paymentCheckout = new PaymentCheckoutApp(configuration);
+		petClinic = new PetClinicApplication(configuration);
+		todoMVC = new TodoMVCApp(configuration);
+		uxPatterns = new UXPatternsApp(configuration);
+
+		{
+			var hb = factory.create(ApplicationHandlerBuilder.class);
+			var h = hb.build();
+			var hh = Map.ofEntries(
+					Map.entry(configuration.getProperty("website.acmedashboard.host"), acmeDashboard.handler),
+					Map.entry(configuration.getProperty("website.acmestore.host"), acmeStore.handler),
+					Map.entry(configuration.getProperty("website.conduit.backend.host"), conduitBackend.handler),
+					Map.entry(configuration.getProperty("website.conduit.frontend.host"), conduitFrontend.handler),
+					Map.entry(configuration.getProperty("website.eshopweb.api.host"), eShopApi.handler),
+					Map.entry(configuration.getProperty("website.eshopweb.web.host"), eShopWeb.handler),
+					Map.entry(configuration.getProperty("website.foodadvisor.api.host"), foodAdvisorApi.handler),
+					Map.entry(configuration.getProperty("website.foodadvisor.client.host"), foodAdvisorClient.handler),
+					Map.entry(configuration.getProperty("website.mystore.admin.host"), myStoreAdmin.handler),
+					Map.entry(configuration.getProperty("website.mystore.storefront.host"), myStoreStorefront.handler),
+					Map.entry(configuration.getProperty("website.paymentcheckout.host"), paymentCheckout.handler),
+					Map.entry(configuration.getProperty("website.petclinic.host"), petClinic.handler),
+					Map.entry(configuration.getProperty("website.todomvc.host"), todoMVC.handler),
+					Map.entry(configuration.getProperty("website.uxpatterns.host"), uxPatterns.handler));
+			handler = x -> {
+				var ex = (HttpExchange) x;
+				var k = ex.getRequest().getAuthority();
+				var j = k != null ? hh.get(k) : null;
+				if (j == null)
+					j = h;
+				return j.handle(ex);
+			};
+		}
+	}
+
 	public JanillaWebsiteApp getApplication() {
 		return this;
-	}
-
-	private Supplier<Factory> factory = Lazy.of(() -> {
-		var f = new Factory();
-		f.setTypes(Util.getPackageClasses(getClass().getPackageName()).toList());
-		f.setSource(this);
-		return f;
-	});
-
-	Supplier<AcmeStoreApp> acmeStore = Lazy.of(() -> {
-		var a = new AcmeStoreApp();
-		a.configuration = configuration;
-		a.getPersistence();
-		return a;
-	});
-
-	Supplier<ConduitBackendApp> conduitBackend = Lazy.of(() -> {
-		var a = new ConduitBackendApp();
-		a.configuration = configuration;
-		a.getPersistence();
-		return a;
-	});
-
-	Supplier<ConduitFrontendApp> conduitFrontend = Lazy.of(() -> {
-		var a = new ConduitFrontendApp();
-		a.configuration = configuration;
-		return a;
-	});
-
-	Supplier<EShopApiApp> eShopApi = Lazy.of(() -> {
-		var a = new EShopApiApp();
-		a.configuration = configuration;
-		a.getPersistence();
-		return a;
-	});
-
-	Supplier<EShopWebApp> eShopWeb = Lazy.of(() -> {
-		var a = new EShopWebApp();
-		a.configuration = configuration;
-		a.getPersistence();
-		return a;
-	});
-
-	Supplier<FoodAdvisorApiApp> foodAdvisorApi = Lazy.of(() -> {
-		var a = new FoodAdvisorApiApp();
-		a.configuration = configuration;
-		a.getPersistence();
-		return a;
-	});
-
-	Supplier<FoodAdvisorClientApp> foodAdvisorClient = Lazy.of(() -> {
-		var a = new FoodAdvisorClientApp();
-		a.configuration = configuration;
-		a.getPersistence();
-		return a;
-	});
-
-	Supplier<MyStoreAdminApp> myStoreAdmin = Lazy.of(() -> {
-		var a = new MyStoreAdminApp();
-		a.configuration = configuration;
-		a.getPersistence();
-		return a;
-	});
-
-	Supplier<MyStoreStorefrontApp> myStoreStorefront = Lazy.of(() -> {
-		var a = new MyStoreStorefrontApp();
-		a.configuration = configuration;
-		a.getPersistence();
-		return a;
-	});
-
-	Supplier<PaymentCheckoutApp> paymentCheckout = Lazy.of(() -> {
-		var a = new PaymentCheckoutApp();
-		a.configuration = configuration;
-		return a;
-	});
-
-	Supplier<PetClinicApplication> petClinic = Lazy.of(() -> {
-		var a = new PetClinicApplication();
-		a.configuration = configuration;
-		a.getPersistence();
-		return a;
-	});
-
-	Supplier<TodoMVCApp> todoMVC = Lazy.of(() -> new TodoMVCApp());
-
-	Supplier<UXPatternsApp> uxPatterns = Lazy.of(() -> {
-		var a = new UXPatternsApp();
-		a.configuration = configuration;
-		return a;
-	});
-
-	Supplier<HttpHandler> handler = Lazy.of(() -> {
-		var f = getFactory();
-		var b = f.create(ApplicationHandlerBuilder.class);
-		var h = b.build();
-
-		var hh = Map.ofEntries(
-				Map.entry(configuration.getProperty("website.acmestore.host"), getAcmeStore().getHandler()),
-				Map.entry(configuration.getProperty("website.conduit.backend.host"), getConduitBackend().getHandler()),
-				Map.entry(configuration.getProperty("website.conduit.frontend.host"),
-						getConduitFrontend().getHandler()),
-				Map.entry(configuration.getProperty("website.eshopweb.api.host"), getEShopApi().getHandler()),
-				Map.entry(configuration.getProperty("website.eshopweb.web.host"), getEShopWeb().getHandler()),
-				Map.entry(configuration.getProperty("website.foodadvisor.api.host"), getFoodAdvisorApi().getHandler()),
-				Map.entry(configuration.getProperty("website.foodadvisor.client.host"),
-						getFoodAdvisorClient().getHandler()),
-				Map.entry(configuration.getProperty("website.mystore.admin.host"), getMyStoreAdmin().getHandler()),
-				Map.entry(configuration.getProperty("website.mystore.storefront.host"),
-						getMyStoreStorefront().getHandler()),
-				Map.entry(configuration.getProperty("website.paymentcheckout.host"), getPaymentCheckout().getHandler()),
-				Map.entry(configuration.getProperty("website.petclinic.host"), getPetClinic().getHandler()),
-				Map.entry(configuration.getProperty("website.todomvc.host"), getTodoMVC().getHandler()),
-				Map.entry(configuration.getProperty("website.uxpatterns.host"), getUxPatterns().getHandler()));
-
-		return x -> {
-			var ex = (HttpExchange) x;
-			var l = ex.getRequest().getHeaders();
-			var i = l != null
-					? l.stream().filter(y -> y.name().equals("Host")).map(HeaderField::value).findFirst().orElse(null)
-					: null;
-			var j = i != null ? hh.get(i) : null;
-			if (j == null)
-				j = h;
-			return j.handle(ex);
-		};
-	});
-
-	public Factory getFactory() {
-		return factory.get();
-	}
-
-	public AcmeStoreApp getAcmeStore() {
-		return acmeStore.get();
-	}
-
-	public ConduitBackendApp getConduitBackend() {
-		return conduitBackend.get();
-	}
-
-	public ConduitFrontendApp getConduitFrontend() {
-		return conduitFrontend.get();
-	}
-
-	public EShopApiApp getEShopApi() {
-		return eShopApi.get();
-	}
-
-	public EShopWebApp getEShopWeb() {
-		return eShopWeb.get();
-	}
-
-	public FoodAdvisorApiApp getFoodAdvisorApi() {
-		return foodAdvisorApi.get();
-	}
-
-	public FoodAdvisorClientApp getFoodAdvisorClient() {
-		return foodAdvisorClient.get();
-	}
-
-	public MyStoreAdminApp getMyStoreAdmin() {
-		return myStoreAdmin.get();
-	}
-
-	public MyStoreStorefrontApp getMyStoreStorefront() {
-		return myStoreStorefront.get();
-	}
-
-	public PaymentCheckoutApp getPaymentCheckout() {
-		return paymentCheckout.get();
-	}
-
-	public PetClinicApplication getPetClinic() {
-		return petClinic.get();
-	}
-
-	public TodoMVCApp getTodoMVC() {
-		return todoMVC.get();
-	}
-
-	public UXPatternsApp getUxPatterns() {
-		return uxPatterns.get();
-	}
-
-	public HttpHandler getHandler() {
-		return handler.get();
 	}
 
 	@Handle(method = "GET", path = "/")
