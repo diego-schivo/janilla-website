@@ -108,17 +108,14 @@ class AddHeaderTool {
 		var h = Map.ofEntries(Map.entry("janilla", GPL2.split("\n")),
 				Map.entry("janilla-acmedashboard", MIT.split("\n")),
 //				Map.entry("janilla-acmestore", MIT.split("\n")),
-				Map.entry("janilla-address-book", MIT.split("\n")),
-				Map.entry("janilla-conduit", MIT.split("\n")),
+				Map.entry("janilla-address-book", MIT.split("\n")), Map.entry("janilla-conduit", MIT.split("\n")),
 //				Map.entry("janilla-eshopweb", MIT.split("\n")),
 //				Map.entry("janilla-foodadvisor", MIT.split("\n")),
 //				Map.entry("janilla-mystore", MIT.split("\n")),
 //				Map.entry("janilla-payment", MIT.split("\n")),
-				Map.entry("janilla-petclinic", APACHE2.split("\n")),
-				Map.entry("janilla-todomvc", MIT.split("\n")),
+				Map.entry("janilla-petclinic", APACHE2.split("\n")), Map.entry("janilla-todomvc", MIT.split("\n")),
 //				Map.entry("janilla-uxpatterns", MIT.split("\n")),
-				Map.entry("janilla-website", MIT.split("\n")),
-				Map.entry("janillas", GPL2.split("\n")));
+				Map.entry("janilla-website", MIT.split("\n")), Map.entry("janillas", GPL2.split("\n")));
 		var s = Path.of(System.getProperty("user.home")).resolve("git");
 		Files.walkFileTree(s, new SimpleFileVisitor<>() {
 
@@ -161,7 +158,7 @@ class AddHeaderTool {
 						return false;
 					c.accept(t);
 					return c.state == 1 || c.state == 2;
-				}, t -> i.hasNext() ? i.next() : null).toArray(String[]::new);
+				}, _ -> i.hasNext() ? i.next() : null).toArray(String[]::new);
 				var b = h.get(s.relativize(file).getName(0).toString());
 				if (!Arrays.equals(a, b)) {
 					System.out.println(file);
