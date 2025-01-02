@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Diego Schivo
+ * Copyright (c) 2024-2025 Diego Schivo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ class AddHeaderTool {
 
 	private static final String APACHE2 = """
 			/*
-			 * Copyright 2012-2024 the original author or authors.
+			 * Copyright 2012-2025 the original author or authors.
 			 *
 			 * Licensed under the Apache License, Version 2.0 (the "License");
 			 * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ class AddHeaderTool {
 
 	private static final String GPL2 = """
 			/*
-			 * Copyright (c) 2024, Diego Schivo. All rights reserved.
+			 * Copyright (c) 2024, 2025, Diego Schivo. All rights reserved.
 			 * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 			 *
 			 * This code is free software; you can redistribute it and/or modify it
@@ -83,7 +83,7 @@ class AddHeaderTool {
 			/*
 			 * MIT License
 			 *
-			 * Copyright (c) 2024 Diego Schivo
+			 * Copyright (c) 2024-2025 Diego Schivo
 			 *
 			 * Permission is hereby granted, free of charge, to any person obtaining a copy
 			 * of this software and associated documentation files (the "Software"), to deal
