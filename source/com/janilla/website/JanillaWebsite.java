@@ -33,36 +33,28 @@ import java.util.Properties;
 import java.util.function.Function;
 
 import com.janilla.acmedashboard.AcmeDashboard;
-import com.janilla.acmestore.AcmeStoreApp;
-import com.janilla.conduit.backend.ConduitBackendApp;
-import com.janilla.conduit.frontend.ConduitFrontendApp;
-import com.janilla.eshopweb.api.EShopApiApp;
-import com.janilla.eshopweb.web.EShopWebApp;
-import com.janilla.foodadvisor.api.FoodAdvisorApiApp;
-import com.janilla.foodadvisor.client.FoodAdvisorClientApp;
+import com.janilla.addressbook.AddressBook;
+import com.janilla.conduit.backend.ConduitBackend;
+import com.janilla.conduit.frontend.ConduitFrontend;
 import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpHandler;
 import com.janilla.http.HttpProtocol;
-import com.janilla.mystore.admin.MyStoreAdminApp;
-import com.janilla.mystore.storefront.MyStoreStorefrontApp;
 import com.janilla.net.Net;
 import com.janilla.net.Server;
-import com.janilla.payment.checkout.PaymentCheckoutApp;
 import com.janilla.petclinic.PetClinicApplication;
 import com.janilla.reflect.Factory;
-import com.janilla.todomvc.TodoMVCApp;
+import com.janilla.todomvc.TodoMvc;
 import com.janilla.util.Util;
-import com.janilla.uxpatterns.UXPatternsApp;
 import com.janilla.web.ApplicationHandlerBuilder;
 import com.janilla.web.Handle;
 import com.janilla.web.Render;
 
-public class JanillaWebsiteApp {
+public class JanillaWebsite {
 
 	public static void main(String[] args) {
 		try {
 			var pp = new Properties();
-			try (var is = JanillaWebsiteApp.class.getResourceAsStream("configuration.properties")) {
+			try (var is = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
 				pp.load(is);
 				if (args.length > 0) {
 					var p = args[0];
@@ -73,7 +65,7 @@ public class JanillaWebsiteApp {
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}
-			var a = new JanillaWebsiteApp(pp);
+			var a = new JanillaWebsite(pp);
 
 			var hp = a.factory.create(HttpProtocol.class);
 			var p = a.configuration.getProperty("website.ssl.keystore.path");
@@ -106,33 +98,35 @@ public class JanillaWebsiteApp {
 
 	public AcmeDashboard acmeDashboard;
 
-	public AcmeStoreApp acmeStore;
+//	public AcmeStoreApp acmeStore;
 
-	public ConduitBackendApp conduitBackend;
+	public AddressBook addressBook;
 
-	public ConduitFrontendApp conduitFrontend;
+	public ConduitBackend conduitBackend;
 
-	public EShopApiApp eShopApi;
+	public ConduitFrontend conduitFrontend;
 
-	public EShopWebApp eShopWeb;
-
-	public FoodAdvisorApiApp foodAdvisorApi;
-
-	public FoodAdvisorClientApp foodAdvisorClient;
-
-	public MyStoreAdminApp myStoreAdmin;
-
-	public MyStoreStorefrontApp myStoreStorefront;
-
-	public PaymentCheckoutApp paymentCheckout;
+//	public EShopApiApp eShopApi;
+//
+//	public EShopWebApp eShopWeb;
+//
+//	public FoodAdvisorApiApp foodAdvisorApi;
+//
+//	public FoodAdvisorClientApp foodAdvisorClient;
+//
+//	public MyStoreAdminApp myStoreAdmin;
+//
+//	public MyStoreStorefrontApp myStoreStorefront;
+//
+//	public PaymentCheckoutApp paymentCheckout;
 
 	public PetClinicApplication petClinic;
 
-	public TodoMVCApp todoMVC;
+	public TodoMvc todoMvc;
 
-	public UXPatternsApp uxPatterns;
+//	public UXPatternsApp uxPatterns;
 
-	public JanillaWebsiteApp(Properties configuration) {
+	public JanillaWebsite(Properties configuration) {
 		this.configuration = configuration;
 
 		factory = new Factory();
@@ -140,38 +134,41 @@ public class JanillaWebsiteApp {
 		factory.setSource(this);
 
 		acmeDashboard = new AcmeDashboard(configuration);
-		acmeStore = new AcmeStoreApp(configuration);
-		conduitBackend = new ConduitBackendApp(configuration);
-		conduitFrontend = new ConduitFrontendApp(configuration);
-		eShopApi = new EShopApiApp(configuration);
-		eShopWeb = new EShopWebApp(configuration);
-		foodAdvisorApi = new FoodAdvisorApiApp(configuration);
-		foodAdvisorClient = new FoodAdvisorClientApp(configuration);
-		myStoreAdmin = new MyStoreAdminApp(configuration);
-		myStoreStorefront = new MyStoreStorefrontApp(configuration);
-		paymentCheckout = new PaymentCheckoutApp(configuration);
+//		acmeStore = new AcmeStoreApp(configuration);
+		addressBook = new AddressBook(configuration);
+		conduitBackend = new ConduitBackend(configuration);
+		conduitFrontend = new ConduitFrontend(configuration);
+//		eShopApi = new EShopApiApp(configuration);
+//		eShopWeb = new EShopWebApp(configuration);
+//		foodAdvisorApi = new FoodAdvisorApiApp(configuration);
+//		foodAdvisorClient = new FoodAdvisorClientApp(configuration);
+//		myStoreAdmin = new MyStoreAdminApp(configuration);
+//		myStoreStorefront = new MyStoreStorefrontApp(configuration);
+//		paymentCheckout = new PaymentCheckoutApp(configuration);
 		petClinic = new PetClinicApplication(configuration);
-		todoMVC = new TodoMVCApp(configuration);
-		uxPatterns = new UXPatternsApp(configuration);
+		todoMvc = new TodoMvc(configuration);
+//		uxPatterns = new UXPatternsApp(configuration);
 
 		{
 			var hb = factory.create(ApplicationHandlerBuilder.class);
 			var h = hb.build();
 			var hh = Map.ofEntries(
 					Map.entry(configuration.getProperty("website.acmedashboard.host"), acmeDashboard.handler),
-					Map.entry(configuration.getProperty("website.acmestore.host"), acmeStore.handler),
+//					Map.entry(configuration.getProperty("website.acmestore.host"), acmeStore.handler),
+					Map.entry(configuration.getProperty("website.address-book.host"), addressBook.handler),
 					Map.entry(configuration.getProperty("website.conduit.backend.host"), conduitBackend.handler),
 					Map.entry(configuration.getProperty("website.conduit.frontend.host"), conduitFrontend.handler),
-					Map.entry(configuration.getProperty("website.eshopweb.api.host"), eShopApi.handler),
-					Map.entry(configuration.getProperty("website.eshopweb.web.host"), eShopWeb.handler),
-					Map.entry(configuration.getProperty("website.foodadvisor.api.host"), foodAdvisorApi.handler),
-					Map.entry(configuration.getProperty("website.foodadvisor.client.host"), foodAdvisorClient.handler),
-					Map.entry(configuration.getProperty("website.mystore.admin.host"), myStoreAdmin.handler),
-					Map.entry(configuration.getProperty("website.mystore.storefront.host"), myStoreStorefront.handler),
-					Map.entry(configuration.getProperty("website.paymentcheckout.host"), paymentCheckout.handler),
+//					Map.entry(configuration.getProperty("website.eshopweb.api.host"), eShopApi.handler),
+//					Map.entry(configuration.getProperty("website.eshopweb.web.host"), eShopWeb.handler),
+//					Map.entry(configuration.getProperty("website.foodadvisor.api.host"), foodAdvisorApi.handler),
+//					Map.entry(configuration.getProperty("website.foodadvisor.client.host"), foodAdvisorClient.handler),
+//					Map.entry(configuration.getProperty("website.mystore.admin.host"), myStoreAdmin.handler),
+//					Map.entry(configuration.getProperty("website.mystore.storefront.host"), myStoreStorefront.handler),
+//					Map.entry(configuration.getProperty("website.paymentcheckout.host"), paymentCheckout.handler),
 					Map.entry(configuration.getProperty("website.petclinic.host"), petClinic.handler),
-					Map.entry(configuration.getProperty("website.todomvc.host"), todoMVC.handler),
-					Map.entry(configuration.getProperty("website.uxpatterns.host"), uxPatterns.handler));
+					Map.entry(configuration.getProperty("website.todomvc.host"), todoMvc.handler)
+//					Map.entry(configuration.getProperty("website.uxpatterns.host"), uxPatterns.handler)
+			);
 			handler = x -> {
 				var ex = (HttpExchange) x;
 				var k = ex.getRequest().getAuthority();
@@ -183,16 +180,16 @@ public class JanillaWebsiteApp {
 		}
 	}
 
-	public JanillaWebsiteApp getApplication() {
+	public JanillaWebsite application() {
 		return this;
 	}
 
 	@Handle(method = "GET", path = "/")
-	public Home getHome() {
-		return new Home(n -> configuration.getProperty("website." + n + ".url"));
+	public Home home() {
+		return new Home(x -> configuration.getProperty("website." + x + ".url"));
 	}
 
-	@Render("home.html")
+	@Render(template = "home.html")
 	public record Home(Function<String, String> demoUrl) {
 	}
 }

@@ -36,25 +36,27 @@ public class CustomHttpProtocol extends HttpProtocol {
 
 	public Properties configuration;
 
-	public JanillaWebsiteApp application;
+	public JanillaWebsite application;
 
 	Supplier<Map<String, Supplier<HttpExchange>>> hostExchange = Lazy.of(() -> {
 		return Map.of(configuration.getProperty("website.acmedashboard.host"),
 				() -> application.acmeDashboard.factory.create(HttpExchange.class),
-				configuration.getProperty("website.acmestore.host"),
-				() -> application.acmeStore.factory.create(HttpExchange.class),
+//				configuration.getProperty("website.acmestore.host"),
+//				() -> application.acmeStore.factory.create(HttpExchange.class),
+				configuration.getProperty("website.address-book.host"),
+				() -> application.addressBook.factory.create(HttpExchange.class),
 				configuration.getProperty("website.conduit.backend.host"),
 				() -> application.conduitBackend.factory.create(HttpExchange.class),
-				configuration.getProperty("website.eshopweb.api.host"),
-				() -> application.eShopApi.factory.create(HttpExchange.class),
-				configuration.getProperty("website.foodadvisor.api.host"),
-				() -> application.foodAdvisorApi.factory.create(HttpExchange.class),
-				configuration.getProperty("website.foodadvisor.client.host"),
-				() -> application.foodAdvisorClient.factory.create(HttpExchange.class),
-				configuration.getProperty("website.mystore.storefront.host"),
-				() -> application.myStoreStorefront.factory.create(HttpExchange.class),
-				configuration.getProperty("website.paymentcheckout.host"),
-				() -> application.paymentCheckout.factory.create(HttpExchange.class),
+//				configuration.getProperty("website.eshopweb.api.host"),
+//				() -> application.eShopApi.factory.create(HttpExchange.class),
+//				configuration.getProperty("website.foodadvisor.api.host"),
+//				() -> application.foodAdvisorApi.factory.create(HttpExchange.class),
+//				configuration.getProperty("website.foodadvisor.client.host"),
+//				() -> application.foodAdvisorClient.factory.create(HttpExchange.class),
+//				configuration.getProperty("website.mystore.storefront.host"),
+//				() -> application.myStoreStorefront.factory.create(HttpExchange.class),
+//				configuration.getProperty("website.paymentcheckout.host"),
+//				() -> application.paymentCheckout.factory.create(HttpExchange.class),
 				configuration.getProperty("website.petclinic.host"),
 				() -> application.petClinic.factory.create(HttpExchange.class));
 	});

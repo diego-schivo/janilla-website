@@ -106,12 +106,19 @@ class AddHeaderTool {
 
 	public static void main(String[] args) throws Exception {
 		var h = Map.ofEntries(Map.entry("janilla", GPL2.split("\n")),
-				Map.entry("janilla-acmedashboard", MIT.split("\n")), Map.entry("janilla-acmestore", MIT.split("\n")),
-				Map.entry("janilla-conduit", MIT.split("\n")), Map.entry("janilla-eshopweb", MIT.split("\n")),
-				Map.entry("janilla-foodadvisor", MIT.split("\n")), Map.entry("janilla-mystore", MIT.split("\n")),
-				Map.entry("janilla-payment", MIT.split("\n")), Map.entry("janilla-petclinic", APACHE2.split("\n")),
-				Map.entry("janilla-todomvc", MIT.split("\n")), Map.entry("janilla-uxpatterns", MIT.split("\n")),
-				Map.entry("janilla-website", MIT.split("\n")));
+				Map.entry("janilla-acmedashboard", MIT.split("\n")),
+//				Map.entry("janilla-acmestore", MIT.split("\n")),
+				Map.entry("janilla-address-book", MIT.split("\n")),
+				Map.entry("janilla-conduit", MIT.split("\n")),
+//				Map.entry("janilla-eshopweb", MIT.split("\n")),
+//				Map.entry("janilla-foodadvisor", MIT.split("\n")),
+//				Map.entry("janilla-mystore", MIT.split("\n")),
+//				Map.entry("janilla-payment", MIT.split("\n")),
+				Map.entry("janilla-petclinic", APACHE2.split("\n")),
+				Map.entry("janilla-todomvc", MIT.split("\n")),
+//				Map.entry("janilla-uxpatterns", MIT.split("\n")),
+				Map.entry("janilla-website", MIT.split("\n")),
+				Map.entry("janillas", GPL2.split("\n")));
 		var s = Path.of(System.getProperty("user.home")).resolve("git");
 		Files.walkFileTree(s, new SimpleFileVisitor<>() {
 
@@ -119,10 +126,11 @@ class AddHeaderTool {
 			public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
 				var n = dir.getFileName().toString();
 				if (dir.getParent().equals(s)) {
-					if (!h.containsKey(n) || n.equals("bin") || n.equals("target"))
+					if (!h.containsKey(n))
 						return FileVisitResult.SKIP_SUBTREE;
 				}
-				if (n.startsWith(".") || n.equals("src") || n.equals("bin") || n.equals("target"))
+				if (n.startsWith(".") || n.equals("src") || n.equals("bin") || n.equals("target") || n.equals("node")
+						|| n.equals("node_modules"))
 					return FileVisitResult.SKIP_SUBTREE;
 				return FileVisitResult.CONTINUE;
 			}
