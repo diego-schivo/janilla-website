@@ -66,7 +66,7 @@ public class JanillaWebsite {
 			var jw = new JanillaWebsite(pp);
 			Server s;
 			{
-				var a = new InetSocketAddress(Integer.parseInt(jw.configuration.getProperty("todomvc.server.port")));
+				var a = new InetSocketAddress(Integer.parseInt(jw.configuration.getProperty("website.server.port")));
 				var kp = jw.configuration.getProperty("website.ssl.keystore.path");
 				var kp2 = jw.configuration.getProperty("website.ssl.keystore.password");
 				if (kp != null && kp.startsWith("~"))
