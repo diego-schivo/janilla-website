@@ -23,14 +23,14 @@
  */
 package com.janilla.website;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
+
+import javax.net.ssl.SSLContext;
 
 import com.janilla.acmedashboard.AcmeDashboard;
 import com.janilla.addressbook.AddressBook;
@@ -62,28 +62,25 @@ public class JanillaWebsite {
 						p = System.getProperty("user.home") + p.substring(1);
 					pp.load(Files.newInputStream(Path.of(p)));
 				}
-			} catch (IOException e) {
-				throw new UncheckedIOException(e);
 			}
-			var a = new JanillaWebsite(pp);
-
-			var hp = a.factory.create(HttpProtocol.class);
-			var p = a.configuration.getProperty("website.ssl.keystore.path");
-			var q = a.configuration.getProperty("website.ssl.keystore.password");
-			if (p != null && p.startsWith("~"))
-				p = System.getProperty("user.home") + p.substring(1);
-			try (var is = p != null && p.length() > 0 ? Files.newInputStream(Path.of(p))
-					: Net.class.getResourceAsStream("testkeys")) {
-				hp.setSslContext(Net.getSSLContext(p != null && p.toLowerCase().endsWith(".p12") ? "PKCS12" : "JKS", is,
-						(q != null && q.length() > 0 ? q : "passphrase").toCharArray()));
-			} catch (IOException e) {
-				throw new UncheckedIOException(e);
+			var jw = new JanillaWebsite(pp);
+			Server s;
+			{
+				var a = new InetSocketAddress(Integer.parseInt(jw.configuration.getProperty("todomvc.server.port")));
+				var kp = jw.configuration.getProperty("website.ssl.keystore.path");
+				var kp2 = jw.configuration.getProperty("website.ssl.keystore.password");
+				if (kp != null && kp.startsWith("~"))
+					kp = System.getProperty("user.home") + kp.substring(1);
+				SSLContext sc;
+				try (var is = kp != null && kp.length() > 0 ? Files.newInputStream(Path.of(kp))
+						: Net.class.getResourceAsStream("testkeys")) {
+					sc = Net.getSSLContext(kp != null && kp.toLowerCase().endsWith(".p12") ? "PKCS12" : "JKS", is,
+							(kp2 != null && kp2.length() > 0 ? kp2 : "passphrase").toCharArray());
+				}
+				var p = jw.factory.create(HttpProtocol.class,
+						Map.of("handler", jw.handler, "sslContext", sc, "useClientMode", false));
+				s = new Server(a, p);
 			}
-			hp.setHandler(a.handler);
-
-			var s = new Server();
-			s.setAddress(new InetSocketAddress(Integer.parseInt(a.configuration.getProperty("website.server.port"))));
-			s.setProtocol(hp);
 			s.serve();
 		} catch (Throwable e) {
 			e.printStackTrace();

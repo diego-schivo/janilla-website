@@ -27,16 +27,22 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Supplier;
 
+import javax.net.ssl.SSLContext;
+
 import com.janilla.http.HttpExchange;
+import com.janilla.http.HttpHandler;
 import com.janilla.http.HttpProtocol;
 import com.janilla.http.HttpRequest;
-import com.janilla.util.Lazy;
 
 public class CustomHttpProtocol extends HttpProtocol {
 
 	public Properties configuration;
 
 	public JanillaWebsite application;
+
+	public CustomHttpProtocol(HttpHandler handler, SSLContext sslContext, boolean useClientMode) {
+		super(handler, sslContext, useClientMode);
+	}
 
 	Supplier<Map<String, Supplier<HttpExchange>>> hostExchange = Lazy.of(() -> {
 		return Map.of(configuration.getProperty("website.acmedashboard.host"),
