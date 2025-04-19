@@ -115,7 +115,8 @@ class AddHeaderTool {
 				Map.entry("janilla-ide", MIT.split("\n")),
 //				Map.entry("janilla-mystore", MIT.split("\n")),
 //				Map.entry("janilla-payment", MIT.split("\n")),
-				Map.entry("janilla-petclinic", APACHE2.split("\n")), Map.entry("janilla-todomvc", MIT.split("\n")),
+				Map.entry("janilla-petclinic", APACHE2.split("\n")), Map.entry("janilla-templates", MIT.split("\n")),
+				Map.entry("janilla-todomvc", MIT.split("\n")),
 //				Map.entry("janilla-uxpatterns", MIT.split("\n")),
 				Map.entry("janilla-website", MIT.split("\n")), Map.entry("janillas", GPL2.split("\n")));
 		var s = Path.of(System.getProperty("user.home")).resolve("git");

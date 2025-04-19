@@ -126,9 +126,7 @@ public class JanillaWebsite {
 	public JanillaWebsite(Properties configuration) {
 		this.configuration = configuration;
 
-		factory = new Factory();
-		factory.setTypes(Util.getPackageClasses(getClass().getPackageName()).toList());
-		factory.setSource(this);
+		factory = new Factory(Util.getPackageClasses(getClass().getPackageName()).toList(), this);
 
 		acmeDashboard = new AcmeDashboard(configuration);
 //		acmeStore = new AcmeStoreApp(configuration);
