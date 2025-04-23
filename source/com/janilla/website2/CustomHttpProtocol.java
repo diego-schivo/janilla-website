@@ -21,24 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module com.janilla.website {
+package com.janilla.website2;
 
-	opens com.janilla.website;
-	opens com.janilla.website2;
+import javax.net.ssl.SSLContext;
 
-	requires com.janilla.acmedashboard;
-//	requires com.janilla.acmestore;
-	requires com.janilla.addressbook;
-	requires com.janilla.conduit.backend;
-	requires com.janilla.conduit.frontend;
-//	requires com.janilla.eshopweb.api;
-//	requires com.janilla.eshopweb.web;
-//	requires com.janilla.foodadvisor.api;
-//	requires com.janilla.foodadvisor.client;
-//	requires com.janilla.payment.checkout;
-	requires com.janilla.petclinic;
-//	requires com.janilla.mystore.admin;
-//	requires com.janilla.mystore.storefront;
-	requires com.janilla.todomvc;
-//	requires com.janilla.uxpatterns;
+import com.janilla.http.HttpExchange;
+import com.janilla.http.HttpHandler;
+import com.janilla.http.HttpProtocol;
+import com.janilla.http.HttpRequest;
+import com.janilla.reflect.Factory;
+import com.janilla.reflect.Reflection;
+
+public class CustomHttpProtocol extends HttpProtocol {
+
+	public JanillaWebsite application;
+//	public AcmeDashboard acmeDashboard;
+
+//	public Properties configuration;
+
+//	public Factory factory;
+
+//	public Persistence persistence;
+
+	public CustomHttpProtocol(HttpHandler handler, SSLContext sslContext, boolean useClientMode) {
+		super(handler, sslContext, useClientMode);
+	}
+
+	@Override
+	protected HttpExchange createExchange(HttpRequest request) {
+		var a = application.application(request.getAuthority());
+		var f = a == application ? application.factory : (Factory) Reflection.property(a.getClass(), "factory").get(a);
+		return f.create(HttpExchange.class);
+	}
 }

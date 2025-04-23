@@ -1,0 +1,35 @@
+<h2>${title}</h2>
+<!--${items}-->
+
+<template id="item">
+  <article>
+    <div>
+      <header>
+        <h3>${title}</h3>
+        <!--${richText}-->
+      </header>
+      <p>
+        <!--${links}-->
+      </p>
+    </div>
+    <!--${media}-->
+  </article>
+</template>
+
+<template id="link">
+  <a href="${uri}" class="cta" target="${target}" hidden="${hidden}">${text}</a>
+</template>
+
+<template id="image">
+  <img src="${uri}" alt="${alt}" />
+</template>
+
+<template id="video">
+  <iframe
+    src="${uri}"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen></iframe>
+</template>

@@ -1,0 +1,57 @@
+body,
+html,
+h1,
+h2,
+h3,
+p,
+ul,
+dd {
+  margin: 0;
+  padding: 0;
+}
+
+body,
+html {
+  height: 100%;
+}
+
+html {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI,
+    Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+    Helvetica Neue, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: normal;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+a {
+  color: inherit;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate3d(0, 1, 0, -60deg);
+  }
+
+  to {
+    transform: rotate3d(0, 1, 0, -50deg);
+  }
+}

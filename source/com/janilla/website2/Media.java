@@ -21,24 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module com.janilla.website {
+package com.janilla.website2;
 
-	opens com.janilla.website;
-	opens com.janilla.website2;
+import java.time.Instant;
 
-	requires com.janilla.acmedashboard;
-//	requires com.janilla.acmestore;
-	requires com.janilla.addressbook;
-	requires com.janilla.conduit.backend;
-	requires com.janilla.conduit.frontend;
-//	requires com.janilla.eshopweb.api;
-//	requires com.janilla.eshopweb.web;
-//	requires com.janilla.foodadvisor.api;
-//	requires com.janilla.foodadvisor.client;
-//	requires com.janilla.payment.checkout;
-	requires com.janilla.petclinic;
-//	requires com.janilla.mystore.admin;
-//	requires com.janilla.mystore.storefront;
-	requires com.janilla.todomvc;
-//	requires com.janilla.uxpatterns;
+import com.janilla.cms.Document;
+import com.janilla.persistence.Store;
+
+@Store
+public record Media(Long id, File file, String alt, String caption, Instant createdAt, Instant updatedAt,
+		Document.Status status, Instant publishedAt) implements Document {
+
+	public String uri() {
+		return file != null ? ("/images/" + file.name()) : null;
+	}
 }

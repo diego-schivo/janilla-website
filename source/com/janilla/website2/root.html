@@ -1,0 +1,43 @@
+<!--${admin}-->
+<!--${header}-->
+<!--${content}-->
+<!--${footer}-->
+
+<template id="admin">
+  <cms-admin data-email="${email}" data-path="${path}"></cms-admin>
+</template>
+
+<template id="header">
+  <header>
+    <nav>
+      <div>
+        <a href="/">
+          <img src="/images/favicon.svg" alt="Janilla" />
+        </a>
+      </div>
+      <div>
+        <!--${navItems}-->
+      </div>
+    </nav>
+  </header>
+</template>
+
+<template id="link">
+  <a href="${uri}" target="${target}" title="${image.alt}">
+    <img src="${image.uri}" alt="${image.alt}" />
+  </a>
+</template>
+
+<template id="page">
+  <page-element data-slug="${slug}"></page-element>
+</template>
+
+<template id="footer">
+  <footer>
+    <!--${richText}-->
+  </footer>
+</template>
+
+<template id="not-found">
+  <not-found></not-found>
+</template>

@@ -21,24 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module com.janilla.website {
+import { WebComponent } from "./web-component.js";
 
-	opens com.janilla.website;
-	opens com.janilla.website2;
+export default class Page extends WebComponent {
 
-	requires com.janilla.acmedashboard;
-//	requires com.janilla.acmestore;
-	requires com.janilla.addressbook;
-	requires com.janilla.conduit.backend;
-	requires com.janilla.conduit.frontend;
-//	requires com.janilla.eshopweb.api;
-//	requires com.janilla.eshopweb.web;
-//	requires com.janilla.foodadvisor.api;
-//	requires com.janilla.foodadvisor.client;
-//	requires com.janilla.payment.checkout;
-	requires com.janilla.petclinic;
-//	requires com.janilla.mystore.admin;
-//	requires com.janilla.mystore.storefront;
-	requires com.janilla.todomvc;
-//	requires com.janilla.uxpatterns;
+	static get observedAttributes() {
+		return ["data-slug"];
+	}
+
+	static get templateName() {
+		return "page";
+	}
+
+	constructor() {
+		super();
+	}
+
+	async updateDisplay() {
+		const r = this.closest("root-element");
+		if (this.dataset.slug === "home") {
+			const s = r.state;
+			this.appendChild(this.interpolateDom({
+				$template: "",
+				layout: s.page?.layout?.map((x, i) => ({
+					$template: x.$type.split(/(?=[A-Z])/).map(x => x.toLowerCase()).join("-"),
+					expression: `layout.${i}`
+				}))
+			}));
+		} else
+			r.notFound();
+	}
+
+	data(expression) {
+		return expression.split(".").reduce((x, y) => Array.isArray(x)
+			? x[parseInt(y)]
+			: typeof x === "object" && x !== null
+				? x[y]
+				: null, this.closest("root-element").state.page);
+	}
 }

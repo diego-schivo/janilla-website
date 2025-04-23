@@ -1,0 +1,55 @@
+page-element {
+  main {
+    background: rgb(245, 245, 245);
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    padding: 0 1.5em 1.5em;
+    row-gap: 4rem;
+  
+    > * {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      row-gap: 3rem;
+    
+      &:not(:first-child) {
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        padding-top: 3rem;
+      }
+    }
+  }
+
+  .cta {
+    border-radius: 0.5rem;
+    color: white;
+    font-weight: bold;
+    padding: 1rem 2rem;
+    text-decoration: none;
+  
+    &:not([hidden]) {
+      display: inline-block;
+    }
+  
+    &:nth-child(odd) {
+      background: rgb(0, 115, 150);
+    }
+  
+    &:nth-child(odd):hover {
+      box-shadow: 0 0 10px rgba(0, 115, 150, .75);
+    }
+  
+    &:nth-child(even) {
+      background: rgb(237, 139, 0);
+    }
+  
+    &:nth-child(even):hover {
+      box-shadow: 0 0 10px rgba(237, 139, 0, .75);
+    }
+  }
+  
+  dt {
+    font-weight: 600;
+  }
+}
