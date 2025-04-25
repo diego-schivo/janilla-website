@@ -26,30 +26,42 @@ package com.janilla.website;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.function.Function;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
 
-import com.janilla.acmedashboard.AcmeDashboard;
-import com.janilla.addressbook.AddressBook;
-import com.janilla.conduit.backend.ConduitBackend;
-import com.janilla.conduit.frontend.ConduitFrontend;
+import com.janilla.cms.Cms;
 import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpHandler;
 import com.janilla.http.HttpProtocol;
+import com.janilla.json.Json;
+import com.janilla.json.MapAndType;
+import com.janilla.json.ReflectionJsonIterator;
 import com.janilla.net.Net;
 import com.janilla.net.Server;
-import com.janilla.petclinic.PetClinicApplication;
+import com.janilla.persistence.ApplicationPersistenceBuilder;
+import com.janilla.persistence.Persistence;
 import com.janilla.reflect.Factory;
-import com.janilla.todomvc.TodoMvc;
+import com.janilla.reflect.Reflection;
 import com.janilla.util.Util;
 import com.janilla.web.ApplicationHandlerBuilder;
 import com.janilla.web.Handle;
 import com.janilla.web.Render;
+import com.janilla.web.RenderableFactory;
+import com.janilla.web.Renderer;
 
 public class JanillaWebsite {
+
+	public static JanillaWebsite INSTANCE;
+
+	public static final Predicate<HttpExchange> DRAFTS = x -> ((CustomHttpExchange) x).sessionUser() != null;
+
+	protected static final Pattern ADMIN = Pattern.compile("/admin(/.*)?");
 
 	public static void main(String[] args) {
 		try {
@@ -63,22 +75,17 @@ public class JanillaWebsite {
 					pp.load(Files.newInputStream(Path.of(p)));
 				}
 			}
-			var jw = new JanillaWebsite(pp);
+			INSTANCE = new JanillaWebsite(pp);
 			Server s;
 			{
-				var a = new InetSocketAddress(Integer.parseInt(jw.configuration.getProperty("website.server.port")));
-				var kp = jw.configuration.getProperty("website.ssl.keystore.path");
-				var kp2 = jw.configuration.getProperty("website.ssl.keystore.password");
-				if (kp != null && kp.startsWith("~"))
-					kp = System.getProperty("user.home") + kp.substring(1);
+				var a = new InetSocketAddress(
+						Integer.parseInt(INSTANCE.configuration.getProperty("janilla-website.server.port")));
 				SSLContext sc;
-				try (var is = kp != null && kp.length() > 0 ? Files.newInputStream(Path.of(kp))
-						: Net.class.getResourceAsStream("testkeys")) {
-					sc = Net.getSSLContext(kp != null && kp.toLowerCase().endsWith(".p12") ? "PKCS12" : "JKS", is,
-							(kp2 != null && kp2.length() > 0 ? kp2 : "passphrase").toCharArray());
+				try (var is = Net.class.getResourceAsStream("testkeys")) {
+					sc = Net.getSSLContext("JKS", is, "passphrase".toCharArray());
 				}
-				var p = jw.factory.create(HttpProtocol.class,
-						Map.of("handler", jw.handler, "sslContext", sc, "useClientMode", false));
+				var p = INSTANCE.factory.create(HttpProtocol.class,
+						Map.of("handler", INSTANCE.handler, "sslContext", sc, "useClientMode", false));
 				s = new Server(a, p);
 			}
 			s.serve();
@@ -89,88 +96,42 @@ public class JanillaWebsite {
 
 	public Properties configuration;
 
+	public Path databaseFile;
+
 	public Factory factory;
 
 	public HttpHandler handler;
 
-	public AcmeDashboard acmeDashboard;
+	public Persistence persistence;
 
-//	public AcmeStoreApp acmeStore;
+	public RenderableFactory renderableFactory;
 
-	public AddressBook addressBook;
+	public MapAndType.TypeResolver typeResolver;
 
-	public ConduitBackend conduitBackend;
+	public Iterable<Class<?>> types;
 
-	public ConduitFrontend conduitFrontend;
-
-//	public EShopApiApp eShopApi;
-//
-//	public EShopWebApp eShopWeb;
-//
-//	public FoodAdvisorApiApp foodAdvisorApi;
-//
-//	public FoodAdvisorClientApp foodAdvisorClient;
-//
-//	public MyStoreAdminApp myStoreAdmin;
-//
-//	public MyStoreStorefrontApp myStoreStorefront;
-//
-//	public PaymentCheckoutApp paymentCheckout;
-
-	public PetClinicApplication petClinic;
-
-	public TodoMvc todoMvc;
-
-//	public UXPatternsApp uxPatterns;
+	protected final Map<String, Object> hostExample = new ConcurrentHashMap<>();
 
 	public JanillaWebsite(Properties configuration) {
 		this.configuration = configuration;
-
-		factory = new Factory(Util.getPackageClasses(getClass().getPackageName()).toList(), this);
-
-		acmeDashboard = new AcmeDashboard(configuration);
-//		acmeStore = new AcmeStoreApp(configuration);
-		addressBook = new AddressBook(configuration);
-		conduitBackend = new ConduitBackend(configuration);
-		conduitFrontend = new ConduitFrontend(configuration);
-//		eShopApi = new EShopApiApp(configuration);
-//		eShopWeb = new EShopWebApp(configuration);
-//		foodAdvisorApi = new FoodAdvisorApiApp(configuration);
-//		foodAdvisorClient = new FoodAdvisorClientApp(configuration);
-//		myStoreAdmin = new MyStoreAdminApp(configuration);
-//		myStoreStorefront = new MyStoreStorefrontApp(configuration);
-//		paymentCheckout = new PaymentCheckoutApp(configuration);
-		petClinic = new PetClinicApplication(configuration);
-		todoMvc = new TodoMvc(configuration);
-//		uxPatterns = new UXPatternsApp(configuration);
-
+		types = Util.getPackageClasses(getClass().getPackageName()).toList();
+		factory = new Factory(types, this);
+		typeResolver = factory.create(MapAndType.DollarTypeResolver.class);
 		{
-			var hb = factory.create(ApplicationHandlerBuilder.class);
-			var h = hb.build();
-			var hh = Map.ofEntries(
-					Map.entry(configuration.getProperty("website.acmedashboard.host"), acmeDashboard.handler),
-//					Map.entry(configuration.getProperty("website.acmestore.host"), acmeStore.handler),
-					Map.entry(configuration.getProperty("website.address-book.host"), addressBook.handler),
-					Map.entry(configuration.getProperty("website.conduit.backend.host"), conduitBackend.handler),
-					Map.entry(configuration.getProperty("website.conduit.frontend.host"), conduitFrontend.handler),
-//					Map.entry(configuration.getProperty("website.eshopweb.api.host"), eShopApi.handler),
-//					Map.entry(configuration.getProperty("website.eshopweb.web.host"), eShopWeb.handler),
-//					Map.entry(configuration.getProperty("website.foodadvisor.api.host"), foodAdvisorApi.handler),
-//					Map.entry(configuration.getProperty("website.foodadvisor.client.host"), foodAdvisorClient.handler),
-//					Map.entry(configuration.getProperty("website.mystore.admin.host"), myStoreAdmin.handler),
-//					Map.entry(configuration.getProperty("website.mystore.storefront.host"), myStoreStorefront.handler),
-//					Map.entry(configuration.getProperty("website.paymentcheckout.host"), paymentCheckout.handler),
-					Map.entry(configuration.getProperty("website.petclinic.host"), petClinic.handler),
-					Map.entry(configuration.getProperty("website.todomvc.host"), todoMvc.handler)
-//					Map.entry(configuration.getProperty("website.uxpatterns.host"), uxPatterns.handler)
-			);
+			var p = configuration.getProperty("janilla-website.database.file");
+			if (p.startsWith("~"))
+				p = System.getProperty("user.home") + p.substring(1);
+			databaseFile = Path.of(p);
+			var pb = factory.create(ApplicationPersistenceBuilder.class);
+			persistence = pb.build();
+		}
+		renderableFactory = new RenderableFactory();
+		{
+			var h0 = factory.create(ApplicationHandlerBuilder.class).build();
 			handler = x -> {
-				var ex = (HttpExchange) x;
-				var k = ex.getRequest().getAuthority();
-				var j = k != null ? hh.get(k) : null;
-				if (j == null)
-					j = h;
-				return j.handle(ex);
+				var a = application(((HttpExchange) x).getRequest().getAuthority());
+				var h = a == this ? h0 : (HttpHandler) Reflection.property(a.getClass(), "handler").get(a);
+				return h.handle(x);
 			};
 		}
 	}
@@ -179,12 +140,71 @@ public class JanillaWebsite {
 		return this;
 	}
 
-	@Handle(method = "GET", path = "/")
-	public Home home() {
-		return new Home(x -> configuration.getProperty("website." + x + ".url"));
+	public Object application(String authority) {
+		var s = "." + configuration.getProperty("janilla-website.authority");
+		if (!authority.endsWith(s))
+			return application();
+		return hostExample.computeIfAbsent(authority.substring(0, authority.length() - s.length()), k -> {
+			var c = persistence.crud(Example.class);
+			var x = c.read(c.find("demo", k));
+			if (x != null)
+				try {
+					return Class.forName(x.application()).getConstructor(Properties.class).newInstance(configuration);
+				} catch (ReflectiveOperationException e) {
+					throw new RuntimeException(e);
+				}
+			return this;
+		});
 	}
 
-	@Render(template = "home.html")
-	public record Home(Function<String, String> demoUrl) {
+	@Handle(method = "GET", path = "((?!/api/)/[\\w\\d/-]*)")
+	public Index index(String path, CustomHttpExchange exchange) {
+		switch (path) {
+		case "/admin":
+			if (exchange.sessionEmail() == null) {
+				var rs = exchange.getResponse();
+				rs.setStatus(307);
+				rs.setHeaderValue("cache-control", "no-cache");
+				rs.setHeaderValue("location", "/admin/login");
+				return null;
+			}
+		case "/admin/login":
+			if (persistence.crud(User.class).count() == 0) {
+				var rs = exchange.getResponse();
+				rs.setStatus(307);
+				rs.setHeaderValue("cache-control", "no-cache");
+				rs.setHeaderValue("location", "/admin/create-first-user");
+				return null;
+			}
+		}
+		var m = ADMIN.matcher(path);
+		if (m.matches())
+			return new Index("/admin.css", Map.of());
+		Map<String, Object> m3 = new LinkedHashMap<>();
+		m3.put("authority", configuration.getProperty("janilla-website.authority"));
+		m3.put("/api/header", persistence.crud(Header.class).read(1));
+		m3.put("/api/page", persistence.crud(Page.class).read(1));
+		m3.put("/api/footer", persistence.crud(Footer.class).read(1));
+		return new Index("/style.css", m3);
+	}
+
+	@Handle(method = "GET", path = "/api/schema")
+	public Map<String, Map<String, Map<String, Object>>> schema() {
+		return Cms.schema(Data.class);
+	}
+
+	@Render(template = "index.html")
+	public record Index(String href, @Render(renderer = DataRenderer.class) Map<String, Object> data) {
+	}
+
+	public static class DataRenderer<T> extends Renderer<T> {
+
+		@Override
+		public String apply(T value) {
+			var tt = INSTANCE.factory.create(ReflectionJsonIterator.class);
+			tt.setObject(value);
+			tt.setIncludeType(true);
+			return Json.format(tt);
+		}
 	}
 }

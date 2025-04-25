@@ -21,23 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module com.janilla.website {
+package com.janilla.website;
 
-	opens com.janilla.website;
+import java.nio.file.Path;
+import java.util.Properties;
 
-	requires com.janilla.acmedashboard;
-//	requires com.janilla.acmestore;
-	requires com.janilla.addressbook;
-	requires com.janilla.conduit.backend;
-	requires com.janilla.conduit.frontend;
-//	requires com.janilla.eshopweb.api;
-//	requires com.janilla.eshopweb.web;
-//	requires com.janilla.foodadvisor.api;
-//	requires com.janilla.foodadvisor.client;
-//	requires com.janilla.payment.checkout;
-	requires com.janilla.petclinic;
-//	requires com.janilla.mystore.admin;
-//	requires com.janilla.mystore.storefront;
-	requires com.janilla.todomvc;
-//	requires com.janilla.uxpatterns;
+import com.janilla.cms.CollectionApi;
+import com.janilla.http.HttpResponse;
+import com.janilla.web.Handle;
+
+@Handle(path = "/api/media")
+public class MediaApi extends CollectionApi<Media> {
+
+	public Properties configuration;
+
+	public MediaApi() {
+		super(Media.class, JanillaWebsite.DRAFTS);
+	}
+
+	@Handle(method = "GET", path = "file/(.+)")
+	public void file(Path path, HttpResponse response) {
+		var ud = configuration.getProperty("janilla-website.upload.directory");
+		if (ud.startsWith("~"))
+			ud = System.getProperty("user.home") + ud.substring(1);
+		var f = Path.of(ud).resolve(path.getFileName());
+		CmsResourceHandlerFactory.handle(f, response);
+	}
 }

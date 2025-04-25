@@ -21,23 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module com.janilla.website {
+package com.janilla.website;
 
-	opens com.janilla.website;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Properties;
 
-	requires com.janilla.acmedashboard;
-//	requires com.janilla.acmestore;
-	requires com.janilla.addressbook;
-	requires com.janilla.conduit.backend;
-	requires com.janilla.conduit.frontend;
-//	requires com.janilla.eshopweb.api;
-//	requires com.janilla.eshopweb.web;
-//	requires com.janilla.foodadvisor.api;
-//	requires com.janilla.foodadvisor.client;
-//	requires com.janilla.payment.checkout;
-	requires com.janilla.petclinic;
-//	requires com.janilla.mystore.admin;
-//	requires com.janilla.mystore.storefront;
-	requires com.janilla.todomvc;
-//	requires com.janilla.uxpatterns;
+import com.janilla.cms.Cms;
+import com.janilla.http.HttpRequest;
+import com.janilla.web.Handle;
+
+@Handle(path = "/api/files")
+public class FileApi {
+
+	public Properties configuration;
+
+	@Handle(method = "POST", path = "upload")
+	public void create(HttpRequest request) throws IOException {
+		for (var kv : Cms.files(request).entrySet()) {
+			var ud = configuration.getProperty("janilla-website.upload.directory");
+			if (ud.startsWith("~"))
+				ud = System.getProperty("user.home") + ud.substring(1);
+			var p = Path.of(ud);
+			if (!Files.exists(p))
+				Files.createDirectories(p);
+			Files.write(p.resolve(kv.getKey()), kv.getValue());
+		}
+	}
 }

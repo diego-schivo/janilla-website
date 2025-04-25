@@ -23,20 +23,16 @@
  */
 package com.janilla.website;
 
-import java.util.Map;
-import java.util.Properties;
-import java.util.function.Supplier;
-
 import javax.net.ssl.SSLContext;
 
 import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpHandler;
 import com.janilla.http.HttpProtocol;
 import com.janilla.http.HttpRequest;
+import com.janilla.reflect.Factory;
+import com.janilla.reflect.Reflection;
 
 public class CustomHttpProtocol extends HttpProtocol {
-
-	public Properties configuration;
 
 	public JanillaWebsite application;
 
@@ -44,32 +40,15 @@ public class CustomHttpProtocol extends HttpProtocol {
 		super(handler, sslContext, useClientMode);
 	}
 
-	Supplier<Map<String, Supplier<HttpExchange>>> hostExchange = Lazy.of(() -> {
-		return Map.of(configuration.getProperty("website.acmedashboard.host"),
-				() -> application.acmeDashboard.factory.create(HttpExchange.class),
-//				configuration.getProperty("website.acmestore.host"),
-//				() -> application.acmeStore.factory.create(HttpExchange.class),
-				configuration.getProperty("website.address-book.host"),
-				() -> application.addressBook.factory.create(HttpExchange.class),
-				configuration.getProperty("website.conduit.backend.host"),
-				() -> application.conduitBackend.factory.create(HttpExchange.class),
-//				configuration.getProperty("website.eshopweb.api.host"),
-//				() -> application.eShopApi.factory.create(HttpExchange.class),
-//				configuration.getProperty("website.foodadvisor.api.host"),
-//				() -> application.foodAdvisorApi.factory.create(HttpExchange.class),
-//				configuration.getProperty("website.foodadvisor.client.host"),
-//				() -> application.foodAdvisorClient.factory.create(HttpExchange.class),
-//				configuration.getProperty("website.mystore.storefront.host"),
-//				() -> application.myStoreStorefront.factory.create(HttpExchange.class),
-//				configuration.getProperty("website.paymentcheckout.host"),
-//				() -> application.paymentCheckout.factory.create(HttpExchange.class),
-				configuration.getProperty("website.petclinic.host"),
-				() -> application.petClinic.factory.create(HttpExchange.class));
-	});
-
 	@Override
 	protected HttpExchange createExchange(HttpRequest request) {
-		var s = hostExchange.get().get(request.getAuthority());
-		return s != null ? s.get() : super.createExchange(request);
+		var a = application.application(request.getAuthority());
+		if (request.getPath().startsWith("/api/")) {
+			var p = Reflection.property(a.getClass(), "backend");
+			if (p != null)
+				a = p.get(a);
+		}
+		var f = a == application ? application.factory : (Factory) Reflection.property(a.getClass(), "factory").get(a);
+		return f.create(HttpExchange.class);
 	}
 }

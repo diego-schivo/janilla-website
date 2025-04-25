@@ -21,23 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module com.janilla.website {
+package com.janilla.website;
 
-	opens com.janilla.website;
+import java.time.Instant;
+import java.util.List;
 
-	requires com.janilla.acmedashboard;
-//	requires com.janilla.acmestore;
-	requires com.janilla.addressbook;
-	requires com.janilla.conduit.backend;
-	requires com.janilla.conduit.frontend;
-//	requires com.janilla.eshopweb.api;
-//	requires com.janilla.eshopweb.web;
-//	requires com.janilla.foodadvisor.api;
-//	requires com.janilla.foodadvisor.client;
-//	requires com.janilla.payment.checkout;
-	requires com.janilla.petclinic;
-//	requires com.janilla.mystore.admin;
-//	requires com.janilla.mystore.storefront;
-	requires com.janilla.todomvc;
-//	requires com.janilla.uxpatterns;
+import com.janilla.cms.Document;
+import com.janilla.cms.Types;
+import com.janilla.cms.Versions;
+import com.janilla.persistence.Store;
+
+@Store
+@Versions(drafts = true)
+public record Page(Long id, List<@Types( {
+		Hero.class, Features.class, ExampleApps.class }) Object> layout, Instant createdAt, Instant updatedAt,
+		Document.Status status, Instant publishedAt) implements Document{
 }

@@ -21,23 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module com.janilla.website {
+import { WebComponent } from "./web-component.js";
 
-	opens com.janilla.website;
+export default class ExampleApps extends WebComponent {
 
-	requires com.janilla.acmedashboard;
-//	requires com.janilla.acmestore;
-	requires com.janilla.addressbook;
-	requires com.janilla.conduit.backend;
-	requires com.janilla.conduit.frontend;
-//	requires com.janilla.eshopweb.api;
-//	requires com.janilla.eshopweb.web;
-//	requires com.janilla.foodadvisor.api;
-//	requires com.janilla.foodadvisor.client;
-//	requires com.janilla.payment.checkout;
-	requires com.janilla.petclinic;
-//	requires com.janilla.mystore.admin;
-//	requires com.janilla.mystore.storefront;
-	requires com.janilla.todomvc;
-//	requires com.janilla.uxpatterns;
+	static get templateName() {
+		return "example-apps";
+	}
+
+	constructor() {
+		super();
+	}
+
+	async updateDisplay() {
+		const o = this.closest("page-element").data(this.dataset.expression);
+		const sd = this.closest("root-element").serverData;
+		this.appendChild(this.interpolateDom({
+			$template: "",
+			...o,
+			examples: o.examples?.map(x => ({
+				$template: "example",
+				...x,
+				links: [{
+					$template: "link",
+					uri: x.demo ? `https://${x.demo}.${sd.authority}` : "",
+					target: "_blank",
+					hidden: !x.demo,
+					text: "Live demo"
+				}, {
+					$template: "link",
+					uri: x.source ? `https://github.com/diego-schivo/${x.source}` : "",
+					target: "_blank",
+					hidden: !x.source,
+					text: "Free source"
+				}],
+				media: x.video ? {
+					$template: "video",
+					uri: `https://www.youtube.com/embed/${x.video}`
+				} : x.image ? {
+					$template: "image",
+					...x.image
+				} : null
+			}))
+		}));
+	}
 }
