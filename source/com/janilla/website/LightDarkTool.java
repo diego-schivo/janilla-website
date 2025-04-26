@@ -40,7 +40,8 @@ import java.util.stream.Stream;
 class LightDarkTool {
 
 	public static void main(String[] args) throws Exception {
-		var h = Map.of("janilla-acmedashboard", "", "janilla-address-book", "");
+//		var h = Map.of("janilla-acmedashboard", "", "janilla-address-book", "", "janilla-ide", "");
+		var h = Map.of("janilla", "", "janilla-templates", "");
 		var s = Path.of(System.getProperty("user.home")).resolve("git");
 		Files.walkFileTree(s, new SimpleFileVisitor<>() {
 
@@ -63,6 +64,11 @@ class LightDarkTool {
 
 			protected static final Pattern RGB = Pattern.compile("rgb\\((\\d+), (\\d+), (\\d+)\\)");
 
+			protected static final Pattern RGBA = Pattern.compile("rgba\\((\\d+), (\\d+), (\\d+), (\\\\d+)\\)");
+
+			protected static final Map<String, String> NAMES = Map.of("black", "white", "darkgray", "lightgray",
+					"lightgray", "darkgray", "white", "black");
+
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 				var n = file.getFileName().toString();
@@ -79,18 +85,31 @@ class LightDarkTool {
 						var bb2 = Arrays.copyOf(bb1, bb1.length);
 						for (var i = 0; i < bb2.length; i++)
 							bb2[i] = (byte) (0xff - bb2[i]);
-						s = "#" + HexFormat.of().formatHex(bb1) + ", #" + HexFormat.of().formatHex(bb2);
+						s = "#" + HexFormat.of().formatHex(bb2) + ", #" + HexFormat.of().formatHex(bb1);
 					}
 					var m2 = RGB.matcher(y.group(3));
 					if (m2.matches()) {
-						var ii1 = IntStream.range(0, 3).map(z -> Integer.parseInt(m2.group(z + 2))).toArray();
+						var ii1 = IntStream.range(0, 3).map(z -> Integer.parseInt(m2.group(z + 1))).toArray();
 						var ii2 = Arrays.stream(ii1).map(z -> 255 - z).toArray();
-						s = Stream.of(ii1, ii2)
+						s = Stream.of(ii2, ii1)
 								.map(z -> "rgb("
 										+ Arrays.stream(z).mapToObj(String::valueOf).collect(Collectors.joining(", "))
 										+ ")")
 								.collect(Collectors.joining(", "));
 					}
+					var m3 = RGBA.matcher(y.group(3));
+					if (m3.matches()) {
+						var ii1 = IntStream.range(0, 3).map(z -> Integer.parseInt(m2.group(z + 1))).toArray();
+						var ii2 = Arrays.stream(ii1).map(z -> 255 - z).toArray();
+						s = Stream.of(ii2, ii1)
+								.map(z -> "rgba("
+										+ Arrays.stream(z).mapToObj(String::valueOf).collect(Collectors.joining(", "))
+										+ ", " + m2.group(4) + ")")
+								.collect(Collectors.joining(", "));
+					}
+					var n2 = NAMES.get(y.group(3));
+					if (n2 != null)
+						s = n2 + ", " + y.group(3);
 					return s != null ? y.group(1) + ": light-dark(" + s + ");" : y.group();
 				})).toList();
 				if (!ll2.equals(ll)) {
