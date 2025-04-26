@@ -77,6 +77,15 @@
 			"id": 9,
 			"file": {
 				"$type": "File",
+				"name": "janilla-website-template.webp"
+			},
+			"alt": "Janilla Website Template"
+		},
+		{
+			"$type": "Media",
+			"id": 10,
+			"file": {
+				"$type": "File",
 				"name": "youtube_social_icon_red.png"
 			},
 			"alt": "YouTube"
@@ -151,6 +160,17 @@
 		{
 			"$type": "Example",
 			"id": 6,
+			"application": "com.janilla.templates.website.WebsiteTemplate",
+			"title": "Website Template",
+			"richText": "<p>(<a href=\"https://github.com/payloadcms/payload/tree/main/templates/website\" target=\"_blank\">original project</a> by <a href=\"https://payloadcms.com/\" target=\"_blank\">Payload</a>)</p>",
+			"demo": "website-template",
+			"source": "janilla-templates",
+			"image": 9,
+			"video": ""
+		},
+		{
+			"$type": "Example",
+			"id": 6,
 			"application": "",
 			"title": "Janilla website",
 			"richText": "",
@@ -174,7 +194,7 @@
 				"$type": "Link",
 				"newTab": true,
 				"url": "https://www.youtube.com/@janilla",
-				"image": 9
+				"image": 10
 			}
 		]
 	},
@@ -230,7 +250,8 @@
 					3,
 					4,
 					5,
-					6
+					6,
+					7
 				]
 			}
 		],
