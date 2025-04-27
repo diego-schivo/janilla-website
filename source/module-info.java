@@ -28,8 +28,9 @@ module com.janilla.website {
 	requires com.janilla.acmedashboard;
 //	requires com.janilla.acmestore;
 	requires com.janilla.addressbook;
-	requires com.janilla.conduit.backend;
-	requires com.janilla.conduit.frontend;
+//	requires com.janilla.conduit.backend;
+//	requires com.janilla.conduit.frontend;
+	requires com.janilla.conduit.fullstack;
 //	requires com.janilla.eshopweb.api;
 //	requires com.janilla.eshopweb.web;
 //	requires com.janilla.foodadvisor.api;
@@ -38,6 +39,7 @@ module com.janilla.website {
 	requires com.janilla.petclinic;
 //	requires com.janilla.mystore.admin;
 //	requires com.janilla.mystore.storefront;
+	requires com.janilla.templates.website;
 	requires com.janilla.todomvc;
 //	requires com.janilla.uxpatterns;
 }

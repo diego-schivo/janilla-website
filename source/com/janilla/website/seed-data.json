@@ -187,13 +187,13 @@
 			{
 				"$type": "Link",
 				"newTab": true,
-				"url": "https://github.com/diego-schivo/janilla",
+				"uri": "https://github.com/diego-schivo/janilla",
 				"image": 2
 			},
 			{
 				"$type": "Link",
 				"newTab": true,
-				"url": "https://www.youtube.com/@janilla",
+				"uri": "https://www.youtube.com/@janilla",
 				"image": 10
 			}
 		]

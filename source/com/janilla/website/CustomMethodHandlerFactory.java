@@ -33,7 +33,7 @@ import com.janilla.web.MethodHandlerFactory;
 
 public class CustomMethodHandlerFactory extends MethodHandlerFactory {
 
-	protected static final Set<String> USER_POST = Set.of("/api/users/first-register", "/api/users/forgot-password",
+	protected static final Set<String> GUEST_POST = Set.of("/api/users/first-register", "/api/users/forgot-password",
 			"/api/users/login", "/api/users/reset-password");
 
 	public Properties configuration;
@@ -44,12 +44,12 @@ public class CustomMethodHandlerFactory extends MethodHandlerFactory {
 	protected void handle(Invocation invocation, HttpExchange exchange) {
 		var rq = exchange.getRequest();
 		if (rq.getPath().startsWith("/api/") && !rq.getMethod().equals("GET")) {
-			if (!USER_POST.contains(rq.getPath()))
+			if (!GUEST_POST.contains(rq.getPath()))
 				((CustomHttpExchange) exchange).requireSessionEmail();
 		}
 
 		if (Boolean.parseBoolean(configuration.getProperty("janilla-website.live-demo")))
-			if (!rq.getMethod().equals("GET") && !USER_POST.contains(rq.getPath()))
+			if (!rq.getMethod().equals("GET"))
 				throw new HandleException(new MethodBlockedException());
 
 //		if (rq.getPath().startsWith("/api/"))

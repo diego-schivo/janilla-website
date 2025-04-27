@@ -80,9 +80,15 @@ public class JanillaWebsite {
 			{
 				var a = new InetSocketAddress(
 						Integer.parseInt(INSTANCE.configuration.getProperty("janilla-website.server.port")));
+				var kp = INSTANCE.configuration.getProperty("janilla-website.ssl.keystore.path");
+				var kp2 = INSTANCE.configuration.getProperty("janilla-website.ssl.keystore.password");
+				if (kp != null && kp.startsWith("~"))
+					kp = System.getProperty("user.home") + kp.substring(1);
 				SSLContext sc;
-				try (var is = Net.class.getResourceAsStream("testkeys")) {
-					sc = Net.getSSLContext("JKS", is, "passphrase".toCharArray());
+				try (var is = kp != null && kp.length() > 0 ? Files.newInputStream(Path.of(kp))
+						: Net.class.getResourceAsStream("testkeys")) {
+					sc = Net.getSSLContext(kp != null && kp.toLowerCase().endsWith(".p12") ? "PKCS12" : "JKS", is,
+							(kp2 != null && kp2.length() > 0 ? kp2 : "passphrase").toCharArray());
 				}
 				var p = INSTANCE.factory.create(HttpProtocol.class,
 						Map.of("handler", INSTANCE.handler, "sslContext", sc, "useClientMode", false));
