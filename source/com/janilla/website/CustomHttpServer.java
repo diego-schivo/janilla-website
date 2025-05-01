@@ -27,17 +27,17 @@ import javax.net.ssl.SSLContext;
 
 import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpHandler;
-import com.janilla.http.HttpProtocol;
 import com.janilla.http.HttpRequest;
+import com.janilla.http.HttpServer;
 import com.janilla.reflect.Factory;
 import com.janilla.reflect.Reflection;
 
-public class CustomHttpProtocol extends HttpProtocol {
+public class CustomHttpServer extends HttpServer {
 
 	public JanillaWebsite application;
 
-	public CustomHttpProtocol(HttpHandler handler, SSLContext sslContext, boolean useClientMode) {
-		super(handler, sslContext, useClientMode);
+	public CustomHttpServer(SSLContext sslContext, HttpHandler handler) {
+		super(sslContext, handler);
 	}
 
 	@Override

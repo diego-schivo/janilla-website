@@ -26,6 +26,7 @@ package com.janilla.website;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -35,7 +36,6 @@ import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpHandler;
 import com.janilla.http.HttpRequest;
 import com.janilla.http.HttpResponse;
-import com.janilla.http.HttpWritableByteChannel;
 import com.janilla.web.WebHandlerFactory;
 
 public class CmsResourceHandlerFactory implements WebHandlerFactory {
@@ -80,7 +80,8 @@ public class CmsResourceHandlerFactory implements WebHandlerFactory {
 		}
 
 		try (var is = Files.newInputStream(file)) {
-			((HttpWritableByteChannel) response.getBody()).write(ByteBuffer.wrap(is.readAllBytes()), true);
+//			((HttpWritableByteChannel) response.getBody()).write(ByteBuffer.wrap(is.readAllBytes()), true);
+			((WritableByteChannel) response.getBody()).write(ByteBuffer.wrap(is.readAllBytes()));
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
