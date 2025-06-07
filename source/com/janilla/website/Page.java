@@ -35,5 +35,5 @@ import com.janilla.persistence.Store;
 @Versions(drafts = true)
 public record Page(Long id, List<@Types( {
 		Hero.class, Features.class, ExampleApps.class }) Object> layout, Instant createdAt, Instant updatedAt,
-		Document.Status status, Instant publishedAt) implements Document{
+		Document.Status documentStatus, Instant publishedAt) implements Document{
 }

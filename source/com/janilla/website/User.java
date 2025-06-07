@@ -41,7 +41,7 @@ import com.janilla.persistence.Store;
 @Store
 public record User(Long id, String name, @Index String email, String salt, String hash,
 		@Index String resetPasswordToken, Instant resetPasswordExpiration, Instant createdAt, Instant updatedAt,
-		Document.Status status, Instant publishedAt) implements Document {
+		Document.Status documentStatus, Instant publishedAt) implements Document {
 
 	private static final SecretKeyFactory SECRET;
 
@@ -79,11 +79,11 @@ public record User(Long id, String name, @Index String email, String salt, Strin
 		var h = hash(password.toCharArray(), s);
 		var f = HexFormat.of();
 		return new User(id, name, email, f.formatHex(s), f.formatHex(h), resetPasswordToken, resetPasswordExpiration,
-				createdAt, updatedAt, status, publishedAt);
+				createdAt, updatedAt, documentStatus, publishedAt);
 	}
 
 	public User withResetPassword(String resetPasswordToken, Instant resetPasswordExpiration) {
 		return new User(id, name, email, salt, hash, resetPasswordToken, resetPasswordExpiration, createdAt, updatedAt,
-				status, publishedAt);
+				documentStatus, publishedAt);
 	}
 }

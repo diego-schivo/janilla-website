@@ -29,6 +29,6 @@ import com.janilla.cms.Document;
 import com.janilla.persistence.Store;
 
 @Store
-public record Footer(Long id, String richText, Instant createdAt, Instant updatedAt, Document.Status status,
+public record Footer(Long id, String richText, Instant createdAt, Instant updatedAt, Document.Status documentStatus,
 		Instant publishedAt) implements Document {
 }
