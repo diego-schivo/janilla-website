@@ -33,5 +33,5 @@ import com.janilla.persistence.Store;
 @Store
 public record Example(Long id, String application, String title, String richText, @Index String demo, String source,
 		@Types(Media.class) Long image, String video, Instant createdAt, Instant updatedAt, Document.Status documentStatus,
-		Instant publishedAt) implements Document {
+		Instant publishedAt) implements Document<Long> {
 }

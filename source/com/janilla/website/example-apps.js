@@ -25,8 +25,8 @@ import WebComponent from "./web-component.js";
 
 export default class ExampleApps extends WebComponent {
 
-	static get templateName() {
-		return "example-apps";
+	static get templateNames() {
+		return ["example-apps"];
 	}
 
 	constructor() {

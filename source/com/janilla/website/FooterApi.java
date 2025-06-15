@@ -27,9 +27,14 @@ import com.janilla.cms.GlobalApi;
 import com.janilla.web.Handle;
 
 @Handle(path = "/api/footer")
-public class FooterApi extends GlobalApi<Footer> {
+public class FooterApi extends GlobalApi<Long, Footer> {
 
 	public FooterApi() {
 		super(Footer.class, JanillaWebsite.DRAFTS);
+	}
+
+	@Override
+	protected Long id() {
+		return 1L;
 	}
 }

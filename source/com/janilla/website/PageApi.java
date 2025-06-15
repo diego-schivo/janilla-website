@@ -27,9 +27,14 @@ import com.janilla.cms.GlobalApi;
 import com.janilla.web.Handle;
 
 @Handle(path = "/api/page")
-public class PageApi extends GlobalApi<Page> {
+public class PageApi extends GlobalApi<Long, Page> {
 
 	public PageApi() {
 		super(Page.class, JanillaWebsite.DRAFTS);
+	}
+
+	@Override
+	protected Long id() {
+		return 1L;
 	}
 }

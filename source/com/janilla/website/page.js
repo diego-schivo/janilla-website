@@ -29,8 +29,8 @@ export default class Page extends WebComponent {
 		return ["data-slug"];
 	}
 
-	static get templateName() {
-		return "page";
+	static get templateNames() {
+		return ["page"];
 	}
 
 	constructor() {

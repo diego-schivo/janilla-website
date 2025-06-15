@@ -30,5 +30,5 @@ import com.janilla.persistence.Store;
 
 @Store
 public record Footer(Long id, String richText, Instant createdAt, Instant updatedAt, Document.Status documentStatus,
-		Instant publishedAt) implements Document {
+		Instant publishedAt) implements Document<Long> {
 }

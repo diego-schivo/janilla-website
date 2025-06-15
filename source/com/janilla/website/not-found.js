@@ -25,8 +25,8 @@ import WebComponent from "./web-component.js";
 
 export default class NotFound extends WebComponent {
 
-	static get templateName() {
-		return "not-found";
+	static get templateNames() {
+		return ["not-found"];
 	}
 
 	constructor() {

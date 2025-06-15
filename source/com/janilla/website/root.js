@@ -27,8 +27,8 @@ const adminRegex = /^\/admin(\/.*)?$/;
 
 export default class Root extends WebComponent {
 
-	static get templateName() {
-		return "root";
+	static get templateNames() {
+		return ["root"];
 	}
 
 	serverData;

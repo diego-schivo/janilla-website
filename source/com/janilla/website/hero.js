@@ -25,8 +25,8 @@ import WebComponent from "./web-component.js";
 
 export default class Hero extends WebComponent {
 
-	static get templateName() {
-		return "hero";
+	static get templateNames() {
+		return ["hero"];
 	}
 
 	constructor() {

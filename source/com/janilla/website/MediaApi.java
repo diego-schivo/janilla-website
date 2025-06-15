@@ -31,7 +31,7 @@ import com.janilla.http.HttpResponse;
 import com.janilla.web.Handle;
 
 @Handle(path = "/api/media")
-public class MediaApi extends CollectionApi<Media> {
+public class MediaApi extends CollectionApi<Long, Media> {
 
 	public Properties configuration;
 

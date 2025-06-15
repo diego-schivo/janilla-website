@@ -29,8 +29,8 @@ export default class CustomCmsAdmin extends CmsAdmin {
 		return ["data-email", "data-path"];
 	}
 
-	static get templateName() {
-		return "cms-admin";
+	static get templateNames() {
+		return ["cms-admin"];
 	}
 
 	constructor() {

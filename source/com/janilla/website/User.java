@@ -41,7 +41,7 @@ import com.janilla.persistence.Store;
 @Store
 public record User(Long id, String name, @Index String email, String salt, String hash,
 		@Index String resetPasswordToken, Instant resetPasswordExpiration, Instant createdAt, Instant updatedAt,
-		Document.Status documentStatus, Instant publishedAt) implements Document {
+		Document.Status documentStatus, Instant publishedAt) implements Document<Long> {
 
 	private static final SecretKeyFactory SECRET;
 

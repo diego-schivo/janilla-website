@@ -31,5 +31,5 @@ import com.janilla.persistence.Store;
 
 @Store
 public record Header(Long id, List<Link> navItems, Instant createdAt, Instant updatedAt, Document.Status documentStatus,
-		Instant publishedAt) implements Document {
+		Instant publishedAt) implements Document<Long> {
 }

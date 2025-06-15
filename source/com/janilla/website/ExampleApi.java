@@ -29,7 +29,7 @@ import com.janilla.cms.CollectionApi;
 import com.janilla.web.Handle;
 
 @Handle(path = "/api/examples")
-public class ExampleApi extends CollectionApi<Example> {
+public class ExampleApi extends CollectionApi<Long, Example> {
 
 	public Properties configuration;
 

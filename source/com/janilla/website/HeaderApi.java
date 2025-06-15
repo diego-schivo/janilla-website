@@ -27,9 +27,14 @@ import com.janilla.cms.GlobalApi;
 import com.janilla.web.Handle;
 
 @Handle(path = "/api/header")
-public class HeaderApi extends GlobalApi<Header> {
+public class HeaderApi extends GlobalApi<Long, Header> {
 
 	public HeaderApi() {
 		super(Header.class, JanillaWebsite.DRAFTS);
+	}
+
+	@Override
+	protected Long id() {
+		return 1L;
 	}
 }

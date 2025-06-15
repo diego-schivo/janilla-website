@@ -184,9 +184,9 @@ public class JanillaWebsite {
 			return new Index("/admin.css", Map.of());
 		Map<String, Object> m3 = new LinkedHashMap<>();
 		m3.put("authority", configuration.getProperty("janilla-website.authority"));
-		m3.put("/api/header", persistence.crud(Header.class).read(1));
-		m3.put("/api/page", persistence.crud(Page.class).read(1));
-		m3.put("/api/footer", persistence.crud(Footer.class).read(1));
+		m3.put("/api/header", persistence.crud(Header.class).read(1L));
+		m3.put("/api/page", persistence.crud(Page.class).read(1L));
+		m3.put("/api/footer", persistence.crud(Footer.class).read(1L));
 		return new Index("/style.css", m3);
 	}
 

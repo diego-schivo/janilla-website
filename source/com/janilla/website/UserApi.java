@@ -37,7 +37,7 @@ import com.janilla.web.Handle;
 import com.janilla.web.UnauthorizedException;
 
 @Handle(path = "/api/users")
-public class UserApi extends CollectionApi<User> {
+public class UserApi extends CollectionApi<Long, User> {
 
 	public Properties configuration;
 

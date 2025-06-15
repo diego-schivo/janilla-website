@@ -25,8 +25,8 @@ import WebComponent from "./web-component.js";
 
 export default class Features extends WebComponent {
 
-	static get templateName() {
-		return "features";
+	static get templateNames() {
+		return ["features"];
 	}
 
 	constructor() {
