@@ -8,7 +8,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.janilla</groupId>
-			<artifactId>janilla-acmedashboard</artifactId>
+			<artifactId>janilla-acme-dashboard-main</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
