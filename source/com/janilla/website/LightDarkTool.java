@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 class LightDarkTool {
 
 	public static void main(String[] args) throws Exception {
-//		var h = Map.of("janilla-acmedashboard", "", "janilla-address-book", "", "janilla-ide", "");
+//		var h = Map.of("janilla-acme-dashboard", "", "janilla-address-book", "", "janilla-ide", "");
 //		var h = Map.of("janilla", "", "janilla-templates", "");
 		var h = Map.of("janilla-address-book", "");
 		var s = Path.of(System.getProperty("user.home")).resolve("git");

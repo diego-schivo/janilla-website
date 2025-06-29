@@ -23,7 +23,7 @@
 			"id": 3,
 			"file": {
 				"$type": "File",
-				"name": "janilla-acmedashboard.webp"
+				"name": "janilla-acme-dashboard.webp"
 			},
 			"alt": "Janilla Acme Dashboard"
 		},
@@ -108,8 +108,8 @@
 			"application": "com.janilla.acmedashboard.AcmeDashboard",
 			"title": "Acme Dashboard",
 			"richText": "<p>(<a href=\"https://github.com/vercel/next-learn/tree/main/dashboard/final-example\" target=\"_blank\">original project</a> by <a href=\"https://vercel.com/\" target=\"_blank\">Vercel</a>)</p>",
-			"demo": "acmedashboard",
-			"source": "janilla-acmedashboard",
+			"demo": "acme-dashboard",
+			"source": "janilla-acme-dashboard",
 			"image": 3,
 			"video": "3JqIs-Y-80M"
 		},

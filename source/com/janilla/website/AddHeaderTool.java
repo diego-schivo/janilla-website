@@ -106,7 +106,7 @@ class AddHeaderTool {
 
 	public static void main(String[] args) throws Exception {
 		var h = Map.ofEntries(Map.entry("janilla", GPL2.split("\n")),
-				Map.entry("janilla-acmedashboard", MIT.split("\n")),
+				Map.entry("janilla-acme-dashboard", MIT.split("\n")),
 //				Map.entry("janilla-acmestore", MIT.split("\n")),
 				Map.entry("janilla-address-book", MIT.split("\n")), Map.entry("janilla-cms", MIT.split("\n")),
 				Map.entry("janilla-conduit", MIT.split("\n")),
