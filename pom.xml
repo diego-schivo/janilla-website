@@ -13,7 +13,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.janilla</groupId>
-			<artifactId>janilla-address-book</artifactId>
+			<artifactId>janilla-address-book-main</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<!--
@@ -82,7 +82,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.janilla</groupId>
-			<artifactId>janilla-todomvc</artifactId>
+			<artifactId>janilla-todomvc-main</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<!--
