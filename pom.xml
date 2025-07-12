@@ -13,7 +13,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.janilla</groupId>
-			<artifactId>janilla-address-book-main</artifactId>
+			<artifactId>janilla-address-book-fullstack</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<!--
