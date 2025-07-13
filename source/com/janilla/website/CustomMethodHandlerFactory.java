@@ -23,17 +23,20 @@
  */
 package com.janilla.website;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
 
 import com.janilla.http.HttpExchange;
-import com.janilla.json.MapAndType;
+import com.janilla.http.HttpHandlerFactory;
+import com.janilla.json.DollarTypeResolver;
+import com.janilla.json.TypeResolver;
 import com.janilla.web.HandleException;
 import com.janilla.web.MethodHandlerFactory;
 import com.janilla.web.RenderableFactory;
-import com.janilla.web.WebHandlerFactory;
 
 public class CustomMethodHandlerFactory extends MethodHandlerFactory {
 
@@ -42,17 +45,17 @@ public class CustomMethodHandlerFactory extends MethodHandlerFactory {
 
 	public Properties configuration;
 
-	public MapAndType.DollarTypeResolver typeResolver;
+	public DollarTypeResolver typeResolver;
 
-	public CustomMethodHandlerFactory(Set<Class<?>> types, Function<Class<?>, Object> targetResolver,
+	public CustomMethodHandlerFactory(Collection<Method> methods, Function<Class<?>, Object> targetResolver,
 			Comparator<Invocation> invocationComparator, RenderableFactory renderableFactory,
-			WebHandlerFactory rootFactory) {
-		super(types, targetResolver, invocationComparator, renderableFactory, rootFactory);
+			HttpHandlerFactory rootFactory) {
+		super(methods, targetResolver, invocationComparator, renderableFactory, rootFactory);
 	}
 
 	@Override
 	protected boolean handle(Invocation invocation, HttpExchange exchange) {
-		var rq = exchange.getRequest();
+		var rq = exchange.request();
 		if (rq.getPath().startsWith("/api/") && !rq.getMethod().equals("GET")) {
 			if (!GUEST_POST.contains(rq.getPath()))
 				((CustomHttpExchange) exchange).requireSessionEmail();
@@ -73,8 +76,8 @@ public class CustomMethodHandlerFactory extends MethodHandlerFactory {
 	}
 
 	@Override
-	protected MapAndType.TypeResolver resolver(Class<? extends MapAndType.TypeResolver> class0) {
-		if (class0 == MapAndType.DollarTypeResolver.class)
+	protected TypeResolver resolver(Class<? extends TypeResolver> class0) {
+		if (class0 == DollarTypeResolver.class)
 			return typeResolver;
 		return super.resolver(class0);
 	}

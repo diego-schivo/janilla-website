@@ -23,27 +23,30 @@
  */
 package com.janilla.website;
 
+import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import com.janilla.http.HttpHandlerFactory;
 import com.janilla.reflect.Factory;
-import com.janilla.web.ApplicationHandlerBuilder;
-import com.janilla.web.ResourceHandlerFactory;
-import com.janilla.web.WebHandlerFactory;
+import com.janilla.web.ApplicationHandlerFactory;
+import com.janilla.web.FileHandlerFactory;
 
-public class CustomHandlerBuilder extends ApplicationHandlerBuilder {
+public class CustomHandlerBuilder extends ApplicationHandlerFactory {
 
-	public CustomHandlerBuilder(Factory factory) {
-		super(factory);
+	public CustomHandlerBuilder(Factory factory, Collection<Method> methods, Collection<Path> files) {
+		super(factory, methods, files);
 	}
 
 	@Override
-	protected List<WebHandlerFactory> buildFactories() {
+	protected List<HttpHandlerFactory> buildFactories() {
 		var ff = new ArrayList<>(super.buildFactories());
-		var i = IntStream.range(0, ff.size()).filter(x -> ff.get(x) instanceof ResourceHandlerFactory).findFirst()
+		var i = IntStream.range(0, ff.size()).filter(x -> ff.get(x) instanceof FileHandlerFactory).findFirst()
 				.getAsInt();
-		ff.add(i, factory.create(CmsResourceHandlerFactory.class));
+		ff.add(i, factory.create(CmsFileHandlerFactory.class));
 		return ff;
 	}
 }

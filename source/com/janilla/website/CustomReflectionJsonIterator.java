@@ -28,7 +28,7 @@ import com.janilla.persistence.Persistence;
 
 public class CustomReflectionJsonIterator extends CmsReflectionJsonIterator {
 
-	public CustomReflectionJsonIterator(Persistence persistence) {
-		super(persistence);
+	public CustomReflectionJsonIterator(Object object, boolean includeType, Persistence persistence) {
+		super(object, includeType, persistence);
 	}
 }

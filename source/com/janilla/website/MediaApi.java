@@ -45,6 +45,6 @@ public class MediaApi extends CollectionApi<Long, Media> {
 		if (ud.startsWith("~"))
 			ud = System.getProperty("user.home") + ud.substring(1);
 		var f = Path.of(ud).resolve(path.getFileName());
-		CmsResourceHandlerFactory.handle(f, response);
+		CmsFileHandlerFactory.handle(f, response);
 	}
 }

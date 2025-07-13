@@ -23,16 +23,17 @@
  */
 package com.janilla.website;
 
-import java.util.Set;
+import java.util.Collection;
 
 import com.janilla.cms.CmsPersistence;
 import com.janilla.database.Database;
-import com.janilla.json.MapAndType.TypeResolver;
+import com.janilla.json.TypeResolver;
 import com.janilla.persistence.Entity;
 
 public class CustomPersistence extends CmsPersistence {
 
-	public CustomPersistence(Database database, Set<Class<? extends Entity<?>>> types, TypeResolver typeResolver) {
+	public CustomPersistence(Database database, Collection<Class<? extends Entity<?>>> types,
+			TypeResolver typeResolver) {
 		super(database, types, typeResolver);
 	}
 }

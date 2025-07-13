@@ -32,18 +32,17 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 import com.janilla.http.HeaderField;
-import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpHandler;
+import com.janilla.http.HttpHandlerFactory;
 import com.janilla.http.HttpRequest;
 import com.janilla.http.HttpResponse;
-import com.janilla.web.WebHandlerFactory;
 
-public class CmsResourceHandlerFactory implements WebHandlerFactory {
+public class CmsFileHandlerFactory implements HttpHandlerFactory {
 
 	public Properties configuration;
 
 	@Override
-	public HttpHandler createHandler(Object object, HttpExchange exchange) {
+	public HttpHandler createHandler(Object object) {
 		var p = object instanceof HttpRequest x ? x.getPath() : null;
 		var n = p != null && p.startsWith("/images/") ? p.substring("/images/".length()) : null;
 		if (n == null)
@@ -54,7 +53,7 @@ public class CmsResourceHandlerFactory implements WebHandlerFactory {
 			ud = System.getProperty("user.home") + ud.substring(1);
 		var f = Path.of(ud).resolve(n);
 		return Files.exists(f) ? ex -> {
-			handle(f, ex.getResponse());
+			handle(f, ex.response());
 			return true;
 		} : null;
 	}
