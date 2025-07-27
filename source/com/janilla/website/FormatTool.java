@@ -64,7 +64,7 @@ class FormatTool {
 		m.add(b.toString());
 		b.setLength(0);
 //			}
-//			System.out.println(m.stream().collect(Collectors.joining("\n")));
+//			IO.println(m.stream().collect(Collectors.joining("\n")));
 		l = new LinkedList<String>();
 		for (var s : m) {
 			n = 0;
@@ -89,7 +89,7 @@ class FormatTool {
 				i = j + 1;
 			}
 		}
-//			System.out.println(l.stream().collect(Collectors.joining("\n")));
+//			IO.println(l.stream().collect(Collectors.joining("\n")));
 //			f = Path.of(System.getProperty("user.home")).resolve( "Projects/janilla/LICENSE2");
 		f = Path.of(System.getProperty("user.home")).resolve("Projects/janilla/README2");
 //			Files.write(f, l);

@@ -105,7 +105,7 @@
 		{
 			"$type": "Example",
 			"id": 1,
-			"application": "com.janilla.acmedashboard.AcmeDashboard",
+			"application": "com.janilla.acmedashboard.frontend.AcmeDashboardFrontend",
 			"title": "Acme Dashboard",
 			"richText": "<p>(<a href=\"https://github.com/vercel/next-learn/tree/main/dashboard/final-example\" target=\"_blank\">original project</a> by <a href=\"https://vercel.com/\" target=\"_blank\">Vercel</a>)</p>",
 			"demo": "acme-dashboard",
@@ -116,7 +116,7 @@
 		{
 			"$type": "Example",
 			"id": 2,
-			"application": "com.janilla.addressbook.AddressBook",
+			"application": "com.janilla.addressbook.fullstack.AddressBookFullstack",
 			"title": "Address Book",
 			"richText": "<p>(<a href=\"https://github.com/remix-run/react-router/tree/main/tutorials/address-book\" target=\"_blank\">original project</a> by <a href=\"https://reactrouter.com/\" target=\"_blank\">React Router</a>)</p>",
 			"demo": "address-book",

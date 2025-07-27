@@ -25,7 +25,7 @@ module com.janilla.website {
 
 	opens com.janilla.website;
 
-	requires com.janilla.acmedashboard;
+	requires com.janilla.acmedashboard.frontend;
 //	requires com.janilla.acmestore;
 	requires com.janilla.addressbook.fullstack;
 //	requires com.janilla.conduit.backend;

@@ -35,12 +35,12 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Properties;
 
-import com.janilla.io.IO;
 import com.janilla.json.Converter;
 import com.janilla.json.Json;
 import com.janilla.persistence.ApplicationPersistenceBuilder;
 import com.janilla.persistence.Persistence;
 import com.janilla.reflect.Factory;
+import com.janilla.zip.Zip;
 
 public class CustomPersistenceBuilder extends ApplicationPersistenceBuilder {
 
@@ -81,7 +81,7 @@ public class CustomPersistenceBuilder extends ApplicationPersistenceBuilder {
 				}
 				if (!u.toString().startsWith("jar:"))
 					u = URI.create("jar:" + u);
-				var s = IO.zipFileSystem(u).getPath("/");
+				var s = Zip.zipFileSystem(u).getPath("/");
 //				var d = Files.createDirectories(databaseFile.getParent().resolve("janilla-website-upload"));
 				var ud = configuration.getProperty("janilla-website.upload.directory");
 				if (ud.startsWith("~"))

@@ -23,6 +23,7 @@
  */
 package com.janilla.website;
 
+import java.io.IO;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -164,7 +165,7 @@ class AddHeaderTool {
 				}, _ -> i.hasNext() ? i.next() : null).toArray(String[]::new);
 				var b = h.get(s.relativize(file).getName(0).toString());
 				if (!Arrays.equals(a, b)) {
-					System.out.println(file);
+					IO.println(file);
 					Files.write(file, Stream.concat(Arrays.stream(b), l.stream().skip(a.length)).toList());
 				}
 				return FileVisitResult.CONTINUE;

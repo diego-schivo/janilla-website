@@ -31,7 +31,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
-import com.janilla.http.HeaderField;
 import com.janilla.http.HttpHandler;
 import com.janilla.http.HttpHandlerFactory;
 import com.janilla.http.HttpRequest;
@@ -48,41 +47,36 @@ public class CmsFileHandlerFactory implements HttpHandlerFactory {
 		if (n == null)
 			return null;
 
-		var ud = configuration.getProperty("janilla-website.upload.directory");
-		if (ud.startsWith("~"))
-			ud = System.getProperty("user.home") + ud.substring(1);
-		var f = Path.of(ud).resolve(n);
-		return Files.exists(f) ? ex -> {
-			handle(f, ex.response());
-			return true;
-		} : null;
+		var d = configuration.getProperty("janilla-website.upload.directory");
+		if (d.startsWith("~"))
+			d = System.getProperty("user.home") + d.substring(1);
+		var f = Path.of(d).resolve(n);
+		return Files.exists(f) ? x -> handle(f, x.response()) : null;
 	}
 
-	protected static void handle(Path file, HttpResponse response) {
+	protected static boolean handle(Path file, HttpResponse response) {
 		response.setStatus(200);
-
-		var hh = response.getHeaders();
-		hh.add(new HeaderField("cache-control", "max-age=3600"));
+		response.setHeaderValue("cache-control", "max-age=3600");
 		var n = file.getFileName().toString();
 		switch (n.substring(n.lastIndexOf('.') + 1)) {
 		case "ico":
-			hh.add(new HeaderField("content-type", "image/x-icon"));
+			response.setHeaderValue("content-type", "image/x-icon");
 			break;
 		case "svg":
-			hh.add(new HeaderField("content-type", "image/svg+xml"));
+			response.setHeaderValue("content-type", "image/svg+xml");
 			break;
 		}
 		try {
-			hh.add(new HeaderField("content-length", String.valueOf(Files.size(file))));
+			response.setHeaderValue("content-length", String.valueOf(Files.size(file)));
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
-
 		try (var in = Files.newInputStream(file);
 				var out = Channels.newOutputStream((WritableByteChannel) response.getBody())) {
 			in.transferTo(out);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
+		return true;
 	}
 }

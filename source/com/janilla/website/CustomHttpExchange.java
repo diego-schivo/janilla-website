@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import com.janilla.http.HeaderField;
 import com.janilla.http.Http;
 import com.janilla.http.HttpCookie;
 import com.janilla.http.HttpExchange;
@@ -46,18 +45,16 @@ public class CustomHttpExchange extends HttpExchange.Base {
 
 	public Persistence persistence;
 
-	private Map<String, Object> map = new HashMap<>();
+	protected final Map<String, Object> session = new HashMap<>();
 
 	public CustomHttpExchange(HttpRequest request, HttpResponse response) {
 		super(request, response);
 	}
 
 	public String sessionEmail() {
-		if (!map.containsKey("sessionEmail")) {
-			var hh = request().getHeaders();
-			var h = hh.stream().filter(x -> x.name().equals("cookie")).map(HeaderField::value)
-					.collect(Collectors.joining("; "));
-			var cc = h != null ? Http.parseCookieHeader(h) : null;
+		if (!session.containsKey("sessionEmail")) {
+			var s = request().getHeaderValues("cookie").collect(Collectors.joining("; "));
+			var cc = Http.parseCookieHeader(s);
 			var t = cc != null ? cc.get("janilla-website-token") : null;
 			Map<String, ?> p;
 			try {
@@ -65,18 +62,18 @@ public class CustomHttpExchange extends HttpExchange.Base {
 			} catch (IllegalArgumentException e) {
 				p = null;
 			}
-			map.put("sessionEmail", p != null ? p.get("loggedInAs") : null);
+			session.put("sessionEmail", p != null ? p.get("loggedInAs") : null);
 		}
-		return (String) map.get("sessionEmail");
+		return (String) session.get("sessionEmail");
 	}
 
 	public User sessionUser() {
-		if (!map.containsKey("sessionUser")) {
+		if (!session.containsKey("sessionUser")) {
 			var uc = persistence.crud(User.class);
 			var se = sessionEmail();
-			map.put("sessionUser", uc.read(se != null ? uc.find("email", se) : 0));
+			session.put("sessionUser", uc.read(se != null ? uc.find("email", se) : 0));
 		}
-		return (User) map.get("sessionUser");
+		return (User) session.get("sessionUser");
 	}
 
 	public void requireSessionEmail() {
@@ -86,7 +83,7 @@ public class CustomHttpExchange extends HttpExchange.Base {
 
 	public void setSessionCookie(String value) {
 		var c = HttpCookie.of("janilla-website-token", value).withPath("/").withHttpOnly(true).withSameSite("Lax");
-		if (value != null && value.length() > 0)
+		if (value != null && !value.isEmpty())
 			c = c.withExpires(ZonedDateTime.now(ZoneOffset.UTC).plusHours(2));
 		else
 			c = c.withMaxAge(0);

@@ -23,6 +23,7 @@
  */
 package com.janilla.website;
 
+import java.io.IO;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -75,7 +76,7 @@ class LightDarkTool {
 				var n = file.getFileName().toString();
 				if (!n.endsWith(".css"))
 					return FileVisitResult.CONTINUE;
-//				System.out.println(n);
+//				IO.println(n);
 				var ll = Files.readAllLines(file);
 				var ll2 = ll.stream().map(x -> COLOR.matcher(x).replaceFirst(y -> {
 					String s = null;
@@ -114,7 +115,7 @@ class LightDarkTool {
 					return s != null ? y.group(1) + ": light-dark(" + s + ");" : y.group();
 				})).toList();
 				if (!ll2.equals(ll)) {
-					System.out.println(file);
+					IO.println(file);
 					Files.write(file, ll2);
 				}
 				return FileVisitResult.CONTINUE;

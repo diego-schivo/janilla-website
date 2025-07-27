@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -41,6 +42,7 @@ import com.janilla.cms.Cms;
 import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpHandler;
 import com.janilla.http.HttpServer;
+import com.janilla.java.Java;
 import com.janilla.json.DollarTypeResolver;
 import com.janilla.json.Json;
 import com.janilla.json.ReflectionJsonIterator;
@@ -50,7 +52,6 @@ import com.janilla.persistence.ApplicationPersistenceBuilder;
 import com.janilla.persistence.Persistence;
 import com.janilla.reflect.Factory;
 import com.janilla.reflect.Reflection;
-import com.janilla.util.Util;
 import com.janilla.web.ApplicationHandlerFactory;
 import com.janilla.web.Handle;
 import com.janilla.web.NotFoundException;
@@ -60,7 +61,7 @@ import com.janilla.web.Renderer;
 
 public class JanillaWebsite {
 
-	public static JanillaWebsite INSTANCE;
+	public static final AtomicReference<JanillaWebsite> INSTANCE = new AtomicReference<>();
 
 	public static final Predicate<HttpExchange> DRAFTS = x -> ((CustomHttpExchange) x).sessionUser() != null;
 
@@ -68,35 +69,41 @@ public class JanillaWebsite {
 
 	public static void main(String[] args) {
 		try {
-			var pp = new Properties();
-			try (var s1 = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
-				pp.load(s1);
+			JanillaWebsite a;
+			{
+				var c = new Properties();
+				try (var x = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
+					c.load(x);
+				}
 				if (args.length > 0) {
-					var p = args[0];
-					if (p.startsWith("~"))
-						p = System.getProperty("user.home") + p.substring(1);
-					try (var s2 = Files.newInputStream(Path.of(p))) {
-						pp.load(s2);
+					var f = args[0];
+					if (f.startsWith("~"))
+						f = System.getProperty("user.home") + f.substring(1);
+					try (var x = Files.newInputStream(Path.of(f))) {
+						c.load(x);
 					}
 				}
+				a = new JanillaWebsite(c);
 			}
-			INSTANCE = new JanillaWebsite(pp);
+
 			HttpServer s;
 			{
-				var kp = INSTANCE.configuration.getProperty("janilla-website.ssl.keystore.path");
-				var kp2 = INSTANCE.configuration.getProperty("janilla-website.ssl.keystore.password");
+				var kp = a.configuration.getProperty("janilla-website.ssl.keystore.path");
+				var kp2 = a.configuration.getProperty("janilla-website.ssl.keystore.password");
 				if (kp != null && kp.startsWith("~"))
 					kp = System.getProperty("user.home") + kp.substring(1);
-				SSLContext sc;
-				try (var is = kp != null && kp.length() > 0 ? Files.newInputStream(Path.of(kp))
+				SSLContext c;
+				try (var x = kp != null && !kp.isEmpty() ? Files.newInputStream(Path.of(kp))
 						: Net.class.getResourceAsStream("testkeys")) {
-					sc = Net.getSSLContext(kp != null && kp.toLowerCase().endsWith(".p12") ? "PKCS12" : "JKS", is,
-							(kp2 != null && kp2.length() > 0 ? kp2 : "passphrase").toCharArray());
+					c = Net.getSSLContext(
+							Map.entry(kp != null && kp.toLowerCase().endsWith(".p12") ? "PKCS12" : "JKS", x),
+							(kp2 != null && !kp2.isEmpty() ? kp2 : "passphrase").toCharArray());
 				}
-				s = INSTANCE.factory.create(HttpServer.class, Map.of("sslContext", sc, "handler", INSTANCE.handler));
+				var p = Integer.parseInt(a.configuration.getProperty("janilla-website.server.port"));
+				s = a.factory.create(HttpServer.class,
+						Map.of("sslContext", c, "endpoint", new InetSocketAddress(p), "handler", a.handler));
 			}
-			var p = Integer.parseInt(INSTANCE.configuration.getProperty("janilla-website.server.port"));
-			s.serve(new InetSocketAddress(p));
+			s.serve();
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -121,8 +128,10 @@ public class JanillaWebsite {
 	protected final Map<String, Object> hostExample = new ConcurrentHashMap<>();
 
 	public JanillaWebsite(Properties configuration) {
+		if (!INSTANCE.compareAndSet(null, this))
+			throw new IllegalStateException();
 		this.configuration = configuration;
-		types = Util.getPackageClasses(getClass().getPackageName()).toList();
+		types = Java.getPackageClasses(JanillaWebsite.class.getPackageName());
 		factory = new Factory(types, this);
 		typeResolver = factory.create(DollarTypeResolver.class);
 
@@ -217,7 +226,7 @@ public class JanillaWebsite {
 
 		@Override
 		public String apply(T value) {
-			return Json.format(INSTANCE.factory.create(ReflectionJsonIterator.class,
+			return Json.format(INSTANCE.get().factory.create(ReflectionJsonIterator.class,
 					Map.of("object", value, "includeType", true)));
 		}
 	}

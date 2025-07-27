@@ -23,6 +23,7 @@
  */
 package com.janilla.website;
 
+import java.io.IO;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
@@ -108,7 +109,7 @@ public class UserApi extends CollectionApi<Long, User> {
 				"""
 				.replace("${href}", h);
 		var m = hm.replaceAll("<.*?>", "");
-		System.out.println("m=" + m);
+		IO.println("m=" + m);
 //		mail(new Data(OffsetDateTime.now(), "foo.bar@example.com", "baz.qux@example.com", "Reset Your Password",
 //				m, hm));
 	}
@@ -171,14 +172,14 @@ public class UserApi extends CollectionApi<Long, User> {
 //								+ d.htmlMessage + "--" + b + "--\n.",
 //						"QUIT" }) {
 //					if (s != null) {
-//						System.out.println("C: " + s.replace("\n", "\nC: "));
+//						IO.println("C: " + s.replace("\n", "\nC: "));
 //						sch.write(encoder.encode(CharBuffer.wrap(s.replace("\n", "\r\n") + "\r\n")));
 //					}
 //					dbuf.clear();
 //					sch.read(dbuf);
 //					dbuf.flip();
 //					var cb = decoder.decode(dbuf);
-//					System.out.println("\t" + cb.toString().replace("\n", "\n\t"));
+//					IO.println("\t" + cb.toString().replace("\n", "\n\t"));
 //				}
 //			}
 //		} catch (IOException e) {
