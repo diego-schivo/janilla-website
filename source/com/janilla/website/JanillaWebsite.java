@@ -132,7 +132,7 @@ public class JanillaWebsite {
 			throw new IllegalStateException();
 		this.configuration = configuration;
 		types = Java.getPackageClasses(JanillaWebsite.class.getPackageName());
-		factory = new Factory(types, this);
+		factory = new Factory(types, INSTANCE::get);
 		typeResolver = factory.create(DollarTypeResolver.class);
 
 		{

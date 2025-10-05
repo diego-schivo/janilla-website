@@ -28,9 +28,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
-import com.janilla.http.Http;
 import com.janilla.http.HttpCookie;
 import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpRequest;
@@ -53,12 +51,11 @@ public class CustomHttpExchange extends HttpExchange.Base {
 
 	public String sessionEmail() {
 		if (!session.containsKey("sessionEmail")) {
-			var s = request().getHeaderValues("cookie").collect(Collectors.joining("; "));
-			var cc = Http.parseCookieHeader(s);
-			var t = cc != null ? cc.get("janilla-website-token") : null;
+			var t = request().getHeaderValues("cookie").map(HttpCookie::parse)
+					.filter(x -> x.name().equals("janilla-website-token")).findFirst().orElse(null);
 			Map<String, ?> p;
 			try {
-				p = t != null ? Jwt.verifyToken(t, configuration.getProperty("janilla-website.jwt.key")) : null;
+				p = t != null ? Jwt.verifyToken(t.value(), configuration.getProperty("janilla-website.jwt.key")) : null;
 			} catch (IllegalArgumentException e) {
 				p = null;
 			}
