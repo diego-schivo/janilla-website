@@ -8,7 +8,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.janilla</groupId>
-			<artifactId>janilla-acme-dashboard-frontend</artifactId>
+			<artifactId>janilla-acme-dashboard-fullstack</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>

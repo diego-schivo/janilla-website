@@ -26,13 +26,13 @@ package com.janilla.website;
 import java.util.Collection;
 
 import com.janilla.cms.CmsPersistence;
-import com.janilla.database.Database;
 import com.janilla.json.TypeResolver;
 import com.janilla.persistence.Entity;
+import com.janilla.sqlite.SQLiteDatabase;
 
 public class CustomPersistence extends CmsPersistence {
 
-	public CustomPersistence(Database database, Collection<Class<? extends Entity<?>>> types,
+	public CustomPersistence(SQLiteDatabase database, Collection<Class<? extends Entity<?>>> types,
 			TypeResolver typeResolver) {
 		super(database, types, typeResolver);
 	}
