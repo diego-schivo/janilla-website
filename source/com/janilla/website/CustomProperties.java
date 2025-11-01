@@ -21,25 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-module com.janilla.website {
+package com.janilla.website;
 
-	opens com.janilla.website;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Properties;
 
-	requires com.janilla.acmedashboard.fullstack;
-//	requires com.janilla.acmestore;
-	requires com.janilla.addressbook.fullstack;
-//	requires com.janilla.conduit.backend;
-//	requires com.janilla.conduit.frontend;
-	requires com.janilla.conduit.fullstack;
-//	requires com.janilla.eshopweb.api;
-//	requires com.janilla.eshopweb.web;
-//	requires com.janilla.foodadvisor.api;
-//	requires com.janilla.foodadvisor.client;
-//	requires com.janilla.payment.checkout;
-	requires com.janilla.petclinic;
-//	requires com.janilla.mystore.admin;
-//	requires com.janilla.mystore.storefront;
-	requires com.janilla.templates.website;
-	requires com.janilla.todomvc;
-//	requires com.janilla.uxpatterns;
+public class CustomProperties extends Properties {
+
+	private static final long serialVersionUID = 5717283962390578739L;
+
+	public CustomProperties(String file) {
+		try {
+			try (var x = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
+				load(x);
+			}
+			if (file != null) {
+				var f = file.startsWith("~") ? System.getProperty("user.home") + file.substring(1) : file;
+				try (var x = Files.newInputStream(Path.of(f))) {
+					load(x);
+				}
+			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
 }

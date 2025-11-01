@@ -23,11 +23,14 @@
  */
 package com.janilla.website;
 
+import java.lang.reflect.Modifier;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -35,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.net.ssl.SSLContext;
 
@@ -50,6 +54,7 @@ import com.janilla.json.TypeResolver;
 import com.janilla.net.Net;
 import com.janilla.persistence.ApplicationPersistenceBuilder;
 import com.janilla.persistence.Persistence;
+import com.janilla.reflect.ClassAndMethod;
 import com.janilla.reflect.Factory;
 import com.janilla.reflect.Reflection;
 import com.janilla.web.ApplicationHandlerFactory;
@@ -71,19 +76,10 @@ public class JanillaWebsite {
 		try {
 			JanillaWebsite a;
 			{
-				var c = new Properties();
-				try (var x = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
-					c.load(x);
-				}
-				if (args.length > 0) {
-					var f = args[0];
-					if (f.startsWith("~"))
-						f = System.getProperty("user.home") + f.substring(1);
-					try (var x = Files.newInputStream(Path.of(f))) {
-						c.load(x);
-					}
-				}
-				a = new JanillaWebsite(c);
+				var f = new Factory(Java.getPackageClasses(JanillaWebsite.class.getPackageName()),
+						JanillaWebsite.INSTANCE::get);
+				a = f.create(JanillaWebsite.class,
+						Java.hashMap("factory", f, "configurationFile", args.length > 0 ? args[0] : null));
 			}
 
 			HttpServer s;
@@ -109,30 +105,30 @@ public class JanillaWebsite {
 		}
 	}
 
-	public Properties configuration;
+	protected final Properties configuration;
 
-	public Path databaseFile;
+	protected final String configurationFile;
 
-	public Factory factory;
+	protected final Path databaseFile;
 
-	public HttpHandler handler;
+	protected final Factory factory;
 
-	public Persistence persistence;
+	protected final HttpHandler handler;
 
-	public RenderableFactory renderableFactory;
+	protected final Persistence persistence;
 
-	public TypeResolver typeResolver;
+	protected final RenderableFactory renderableFactory;
 
-	public List<Class<?>> types;
+	protected final TypeResolver typeResolver;
 
 	protected final Map<String, Object> hostExample = new ConcurrentHashMap<>();
 
-	public JanillaWebsite(Properties configuration) {
+	public JanillaWebsite(Factory factory, String configurationFile) {
+		this.factory = factory;
+		this.configurationFile = configurationFile;
 		if (!INSTANCE.compareAndSet(null, this))
 			throw new IllegalStateException();
-		this.configuration = configuration;
-		types = Java.getPackageClasses(JanillaWebsite.class.getPackageName());
-		factory = new Factory(types, INSTANCE::get);
+		configuration = factory.create(Properties.class, Collections.singletonMap("file", configurationFile));
 		typeResolver = factory.create(DollarTypeResolver.class);
 
 		{
@@ -147,7 +143,12 @@ public class JanillaWebsite {
 		renderableFactory = new RenderableFactory();
 
 		{
-			var f = factory.create(ApplicationHandlerFactory.class);
+			var f = factory.create(ApplicationHandlerFactory.class, Map.of("methods", types().stream()
+					.flatMap(x -> Arrays.stream(x.getMethods()).filter(y -> !Modifier.isStatic(y.getModifiers()))
+							.map(y -> new ClassAndMethod(x, y)))
+					.toList(), "files",
+					Stream.of("com.janilla.frontend", JanillaWebsite.class.getPackageName())
+							.flatMap(x -> Java.getPackagePaths(x).stream().filter(Files::isRegularFile)).toList()));
 			handler = x -> {
 				var a = application(((HttpExchange) x).request().getAuthority());
 				var h2 = a == this ? (HttpHandler) y -> {
@@ -165,16 +166,54 @@ public class JanillaWebsite {
 		return this;
 	}
 
+	public Properties configuration() {
+		return configuration;
+	}
+
+	public Path databaseFile() {
+		return databaseFile;
+	}
+
+	public Factory factory() {
+		return factory;
+	}
+
+	public HttpHandler handler() {
+		return handler;
+	}
+
+	public Persistence persistence() {
+		return persistence;
+	}
+
+	public RenderableFactory renderableFactory() {
+		return renderableFactory;
+	}
+
+	public TypeResolver typeResolver() {
+		return typeResolver;
+	}
+
+	public Collection<Class<?>> types() {
+		return factory.types();
+	}
+
 	public Object application(String authority) {
 		var s = "." + configuration.getProperty("janilla-website.authority");
 		if (!authority.endsWith(s))
 			return application();
 		return hostExample.computeIfAbsent(authority.substring(0, authority.length() - s.length()), k -> {
-			var c = persistence.crud(Example.class);
-			var x = c.read(c.find("demo", k));
+			Example x;
+			{
+				var c = persistence.crud(Example.class);
+				x = c.read(c.find("demo", k));
+			}
 			if (x != null)
 				try {
-					return Class.forName(x.application()).getConstructor(Properties.class).newInstance(configuration);
+					var c = Class.forName(x.application());
+					var f = new Factory(Java.getPackageClasses(c.getPackageName()),
+							((AtomicReference<?>) c.getDeclaredField("INSTANCE").get(null))::get);
+					return f.create(c, Java.hashMap("factory", f, "configurationFile", configurationFile));
 				} catch (ReflectiveOperationException e) {
 					throw new RuntimeException(e);
 				}

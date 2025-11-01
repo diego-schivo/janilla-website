@@ -25,6 +25,7 @@ package com.janilla.website;
 
 import java.net.SocketAddress;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.net.ssl.SSLContext;
 
@@ -51,8 +52,13 @@ public class CustomHttpServer extends HttpServer {
 			var p = Reflection.property(a.getClass(), "backend");
 			if (p != null)
 				a = p.get(a);
+		} else {
+			var p = Reflection.property(a.getClass(), "frontend");
+			if (p != null)
+				a = p.get(a);
 		}
 		var f = a == application ? application.factory : (Factory) Reflection.property(a.getClass(), "factory").get(a);
-		return f.create(HttpExchange.class, Map.of("request", request, "response", response));
+		return Optional.ofNullable(f.create(HttpExchange.class, Map.of("request", request, "response", response)))
+				.orElseGet(() -> super.createExchange(request, response));
 	}
 }
