@@ -39,10 +39,12 @@ import com.janilla.reflect.Reflection;
 
 public class CustomHttpServer extends HttpServer {
 
-	public JanillaWebsite application;
+	protected final JanillaWebsite application;
 
-	public CustomHttpServer(SSLContext sslContext, SocketAddress endpoint, HttpHandler handler) {
+	public CustomHttpServer(SSLContext sslContext, SocketAddress endpoint, HttpHandler handler,
+			JanillaWebsite application) {
 		super(sslContext, endpoint, handler);
+		this.application = application;
 	}
 
 	@Override
@@ -57,7 +59,9 @@ public class CustomHttpServer extends HttpServer {
 			if (p != null)
 				a = p.get(a);
 		}
-		var f = a == application ? application.factory : (Factory) Reflection.property(a.getClass(), "factory").get(a);
+//		IO.println("a=" + a);
+		var f = a == application ? application.factory()
+				: (Factory) Reflection.property(a.getClass(), "factory").get(a);
 		return Optional.ofNullable(f.create(HttpExchange.class, Map.of("request", request, "response", response)))
 				.orElseGet(() -> super.createExchange(request, response));
 	}

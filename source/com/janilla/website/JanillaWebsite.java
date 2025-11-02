@@ -25,6 +25,7 @@ package com.janilla.website;
 
 import java.lang.reflect.Modifier;
 import java.net.InetSocketAddress;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -79,7 +81,11 @@ public class JanillaWebsite {
 				var f = new Factory(Java.getPackageClasses(JanillaWebsite.class.getPackageName()),
 						JanillaWebsite.INSTANCE::get);
 				a = f.create(JanillaWebsite.class,
-						Java.hashMap("factory", f, "configurationFile", args.length > 0 ? args[0] : null));
+						Java.hashMap("factory", f, "configurationFile",
+								args.length > 0 ? Path.of(
+										args[0].startsWith("~") ? System.getProperty("user.home") + args[0].substring(1)
+												: args[0])
+										: null));
 			}
 
 			HttpServer s;
@@ -107,7 +113,7 @@ public class JanillaWebsite {
 
 	protected final Properties configuration;
 
-	protected final String configurationFile;
+	protected final Path configurationFile;
 
 	protected final Path databaseFile;
 
@@ -123,7 +129,7 @@ public class JanillaWebsite {
 
 	protected final Map<String, Object> hostExample = new ConcurrentHashMap<>();
 
-	public JanillaWebsite(Factory factory, String configurationFile) {
+	public JanillaWebsite(Factory factory, Path configurationFile) {
 		this.factory = factory;
 		this.configurationFile = configurationFile;
 		if (!INSTANCE.compareAndSet(null, this))
@@ -213,7 +219,15 @@ public class JanillaWebsite {
 					var c = Class.forName(x.application());
 					var f = new Factory(Java.getPackageClasses(c.getPackageName()),
 							((AtomicReference<?>) c.getDeclaredField("INSTANCE").get(null))::get);
-					return f.create(c, Java.hashMap("factory", f, "configurationFile", configurationFile));
+					return f.create(c, Java.hashMap("factory", f, "configurationFile",
+							Optional.ofNullable(configurationFile).orElseGet(() -> {
+								try {
+									return Path
+											.of(JanillaWebsite.class.getResource("configuration.properties").toURI());
+								} catch (URISyntaxException e) {
+									throw new RuntimeException(e);
+								}
+							})));
 				} catch (ReflectiveOperationException e) {
 					throw new RuntimeException(e);
 				}
