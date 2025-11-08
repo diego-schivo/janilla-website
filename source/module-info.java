@@ -39,6 +39,7 @@ module com.janilla.website {
 	requires com.janilla.petclinic;
 //	requires com.janilla.mystore.admin;
 //	requires com.janilla.mystore.storefront;
+	requires com.janilla.templates.blank;
 	requires com.janilla.templates.website;
 	requires com.janilla.todomvc;
 //	requires com.janilla.uxpatterns;

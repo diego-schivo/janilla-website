@@ -24,8 +24,11 @@
 package com.janilla.website;
 
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import com.janilla.cms.CollectionApi;
+import com.janilla.http.HttpExchange;
+import com.janilla.persistence.Persistence;
 import com.janilla.web.Handle;
 
 @Handle(path = "/api/examples")
@@ -33,7 +36,7 @@ public class ExampleApi extends CollectionApi<Long, Example> {
 
 	public Properties configuration;
 
-	public ExampleApi() {
-		super(Example.class, JanillaWebsite.DRAFTS);
+	public ExampleApi(Predicate<HttpExchange> drafts, Persistence persistence) {
+		super(Example.class, drafts, persistence);
 	}
 }

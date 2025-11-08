@@ -105,7 +105,7 @@
 		{
 			"$type": "Example",
 			"id": 1,
-			"application": "com.janilla.acmedashboard.frontend.AcmeDashboardFrontend",
+			"application": "com.janilla.acmedashboard.fullstack.AcmeDashboardFullstack",
 			"title": "Acme Dashboard",
 			"richText": "<p>(<a href=\"https://github.com/vercel/next-learn/tree/main/dashboard/final-example\" target=\"_blank\">original project</a> by <a href=\"https://vercel.com/\" target=\"_blank\">Vercel</a>)</p>",
 			"demo": "acme-dashboard",
@@ -170,13 +170,24 @@
 		},
 		{
 			"$type": "Example",
-			"id": 6,
+			"id": 7,
 			"application": "",
 			"title": "Janilla website",
 			"richText": "",
 			"demo": "",
 			"source": "janilla-website",
 			"image": 8,
+			"video": ""
+		},
+		{
+			"$type": "Example",
+			"id": 8,
+			"application": "com.janilla.templates.blank.BlankTemplate",
+			"title": "Blank Template",
+			"richText": "",
+			"demo": "blank-template",
+			"source": "janilla-templates",
+			"image": 9,
 			"video": ""
 		}
 	],
@@ -251,7 +262,8 @@
 					4,
 					5,
 					6,
-					7
+					7,
+					8
 				]
 			}
 		],

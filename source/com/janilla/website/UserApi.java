@@ -23,15 +23,17 @@
  */
 package com.janilla.website;
 
-//import java.io.IO;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import com.janilla.cms.CollectionApi;
+import com.janilla.http.HttpExchange;
 import com.janilla.json.Jwt;
+import com.janilla.persistence.Persistence;
 import com.janilla.web.BadRequestException;
 import com.janilla.web.ForbiddenException;
 import com.janilla.web.Handle;
@@ -42,8 +44,8 @@ public class UserApi extends CollectionApi<Long, User> {
 
 	public Properties configuration;
 
-	public UserApi() {
-		super(User.class, JanillaWebsite.DRAFTS);
+	public UserApi(Predicate<HttpExchange> drafts, Persistence persistence) {
+		super(User.class, drafts, persistence);
 	}
 
 	@Handle(method = "POST", path = "login")

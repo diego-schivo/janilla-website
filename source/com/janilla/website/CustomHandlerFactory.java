@@ -30,16 +30,17 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import com.janilla.http.HttpHandlerFactory;
+import com.janilla.ioc.DependencyInjector;
 import com.janilla.reflect.ClassAndMethod;
-import com.janilla.reflect.Factory;
 import com.janilla.web.ApplicationHandlerFactory;
 import com.janilla.web.FileHandlerFactory;
+import com.janilla.web.RenderableFactory;
 
 public class CustomHandlerFactory extends ApplicationHandlerFactory {
 
-	public CustomHandlerFactory(Factory factory, Collection<ClassAndMethod> methods,
-			Collection<Path> files) {
-		super(factory, methods, files);
+	public CustomHandlerFactory(DependencyInjector injector, Collection<ClassAndMethod> methods,
+			RenderableFactory renderableFactory, Collection<Path> files) {
+		super(injector, methods, renderableFactory, files);
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class CustomHandlerFactory extends ApplicationHandlerFactory {
 		var ff = new ArrayList<>(super.buildFactories());
 		var i = IntStream.range(0, ff.size()).filter(x -> ff.get(x) instanceof FileHandlerFactory).findFirst()
 				.getAsInt();
-		ff.add(i, factory.create(CmsFileHandlerFactory.class));
+		ff.add(i, injector.create(CmsFileHandlerFactory.class));
 		return ff;
 	}
 }

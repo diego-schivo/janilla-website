@@ -23,14 +23,18 @@
  */
 package com.janilla.website;
 
+import java.util.function.Predicate;
+
 import com.janilla.cms.GlobalApi;
+import com.janilla.http.HttpExchange;
+import com.janilla.persistence.Persistence;
 import com.janilla.web.Handle;
 
 @Handle(path = "/api/page")
 public class PageApi extends GlobalApi<Long, Page> {
 
-	public PageApi() {
-		super(Page.class, JanillaWebsite.DRAFTS);
+	public PageApi(Predicate<HttpExchange> drafts, Persistence persistence) {
+		super(Page.class, drafts, persistence);
 	}
 
 	@Override

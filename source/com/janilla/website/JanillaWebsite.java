@@ -48,6 +48,7 @@ import com.janilla.cms.Cms;
 import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpHandler;
 import com.janilla.http.HttpServer;
+import com.janilla.ioc.DependencyInjector;
 import com.janilla.java.Java;
 import com.janilla.json.DollarTypeResolver;
 import com.janilla.json.Json;
@@ -57,7 +58,6 @@ import com.janilla.net.Net;
 import com.janilla.persistence.ApplicationPersistenceBuilder;
 import com.janilla.persistence.Persistence;
 import com.janilla.reflect.ClassAndMethod;
-import com.janilla.reflect.Factory;
 import com.janilla.reflect.Reflection;
 import com.janilla.web.ApplicationHandlerFactory;
 import com.janilla.web.Handle;
@@ -78,7 +78,7 @@ public class JanillaWebsite {
 		try {
 			JanillaWebsite a;
 			{
-				var f = new Factory(Java.getPackageClasses(JanillaWebsite.class.getPackageName()),
+				var f = new DependencyInjector(Java.getPackageClasses(JanillaWebsite.class.getPackageName()),
 						JanillaWebsite.INSTANCE::get);
 				a = f.create(JanillaWebsite.class,
 						Java.hashMap("factory", f, "configurationFile",
@@ -102,7 +102,7 @@ public class JanillaWebsite {
 							(kp2 != null && !kp2.isEmpty() ? kp2 : "passphrase").toCharArray());
 				}
 				var p = Integer.parseInt(a.configuration.getProperty("janilla-website.server.port"));
-				s = a.factory.create(HttpServer.class,
+				s = a.injector.create(HttpServer.class,
 						Map.of("sslContext", c, "endpoint", new InetSocketAddress(p), "handler", a.handler));
 			}
 			s.serve();
@@ -117,7 +117,7 @@ public class JanillaWebsite {
 
 	protected final Path databaseFile;
 
-	protected final Factory factory;
+	protected final DependencyInjector injector;
 
 	protected final HttpHandler handler;
 
@@ -129,27 +129,27 @@ public class JanillaWebsite {
 
 	protected final Map<String, Object> hostExample = new ConcurrentHashMap<>();
 
-	public JanillaWebsite(Factory factory, Path configurationFile) {
-		this.factory = factory;
+	public JanillaWebsite(DependencyInjector injector, Path configurationFile) {
+		this.injector = injector;
 		this.configurationFile = configurationFile;
 		if (!INSTANCE.compareAndSet(null, this))
 			throw new IllegalStateException();
-		configuration = factory.create(Properties.class, Collections.singletonMap("file", configurationFile));
-		typeResolver = factory.create(DollarTypeResolver.class);
+		configuration = injector.create(Properties.class, Collections.singletonMap("file", configurationFile));
+		typeResolver = injector.create(DollarTypeResolver.class);
 
 		{
 			var p = configuration.getProperty("janilla-website.database.file");
 			if (p.startsWith("~"))
 				p = System.getProperty("user.home") + p.substring(1);
 			databaseFile = Path.of(p);
-			var pb = factory.create(ApplicationPersistenceBuilder.class);
+			var pb = injector.create(ApplicationPersistenceBuilder.class);
 			persistence = pb.build();
 		}
 
 		renderableFactory = new RenderableFactory();
 
 		{
-			var f = factory.create(ApplicationHandlerFactory.class, Map.of("methods", types().stream()
+			var f = injector.create(ApplicationHandlerFactory.class, Map.of("methods", types().stream()
 					.flatMap(x -> Arrays.stream(x.getMethods()).filter(y -> !Modifier.isStatic(y.getModifiers()))
 							.map(y -> new ClassAndMethod(x, y)))
 					.toList(), "files",
@@ -180,8 +180,8 @@ public class JanillaWebsite {
 		return databaseFile;
 	}
 
-	public Factory factory() {
-		return factory;
+	public DependencyInjector injector() {
+		return injector;
 	}
 
 	public HttpHandler handler() {
@@ -201,7 +201,7 @@ public class JanillaWebsite {
 	}
 
 	public Collection<Class<?>> types() {
-		return factory.types();
+		return injector.types();
 	}
 
 	public Object application(String authority) {
@@ -217,7 +217,7 @@ public class JanillaWebsite {
 			if (x != null)
 				try {
 					var c = Class.forName(x.application());
-					var f = new Factory(Java.getPackageClasses(c.getPackageName()),
+					var f = new DependencyInjector(Java.getPackageClasses(c.getPackageName()),
 							((AtomicReference<?>) c.getDeclaredField("INSTANCE").get(null))::get);
 					return f.create(c, Java.hashMap("factory", f, "configurationFile",
 							Optional.ofNullable(configurationFile).orElseGet(() -> {
@@ -279,7 +279,7 @@ public class JanillaWebsite {
 
 		@Override
 		public String apply(T value) {
-			return Json.format(INSTANCE.get().factory.create(ReflectionJsonIterator.class,
+			return Json.format(INSTANCE.get().injector.create(ReflectionJsonIterator.class,
 					Map.of("object", value, "includeType", true)));
 		}
 	}

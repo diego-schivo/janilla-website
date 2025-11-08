@@ -23,14 +23,18 @@
  */
 package com.janilla.website;
 
+import java.util.function.Predicate;
+
 import com.janilla.cms.GlobalApi;
+import com.janilla.http.HttpExchange;
+import com.janilla.persistence.Persistence;
 import com.janilla.web.Handle;
 
 @Handle(path = "/api/footer")
 public class FooterApi extends GlobalApi<Long, Footer> {
 
-	public FooterApi() {
-		super(Footer.class, JanillaWebsite.DRAFTS);
+	public FooterApi(Predicate<HttpExchange> drafts, Persistence persistence) {
+		super(Footer.class, drafts, persistence);
 	}
 
 	@Override

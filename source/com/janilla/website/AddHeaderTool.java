@@ -23,7 +23,6 @@
  */
 package com.janilla.website;
 
-//import java.io.IO;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -109,7 +108,8 @@ class AddHeaderTool {
 		var h = Map.ofEntries(Map.entry("janilla", GPL2.split("\n")),
 				Map.entry("janilla-acme-dashboard", MIT.split("\n")),
 //				Map.entry("janilla-acmestore", MIT.split("\n")),
-				Map.entry("janilla-address-book", MIT.split("\n")), Map.entry("janilla-cms", MIT.split("\n")),
+				Map.entry("janilla-address-book", MIT.split("\n")),
+				Map.entry("janilla-blank-template", MIT.split("\n")), Map.entry("janilla-cms", MIT.split("\n")),
 				Map.entry("janilla-conduit", MIT.split("\n")),
 //				Map.entry("janilla-eshopweb", MIT.split("\n")),
 //				Map.entry("janilla-foodadvisor", MIT.split("\n")),
@@ -119,7 +119,8 @@ class AddHeaderTool {
 				Map.entry("janilla-petclinic", APACHE2.split("\n")), Map.entry("janilla-templates", MIT.split("\n")),
 				Map.entry("janilla-todomvc", MIT.split("\n")),
 //				Map.entry("janilla-uxpatterns", MIT.split("\n")),
-				Map.entry("janilla-website", MIT.split("\n")), Map.entry("janillas", GPL2.split("\n")));
+				Map.entry("janilla-website", MIT.split("\n")), Map.entry("janilla-website-template", MIT.split("\n")),
+				Map.entry("janillas", GPL2.split("\n")));
 		var s = Path.of(System.getProperty("user.home")).resolve("git");
 		Files.walkFileTree(s, new SimpleFileVisitor<>() {
 

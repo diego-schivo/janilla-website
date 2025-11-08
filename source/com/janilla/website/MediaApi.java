@@ -25,9 +25,12 @@ package com.janilla.website;
 
 import java.nio.file.Path;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import com.janilla.cms.CollectionApi;
+import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpResponse;
+import com.janilla.persistence.Persistence;
 import com.janilla.web.Handle;
 
 @Handle(path = "/api/media")
@@ -35,8 +38,8 @@ public class MediaApi extends CollectionApi<Long, Media> {
 
 	public Properties configuration;
 
-	public MediaApi() {
-		super(Media.class, JanillaWebsite.DRAFTS);
+	public MediaApi(Predicate<HttpExchange> drafts, Persistence persistence) {
+		super(Media.class, drafts, persistence);
 	}
 
 	@Handle(method = "GET", path = "file/(.+)")

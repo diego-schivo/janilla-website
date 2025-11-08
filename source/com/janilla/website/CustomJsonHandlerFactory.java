@@ -26,18 +26,18 @@ package com.janilla.website;
 import java.util.Iterator;
 
 import com.janilla.http.HttpExchange;
+import com.janilla.ioc.DependencyInjector;
 import com.janilla.java.Java;
 import com.janilla.json.JsonToken;
 import com.janilla.json.ReflectionJsonIterator;
-import com.janilla.reflect.Factory;
 import com.janilla.web.JsonHandlerFactory;
 
 public class CustomJsonHandlerFactory extends JsonHandlerFactory {
 
-	public Factory factory;
+	public DependencyInjector injector;
 
 	@Override
 	protected Iterator<JsonToken<?>> buildJsonIterator(Object object, HttpExchange exchange) {
-		return factory.create(ReflectionJsonIterator.class, Java.hashMap("object", object, "includeType", true));
+		return injector.create(ReflectionJsonIterator.class, Java.hashMap("object", object, "includeType", true));
 	}
 }
