@@ -35,7 +35,7 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Properties;
 
-import com.janilla.ioc.DependencyInjector;
+import com.janilla.ioc.DiFactory;
 import com.janilla.java.Java;
 import com.janilla.json.Converter;
 import com.janilla.json.Json;
@@ -46,8 +46,8 @@ public class CustomPersistenceBuilder extends ApplicationPersistenceBuilder {
 
 	public Properties configuration;
 
-	public CustomPersistenceBuilder(Path databaseFile, DependencyInjector injector) {
-		super(databaseFile, injector);
+	public CustomPersistenceBuilder(Path databaseFile, DiFactory diFactory) {
+		super(databaseFile, diFactory);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class CustomPersistenceBuilder extends ApplicationPersistenceBuilder {
 				try (var is = getClass().getResourceAsStream("seed-data.json")) {
 					var s = new String(is.readAllBytes());
 					var o = Json.parse(s);
-					sd = (SeedData) injector.create(Converter.class).convert(o, SeedData.class);
+					sd = (SeedData) diFactory.create(Converter.class).convert(o, SeedData.class);
 				}
 				for (var x : sd.media())
 					persistence.crud(Media.class).create(x);

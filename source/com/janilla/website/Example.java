@@ -26,12 +26,13 @@ package com.janilla.website;
 import java.time.Instant;
 
 import com.janilla.cms.Document;
+import com.janilla.cms.DocumentStatus;
 import com.janilla.cms.Types;
 import com.janilla.persistence.Index;
 import com.janilla.persistence.Store;
 
 @Store
 public record Example(Long id, String application, String title, String richText, @Index String demo, String source,
-		@Types(Media.class) Long image, String video, Instant createdAt, Instant updatedAt, Document.Status documentStatus,
+		@Types(Media.class) Long image, String video, Instant createdAt, Instant updatedAt, DocumentStatus documentStatus,
 		Instant publishedAt) implements Document<Long> {
 }

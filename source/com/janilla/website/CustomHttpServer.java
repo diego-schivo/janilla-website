@@ -34,7 +34,7 @@ import com.janilla.http.HttpHandler;
 import com.janilla.http.HttpRequest;
 import com.janilla.http.HttpResponse;
 import com.janilla.http.HttpServer;
-import com.janilla.ioc.DependencyInjector;
+import com.janilla.ioc.DiFactory;
 import com.janilla.reflect.Reflection;
 
 public class CustomHttpServer extends HttpServer {
@@ -60,8 +60,8 @@ public class CustomHttpServer extends HttpServer {
 				a = p.get(a);
 		}
 //		IO.println("a=" + a);
-		var f = a == application ? application.injector()
-				: (DependencyInjector) Reflection.property(a.getClass(), "factory").get(a);
+		var f = a == application ? application.diFactory()
+				: (DiFactory) Reflection.property(a.getClass(), "diFactory").get(a);
 		return Optional.ofNullable(f.create(HttpExchange.class, Map.of("request", request, "response", response)))
 				.orElseGet(() -> super.createExchange(request, response));
 	}

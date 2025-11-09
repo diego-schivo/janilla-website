@@ -27,6 +27,7 @@ import java.time.Instant;
 import java.util.List;
 
 import com.janilla.cms.Document;
+import com.janilla.cms.DocumentStatus;
 import com.janilla.cms.Types;
 import com.janilla.cms.Versions;
 import com.janilla.persistence.Store;
@@ -35,5 +36,5 @@ import com.janilla.persistence.Store;
 @Versions(drafts = true)
 public record Page(Long id, List<@Types( {
 		Hero.class, Features.class, ExampleApps.class }) Object> layout, Instant createdAt, Instant updatedAt,
-		Document.Status documentStatus, Instant publishedAt) implements Document<Long>{
+		DocumentStatus documentStatus, Instant publishedAt) implements Document<Long>{
 }

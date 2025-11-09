@@ -27,9 +27,10 @@ import java.time.Instant;
 import java.util.List;
 
 import com.janilla.cms.Document;
+import com.janilla.cms.DocumentStatus;
 import com.janilla.persistence.Store;
 
 @Store
-public record Header(Long id, List<Link> navItems, Instant createdAt, Instant updatedAt, Document.Status documentStatus,
+public record Header(Long id, List<Link> navItems, Instant createdAt, Instant updatedAt, DocumentStatus documentStatus,
 		Instant publishedAt) implements Document<Long> {
 }
