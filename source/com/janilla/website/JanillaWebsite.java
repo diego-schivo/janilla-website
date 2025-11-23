@@ -49,17 +49,17 @@ import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpHandler;
 import com.janilla.http.HttpServer;
 import com.janilla.ioc.DiFactory;
+import com.janilla.java.DollarTypeResolver;
 import com.janilla.java.Java;
-import com.janilla.json.DollarTypeResolver;
+import com.janilla.java.TypeResolver;
 import com.janilla.json.Json;
 import com.janilla.json.ReflectionJsonIterator;
-import com.janilla.json.TypeResolver;
 import com.janilla.net.Net;
 import com.janilla.persistence.ApplicationPersistenceBuilder;
 import com.janilla.persistence.Persistence;
-import com.janilla.reflect.ClassAndMethod;
 import com.janilla.reflect.Reflection;
 import com.janilla.web.ApplicationHandlerFactory;
+import com.janilla.web.Invocable;
 import com.janilla.web.Handle;
 import com.janilla.web.NotFoundException;
 import com.janilla.web.Render;
@@ -151,7 +151,7 @@ public class JanillaWebsite {
 		{
 			var f = diFactory.create(ApplicationHandlerFactory.class, Map.of("methods", types().stream()
 					.flatMap(x -> Arrays.stream(x.getMethods()).filter(y -> !Modifier.isStatic(y.getModifiers()))
-							.map(y -> new ClassAndMethod(x, y)))
+							.map(y -> new Invocable(x, y)))
 					.toList(), "files",
 					Stream.of("com.janilla.frontend", JanillaWebsite.class.getPackageName())
 							.flatMap(x -> Java.getPackagePaths(x).stream().filter(Files::isRegularFile)).toList()));
