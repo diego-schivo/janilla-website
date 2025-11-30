@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import com.janilla.http.BaseHttpExchange;
 import com.janilla.http.HttpCookie;
 import com.janilla.http.HttpExchange;
 import com.janilla.http.HttpRequest;
@@ -37,7 +38,7 @@ import com.janilla.json.Jwt;
 import com.janilla.persistence.Persistence;
 import com.janilla.web.UnauthorizedException;
 
-public class CustomHttpExchange extends HttpExchange.Base {
+public class CustomHttpExchange extends BaseHttpExchange {
 
 	public Properties configuration;
 
