@@ -104,11 +104,38 @@ class AddHeaderTool {
 			 * SOFTWARE.
 			 */""";
 
+//	private static final String MIT_PAYLOADCMS = """
+//			/*
+//			 * MIT License
+//			 *
+//			 * Copyright (c) 2025 Diego Schivo
+//			 * Copyright (c) 2018-2025 Payload CMS, Inc. <info@payloadcms.com>
+//			 *
+//			 * Permission is hereby granted, free of charge, to any person obtaining a copy
+//			 * of this software and associated documentation files (the "Software"), to deal
+//			 * in the Software without restriction, including without limitation the rights
+//			 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//			 * copies of the Software, and to permit persons to whom the Software is
+//			 * furnished to do so, subject to the following conditions:
+//			 *
+//			 * The above copyright notice and this permission notice shall be included in all
+//			 * copies or substantial portions of the Software.
+//			 *
+//			 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//			 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//			 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//			 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//			 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//			 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//			 * SOFTWARE.
+//			 */""";
+
 	public static void main(String[] args) throws Exception {
 		var h = Map.ofEntries(Map.entry("janilla", GPL2.split("\n")),
 				Map.entry("janilla-acme-dashboard", MIT.split("\n")),
 //				Map.entry("janilla-acmestore", MIT.split("\n")),
 				Map.entry("janilla-address-book", MIT.split("\n")),
+				Map.entry("janilla-admin-frontend", MIT.split("\n")),
 				Map.entry("janilla-blank-template", MIT.split("\n")), Map.entry("janilla-cms", MIT.split("\n")),
 				Map.entry("janilla-conduit", MIT.split("\n")),
 //				Map.entry("janilla-eshopweb", MIT.split("\n")),
