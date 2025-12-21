@@ -1,3 +1,26 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024-2025 Diego Schivo
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package com.janilla.website;
 
 import java.io.IOException;
@@ -14,12 +37,13 @@ import java.util.stream.IntStream;
 public class CssVariablesTool {
 
 	public static void main(String[] args) {
+		var a = "git/janilla-ecommerce-template/frontend/source/com/janilla/ecommercetemplate/frontend";
+//		var a = "git/janilla-admin-frontend/source/com/janilla/admin/frontend";
+		var b = "style.css";
+//		var b = "admin.css";
 		try {
-			var d = Path.of(System.getProperty("user.home"))
-//					.resolve("git/janilla-ecommerce-template/frontend/source/com/janilla/ecommercetemplate/frontend");
-					.resolve("git/janilla-admin-frontend/source/com/janilla/admin/frontend");
-//			var nn = Files.lines(d.resolve("style.css"))
-			var nn = Files.lines(d.resolve("admin.css")).filter(x -> x.startsWith("@import "))
+			var d = Path.of(System.getProperty("user.home")).resolve(a);
+			var nn = Files.lines(d.resolve(b)).filter(x -> x.startsWith("@import "))
 					.map(x -> x.substring(x.indexOf('"') + 1, x.lastIndexOf('"')))
 					.filter(x -> Files.exists(d.resolve(x))).toList();
 
