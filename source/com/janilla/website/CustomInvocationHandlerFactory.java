@@ -43,7 +43,7 @@ import com.janilla.web.Invocation;
 import com.janilla.web.InvocationHandlerFactory;
 import com.janilla.web.RenderableFactory;
 
-public class CustomMethodHandlerFactory extends InvocationHandlerFactory {
+public class CustomInvocationHandlerFactory extends InvocationHandlerFactory {
 
 	protected static final Set<String> GUEST_POST = Set.of("/api/users/first-register", "/api/users/forgot-password",
 			"/api/users/login", "/api/users/reset-password");
@@ -52,7 +52,7 @@ public class CustomMethodHandlerFactory extends InvocationHandlerFactory {
 
 	protected final DiFactory diFactory;
 
-	public CustomMethodHandlerFactory(List<Invocable> invocables, Function<Class<?>, Object> instanceResolver,
+	public CustomInvocationHandlerFactory(List<Invocable> invocables, Function<Class<?>, Object> instanceResolver,
 			Comparator<Invocation> invocationComparator, RenderableFactory renderableFactory,
 			HttpHandlerFactory rootFactory, Properties configuration, DiFactory diFactory) {
 		super(invocables, instanceResolver, invocationComparator, renderableFactory, rootFactory);
