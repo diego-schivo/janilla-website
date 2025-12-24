@@ -96,7 +96,7 @@ public class JanillaWebsite {
 					kp = System.getProperty("user.home") + kp.substring(1);
 				SSLContext c;
 				try (var x = kp != null && !kp.isEmpty() ? Files.newInputStream(Path.of(kp))
-						: Net.class.getResourceAsStream("testkeys")) {
+						: Net.class.getResourceAsStream("localhost")) {
 					c = Net.getSSLContext(
 							Map.entry(kp != null && kp.toLowerCase().endsWith(".p12") ? "PKCS12" : "JKS", x),
 							(kp2 != null && !kp2.isEmpty() ? kp2 : "passphrase").toCharArray());

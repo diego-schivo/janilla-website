@@ -79,6 +79,57 @@ class AddHeaderTool {
 			 * www.janilla.com if you need additional information or have any questions.
 			 */""";
 
+	private static final String GPL2_PAYLOAD = """
+			/*
+			 * Copyright (c) 2024, 2025, Diego Schivo. All rights reserved.
+			 * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+			 *
+			 * This code is free software; you can redistribute it and/or modify it
+			 * under the terms of the GNU General Public License version 2 only, as
+			 * published by the Free Software Foundation.  Diego Schivo designates
+			 * this particular file as subject to the "Classpath" exception as
+			 * provided by Diego Schivo in the LICENSE file that accompanied this
+			 * code.
+			 *
+			 * This code is distributed in the hope that it will be useful, but WITHOUT
+			 * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+			 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+			 * version 2 for more details (a copy is included in the LICENSE file that
+			 * accompanied this code).
+			 *
+			 * You should have received a copy of the GNU General Public License version
+			 * 2 along with this work; if not, write to the Free Software Foundation,
+			 * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+			 *
+			 * Note that authoring this file involved dealing in other programs that are
+			 * provided under the following license:
+			 *
+			 * MIT License
+			 *
+			 * Copyright (c) 2018-2025 Payload CMS, Inc. <info@payloadcms.com>
+			 *
+			 * Permission is hereby granted, free of charge, to any person obtaining a copy
+			 * of this software and associated documentation files (the "Software"), to deal
+			 * in the Software without restriction, including without limitation the rights
+			 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+			 * copies of the Software, and to permit persons to whom the Software is
+			 * furnished to do so, subject to the following conditions:
+			 *
+			 * The above copyright notice and this permission notice shall be included in all
+			 * copies or substantial portions of the Software.
+			 *
+			 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+			 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+			 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+			 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+			 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+			 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+			 * SOFTWARE.
+			 *
+			 * Please contact Diego Schivo, diego.schivo@janilla.com or visit
+			 * www.janilla.com if you need additional information or have any questions.
+			 */""";
+
 	private static final String MIT = """
 			/*
 			 * MIT License
@@ -104,50 +155,106 @@ class AddHeaderTool {
 			 * SOFTWARE.
 			 */""";
 
-//	private static final String MIT_PAYLOADCMS = """
-//			/*
-//			 * MIT License
-//			 *
-//			 * Copyright (c) 2025 Diego Schivo
-//			 * Copyright (c) 2018-2025 Payload CMS, Inc. <info@payloadcms.com>
-//			 *
-//			 * Permission is hereby granted, free of charge, to any person obtaining a copy
-//			 * of this software and associated documentation files (the "Software"), to deal
-//			 * in the Software without restriction, including without limitation the rights
-//			 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//			 * copies of the Software, and to permit persons to whom the Software is
-//			 * furnished to do so, subject to the following conditions:
-//			 *
-//			 * The above copyright notice and this permission notice shall be included in all
-//			 * copies or substantial portions of the Software.
-//			 *
-//			 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//			 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//			 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//			 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//			 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//			 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//			 * SOFTWARE.
-//			 */""";
+	private static final String MIT_PAYLOAD = """
+			/*
+			 * MIT License
+			 *
+			 * Copyright (c) 2018-2025 Payload CMS, Inc. <info@payloadcms.com>
+			 * Copyright (c) 2024-2025 Diego Schivo <diego.schivo@janilla.com>
+			 *
+			 * Permission is hereby granted, free of charge, to any person obtaining a copy
+			 * of this software and associated documentation files (the "Software"), to deal
+			 * in the Software without restriction, including without limitation the rights
+			 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+			 * copies of the Software, and to permit persons to whom the Software is
+			 * furnished to do so, subject to the following conditions:
+			 *
+			 * The above copyright notice and this permission notice shall be included in all
+			 * copies or substantial portions of the Software.
+			 *
+			 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+			 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+			 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+			 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+			 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+			 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+			 * SOFTWARE.
+			 */""";
+
+	private static final String MIT_REACTROUTER = """
+			/*
+			 * MIT License
+			 *
+			 * Copyright (c) React Training LLC 2015-2019
+			 * Copyright (c) Remix Software Inc. 2020-2021
+			 * Copyright (c) Shopify Inc. 2022-2023
+			 * Copyright (c) Diego Schivo 2024-2025
+			 *
+			 * Permission is hereby granted, free of charge, to any person obtaining a copy
+			 * of this software and associated documentation files (the "Software"), to deal
+			 * in the Software without restriction, including without limitation the rights
+			 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+			 * copies of the Software, and to permit persons to whom the Software is
+			 * furnished to do so, subject to the following conditions:
+			 *
+			 * The above copyright notice and this permission notice shall be included in all
+			 * copies or substantial portions of the Software.
+			 *
+			 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+			 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+			 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+			 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+			 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+			 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+			 * SOFTWARE.
+			 */""";
+
+	private static final String MIT_VERCEL = """
+			/*
+			 * MIT License
+			 *
+			 * Copyright (c) 2024 Vercel, Inc.
+			 * Copyright (c) 2024-2025 Diego Schivo
+			 *
+			 * Permission is hereby granted, free of charge, to any person obtaining a copy
+			 * of this software and associated documentation files (the "Software"), to deal
+			 * in the Software without restriction, including without limitation the rights
+			 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+			 * copies of the Software, and to permit persons to whom the Software is
+			 * furnished to do so, subject to the following conditions:
+			 *
+			 * The above copyright notice and this permission notice shall be included in all
+			 * copies or substantial portions of the Software.
+			 *
+			 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+			 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+			 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+			 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+			 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+			 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+			 * SOFTWARE.
+			 */""";
 
 	public static void main(String[] args) throws Exception {
-		var h = Map.ofEntries(Map.entry("janilla", GPL2.split("\n")),
-				Map.entry("janilla-acme-dashboard", MIT.split("\n")),
-//				Map.entry("janilla-acmestore", MIT.split("\n")),
-				Map.entry("janilla-address-book", MIT.split("\n")),
-				Map.entry("janilla-admin-frontend", MIT.split("\n")),
-				Map.entry("janilla-blank-template", MIT.split("\n")), Map.entry("janilla-cms", MIT.split("\n")),
-				Map.entry("janilla-conduit", MIT.split("\n")),
-//				Map.entry("janilla-eshopweb", MIT.split("\n")),
-//				Map.entry("janilla-foodadvisor", MIT.split("\n")),
-				Map.entry("janilla-ide", MIT.split("\n")),
-//				Map.entry("janilla-mystore", MIT.split("\n")),
-//				Map.entry("janilla-payment", MIT.split("\n")),
-				Map.entry("janilla-petclinic", APACHE2.split("\n")), Map.entry("janilla-templates", MIT.split("\n")),
-				Map.entry("janilla-todomvc", MIT.split("\n")),
-//				Map.entry("janilla-uxpatterns", MIT.split("\n")),
-				Map.entry("janilla-website", MIT.split("\n")), Map.entry("janilla-website-template", MIT.split("\n")),
-				Map.entry("janillas", GPL2.split("\n")));
+		var h = Map.ofEntries(
+				Map.entry("janilla",
+						Map.of("", GPL2.split("\n"), Path.of("source/com/janilla/cms"), GPL2_PAYLOAD.split("\n"),
+								Path.of("source/com/janilla/admin/frontend"), GPL2_PAYLOAD.split("\n"))),
+				Map.entry("janilla-acme-dashboard", MIT_VERCEL.split("\n")),
+				Map.entry("janilla-address-book", MIT_REACTROUTER.split("\n")),
+				Map.entry("janilla-admin-frontend", MIT_PAYLOAD.split("\n")),
+				Map.entry("janilla-blank-template", MIT_PAYLOAD.split("\n")),
+//						Map.entry("janilla-cms", MIT.split("\n")),
+//						Map.entry("janilla-conduit", MIT.split("\n")),
+				Map.entry("janilla-ecommerce-template", MIT_PAYLOAD.split("\n"))
+//						Map.entry("janilla-ide", MIT.split("\n")),
+//						Map.entry("janilla-petclinic", APACHE2.split("\n")),
+//						Map.entry("janilla-templates", MIT.split("\n")),
+//						Map.entry("janilla-todomvc", MIT.split("\n")),
+//						Map.entry("janilla-website", MIT.split("\n")),
+//						Map.entry("janilla-website-template", MIT.split("\n")),
+//						Map.entry("janillas", GPL2.split("\n"))
+		);
 		var s = Path.of(System.getProperty("user.home")).resolve("git");
 		Files.walkFileTree(s, new SimpleFileVisitor<>() {
 
@@ -167,7 +274,7 @@ class AddHeaderTool {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
 				var n = file.getFileName().toString();
-				if (!n.endsWith(".java") && !n.endsWith(".js"))
+				if (!n.endsWith(".css") && !n.endsWith(".java") && !n.endsWith(".js"))
 					return FileVisitResult.CONTINUE;
 				var l = Files.readAllLines(file);
 				var i = l.iterator();
@@ -191,7 +298,20 @@ class AddHeaderTool {
 					c.accept(t);
 					return c.state == 1 || c.state == 2;
 				}, _ -> i.hasNext() ? i.next() : null).toArray(String[]::new);
-				var b = h.get(s.relativize(file).getName(0).toString());
+				var f = s.relativize(file);
+				var o = h.get(f.getName(0).toString());
+				String[] b;
+				if (o instanceof Map<?, ?> m) {
+					b = (String[]) m.get("");
+					var x = 0;
+					for (var e : m.entrySet())
+						if (e.getKey() instanceof Path k && k.getNameCount() > x
+								&& f.getName(0).relativize(f).startsWith(k)) {
+							b = (String[]) e.getValue();
+							x = k.getNameCount();
+						}
+				} else
+					b = (String[]) o;
 				if (!Arrays.equals(a, b)) {
 					IO.println(file);
 					Files.write(file, Stream.concat(Arrays.stream(b), l.stream().skip(a.length)).toList());
