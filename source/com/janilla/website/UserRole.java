@@ -23,27 +23,7 @@
  */
 package com.janilla.website;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Properties;
+public enum UserRole implements com.janilla.cms.UserRole {
 
-public class CustomProperties extends Properties {
-
-	private static final long serialVersionUID = 5717283962390578739L;
-
-	public CustomProperties(Path file) {
-		try {
-			try (var x = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
-				load(x);
-			}
-			if (file != null)
-				try (var x = Files.newInputStream(file)) {
-					load(x);
-				}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-	}
+	ADMIN
 }

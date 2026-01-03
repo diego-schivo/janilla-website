@@ -4,13 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Janilla</title>
-    <link href="/images/favicon.svg" rel="icon" />
-	<link href="${href}" rel="stylesheet" />
+    <link rel="icon" href="/images/favicon.svg" />
+    <link rel="stylesheet" href="/style.css" />
+    <script type="importmap">
+      {
+        "imports": ${imports}
+      }
+    </script>
     <script type="module" src="/script.js"></script>
   </head>
   <body>
-    <root-element>
-      <script id="server-data" type="application/json">${data}</script>
-    </root-element>
+    <app-element data-api-url="${apiUrl}">
+      <script type="application/json">${state}</script>
+    </app-element>
   </body>
 </html>

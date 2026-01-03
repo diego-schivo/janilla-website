@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024-2025 Diego Schivo
+ * Copyright (c) 2024-2026 Diego Schivo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import WebComponent from "./web-component.js";
+import WebComponent from "web-component";
 
 export default class ExampleApps extends WebComponent {
 
@@ -29,13 +29,17 @@ export default class ExampleApps extends WebComponent {
 		return ["example-apps"];
 	}
 
+	static get observedAttributes() {
+	    return ["data-path"];
+	}
+
 	constructor() {
 		super();
 	}
 
 	async updateDisplay() {
-		const o = this.closest("page-element").data(this.dataset.expression);
-		const sd = this.closest("root-element").serverData;
+		const o = this.closest("page-element").data(this.dataset.path);
+		const ss = this.closest("app-element").serverState;
 		this.appendChild(this.interpolateDom({
 			$template: "",
 			...o,
@@ -44,7 +48,7 @@ export default class ExampleApps extends WebComponent {
 				...x,
 				links: [{
 					$template: "link",
-					uri: x.demo ? `https://${x.demo}.${sd.authority}` : "",
+					uri: x.demo ? `https://${x.demo}.${ss.authority}` : "",
 					target: "_blank",
 					hidden: !x.demo,
 					text: "Live demo"

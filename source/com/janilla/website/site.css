@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024-2025 Diego Schivo
+ * Copyright (c) 2024-2026 Diego Schivo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,28 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import CmsAdmin from "./cms-admin.js";
+@import "base.css";
 
-export default class CustomCmsAdmin extends CmsAdmin {
-
-	static get observedAttributes() {
-		return ["data-email", "data-path"];
-	}
-
-	static get templateNames() {
-		return ["cms-admin"];
-	}
-
-	constructor() {
-		super();
-	}
-
-	controlTemplate(field) {
-		if (field.type === "String")
-			switch (field.name) {
-				case "richText":
-					return "cms-rich-text";
-			}
-		return super.controlTemplate(field);
-	}
-}
+@import "app.css";
+@import "example-apps.css";
+@import "features.css";
+@import "hero.css";
+@import "not-found.css";
+@import "page.css";

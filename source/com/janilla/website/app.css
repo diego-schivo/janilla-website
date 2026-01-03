@@ -21,29 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.janilla.website;
+app-element {
+  > header {
+    background: white;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+    padding: .5rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Properties;
+    nav {
+      display: flex;
+      justify-content: space-between;
+    }
 
-public class CustomProperties extends Properties {
+    div {
+      align-items: center;
+      column-gap: 1rem;
+      display: flex;
+    }
 
-	private static final long serialVersionUID = 5717283962390578739L;
+    img {
+      height: 1.5rem;
+    }
 
-	public CustomProperties(Path file) {
-		try {
-			try (var x = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
-				load(x);
-			}
-			if (file != null)
-				try (var x = Files.newInputStream(file)) {
-					load(x);
-				}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-	}
+    a {
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  > footer {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+  
+    p {
+      max-width: 80%;
+    }
+  }
 }

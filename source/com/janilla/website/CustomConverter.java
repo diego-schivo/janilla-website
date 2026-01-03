@@ -23,27 +23,12 @@
  */
 package com.janilla.website;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Properties;
+import com.janilla.cms.CmsConverter;
+import com.janilla.java.TypeResolver;
 
-public class CustomProperties extends Properties {
+public class CustomConverter extends CmsConverter {
 
-	private static final long serialVersionUID = 5717283962390578739L;
-
-	public CustomProperties(Path file) {
-		try {
-			try (var x = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
-				load(x);
-			}
-			if (file != null)
-				try (var x = Files.newInputStream(file)) {
-					load(x);
-				}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
+	public CustomConverter(TypeResolver typeResolver) {
+		super(typeResolver);
 	}
 }

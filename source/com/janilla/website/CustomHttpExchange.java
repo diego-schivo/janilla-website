@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024-2025 Diego Schivo
+ * Copyright (c) 2024-2026 Diego Schivo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,36 +23,45 @@
  */
 package com.janilla.website;
 
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import com.janilla.http.SimpleHttpExchange;
 import com.janilla.http.HttpCookie;
 import com.janilla.http.HttpRequest;
 import com.janilla.http.HttpResponse;
+import com.janilla.http.SimpleHttpExchange;
 import com.janilla.json.Jwt;
-import com.janilla.persistence.Persistence;
 import com.janilla.web.UnauthorizedException;
 
 public class CustomHttpExchange extends SimpleHttpExchange {
 
-	public Properties configuration;
+	private static final String SESSION_COOKIE = "janilla-token";
 
-	public Persistence persistence;
+	protected final Properties configuration;
+
+	protected final DataFetching dataFetching;
 
 	protected final Map<String, Object> session = new HashMap<>();
 
-	public CustomHttpExchange(HttpRequest request, HttpResponse response) {
+	public CustomHttpExchange(HttpRequest request, HttpResponse response, Properties configuration,
+			DataFetching dataFetching) {
 		super(request, response);
+		this.configuration = configuration;
+		this.dataFetching = dataFetching;
+	}
+
+	public HttpCookie tokenCookie() {
+		return request.getHeaderValues("cookie").map(HttpCookie::parse).filter(x -> x.name().equals(SESSION_COOKIE))
+				.findFirst().orElse(null);
 	}
 
 	public String sessionEmail() {
 		if (!session.containsKey("sessionEmail")) {
-			var t = request().getHeaderValues("cookie").map(HttpCookie::parse)
-					.filter(x -> x.name().equals("janilla-website-token")).findFirst().orElse(null);
+			var t = tokenCookie();
 			Map<String, ?> p;
 			try {
 				p = t != null ? Jwt.verifyToken(t.value(), configuration.getProperty("janilla-website.jwt.key")) : null;
@@ -64,13 +73,12 @@ public class CustomHttpExchange extends SimpleHttpExchange {
 		return (String) session.get("sessionEmail");
 	}
 
-	public User sessionUser() {
+	public Object sessionUser() {
 		if (!session.containsKey("sessionUser")) {
-			var uc = persistence.crud(User.class);
-			var se = sessionEmail();
-			session.put("sessionUser", uc.read(se != null ? uc.find("email", se) : 0));
+			var t = tokenCookie();
+			session.put("sessionUser", t != null ? dataFetching.sessionUser() : null);
 		}
-		return (User) session.get("sessionUser");
+		return session.get("sessionUser");
 	}
 
 	public void requireSessionEmail() {
@@ -79,11 +87,10 @@ public class CustomHttpExchange extends SimpleHttpExchange {
 	}
 
 	public void setSessionCookie(String value) {
-		var c = HttpCookie.of("janilla-website-token", value).withPath("/").withHttpOnly(true).withSameSite("Lax");
-		if (value != null && !value.isEmpty())
-			c = c.withExpires(ZonedDateTime.now(ZoneOffset.UTC).plusHours(2));
-		else
-			c = c.withMaxAge(0);
-		response().setHeaderValue("set-cookie", c.format());
+		response().setHeaderValue("set-cookie",
+				HttpCookie.of(SESSION_COOKIE, value).withPath("/").withHttpOnly(true).withSameSite("Lax")
+						.withExpires(value != null && !value.isEmpty() ? ZonedDateTime.now(ZoneOffset.UTC).plusHours(2)
+								: ZonedDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC))
+						.format());
 	}
 }

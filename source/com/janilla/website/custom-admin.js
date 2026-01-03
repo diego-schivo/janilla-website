@@ -21,29 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.janilla.website;
+import Admin from "./admin.js";
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Properties;
+export default class CustomAdmin extends Admin {
 
-public class CustomProperties extends Properties {
+    static get templateNames() {
+        return ["admin"];
+    }
 
-	private static final long serialVersionUID = 5717283962390578739L;
+    static get observedAttributes() {
+        return ["data-user", "data-path"];
+    }
 
-	public CustomProperties(Path file) {
-		try {
-			try (var x = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
-				load(x);
-			}
-			if (file != null)
-				try (var x = Files.newInputStream(file)) {
-					load(x);
-				}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-	}
+    constructor() {
+        super();
+    }
+
+    controlTemplate(field) {
+        switch (field.type) {
+            case "String":
+                switch (field.name) {
+                    case "richText":
+                        return "rich-text";
+                }
+                break;
+        }
+        return super.controlTemplate(field);
+    }
 }

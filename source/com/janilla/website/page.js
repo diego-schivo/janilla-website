@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024-2025 Diego Schivo
+ * Copyright (c) 2024-2026 Diego Schivo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,42 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import WebComponent from "./web-component.js";
+import WebComponent from "web-component";
 
 export default class Page extends WebComponent {
 
-	static get observedAttributes() {
-		return ["data-slug"];
-	}
+    static get templateNames() {
+        return ["page"];
+    }
 
-	static get templateNames() {
-		return ["page"];
-	}
+    constructor() {
+        super();
+    }
 
-	constructor() {
-		super();
-	}
+    async updateDisplay() {
+        let hs = history.state;
+        const a = this.closest("app-element");
 
-	async updateDisplay() {
-		const r = this.closest("root-element");
-		if (this.dataset.slug === "home") {
-			const s = r.state;
-			this.appendChild(this.interpolateDom({
-				$template: "",
-				layout: s.page?.layout?.map((x, i) => ({
-					$template: x.$type.split(/(?=[A-Z])/).map(x => x.toLowerCase()).join("-"),
-					expression: `layout.${i}`
-				}))
-			}));
-		} else
-			r.notFound();
-	}
+        if (!Object.hasOwn(hs, "page"))
+            history.replaceState(hs = {
+                ...hs,
+                page: a.serverState?.page
+            }, "");
 
-	data(expression) {
-		return expression.split(".").reduce((x, y) => Array.isArray(x)
-			? x[parseInt(y)]
-			: typeof x === "object" && x !== null
-				? x[y]
-				: null, this.closest("root-element").state.page);
-	}
+        if (hs.page)
+            this.appendChild(this.interpolateDom({
+                $template: "",
+                layout: hs.page?.layout?.map((x, i) => ({
+                    $template: x.$type.split(/(?=[A-Z])/).map(x => x.toLowerCase()).join("-"),
+                    path: `layout.${i}`
+                }))
+            }));
+        else
+            a.notFound();
+    }
+
+    data(path) {
+        return path.split(".").reduce((x, n) => Array.isArray(x)
+            ? x[parseInt(n)]
+            : typeof x === "object" && x !== null
+                ? x[n]
+                : null, history.state.page);
+    }
 }

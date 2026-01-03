@@ -23,27 +23,38 @@
  */
 package com.janilla.website;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Properties;
+import java.util.Map;
 
-public class CustomProperties extends Properties {
+import com.janilla.ioc.DiFactory;
+import com.janilla.json.Json;
+import com.janilla.json.ReflectionJsonIterator;
+import com.janilla.web.Render;
+import com.janilla.web.Renderer;
 
-	private static final long serialVersionUID = 5717283962390578739L;
+@Render(template = "index.html")
+public record Index(@Render(renderer = JsonRenderer.class) Map<String, String> imports, String apiUrl,
+		@Render(renderer = StateRenderer.class) Map<String, Object> state) {
 
-	public CustomProperties(Path file) {
-		try {
-			try (var x = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
-				load(x);
-			}
-			if (file != null)
-				try (var x = Files.newInputStream(file)) {
-					load(x);
-				}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
+	public static class JsonRenderer<T> extends Renderer<T> {
+
+		@Override
+		public String apply(T value) {
+			return Json.format(value);
+		}
+	}
+
+	public static class StateRenderer<T> extends Renderer<T> {
+
+		protected final DiFactory diFactory;
+
+		public StateRenderer(DiFactory diFactory) {
+			this.diFactory = diFactory;
+		}
+
+		@Override
+		public String apply(T value) {
+			return Json.format(
+					diFactory.create(ReflectionJsonIterator.class, Map.of("object", value, "includeType", true)));
 		}
 	}
 }

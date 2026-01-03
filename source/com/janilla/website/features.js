@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024-2025 Diego Schivo
+ * Copyright (c) 2024-2026 Diego Schivo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import WebComponent from "./web-component.js";
+import WebComponent from "web-component";
 
 export default class Features extends WebComponent {
 
@@ -29,12 +29,16 @@ export default class Features extends WebComponent {
 		return ["features"];
 	}
 
+	static get observedAttributes() {
+	    return ["data-path"];
+	}
+
 	constructor() {
 		super();
 	}
 
 	async updateDisplay() {
-		const o = this.closest("page-element").data(this.dataset.expression);
+		const o = this.closest("page-element").data(this.dataset.path);
 		this.appendChild(this.interpolateDom({
 			$template: "",
 			items: o.items?.map(x => ({

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024-2025 Diego Schivo
+ * Copyright (c) 2024-2026 Diego Schivo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@ class AddHeaderTool {
 
 	private static final String APACHE2 = """
 			/*
-			 * Copyright 2012-2025 the original author or authors.
+			 * Copyright 2012-2026 the original author or authors.
 			 *
 			 * Licensed under the Apache License, Version 2.0 (the "License");
 			 * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ class AddHeaderTool {
 
 	private static final String GPL2 = """
 			/*
-			 * Copyright (c) 2024, 2025, Diego Schivo. All rights reserved.
+			 * Copyright (c) 2024, 2026, Diego Schivo. All rights reserved.
 			 * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 			 *
 			 * This code is free software; you can redistribute it and/or modify it
@@ -81,7 +81,7 @@ class AddHeaderTool {
 
 	private static final String GPL2_PAYLOAD = """
 			/*
-			 * Copyright (c) 2024, 2025, Diego Schivo. All rights reserved.
+			 * Copyright (c) 2024, 2026, Diego Schivo. All rights reserved.
 			 * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 			 *
 			 * This code is free software; you can redistribute it and/or modify it
@@ -134,7 +134,7 @@ class AddHeaderTool {
 			/*
 			 * MIT License
 			 *
-			 * Copyright (c) 2024-2025 Diego Schivo
+			 * Copyright (c) 2024-2026 Diego Schivo
 			 *
 			 * Permission is hereby granted, free of charge, to any person obtaining a copy
 			 * of this software and associated documentation files (the "Software"), to deal
@@ -160,7 +160,7 @@ class AddHeaderTool {
 			 * MIT License
 			 *
 			 * Copyright (c) 2018-2025 Payload CMS, Inc. <info@payloadcms.com>
-			 * Copyright (c) 2024-2025 Diego Schivo <diego.schivo@janilla.com>
+			 * Copyright (c) 2024-2026 Diego Schivo <diego.schivo@janilla.com>
 			 *
 			 * Permission is hereby granted, free of charge, to any person obtaining a copy
 			 * of this software and associated documentation files (the "Software"), to deal
@@ -188,7 +188,7 @@ class AddHeaderTool {
 			 * Copyright (c) React Training LLC 2015-2019
 			 * Copyright (c) Remix Software Inc. 2020-2021
 			 * Copyright (c) Shopify Inc. 2022-2023
-			 * Copyright (c) Diego Schivo 2024-2025
+			 * Copyright (c) Diego Schivo 2024-2026
 			 *
 			 * Permission is hereby granted, free of charge, to any person obtaining a copy
 			 * of this software and associated documentation files (the "Software"), to deal
@@ -214,7 +214,7 @@ class AddHeaderTool {
 			 * MIT License
 			 *
 			 * Copyright (c) 2024 Vercel, Inc.
-			 * Copyright (c) 2024-2025 Diego Schivo
+			 * Copyright (c) 2024-2026 Diego Schivo
 			 *
 			 * Permission is hereby granted, free of charge, to any person obtaining a copy
 			 * of this software and associated documentation files (the "Software"), to deal
@@ -236,24 +236,25 @@ class AddHeaderTool {
 			 */""";
 
 	public static void main(String[] args) throws Exception {
-		var h = Map.ofEntries(
-				Map.entry("janilla",
-						Map.of("", GPL2.split("\n"), Path.of("source/com/janilla/cms"), GPL2_PAYLOAD.split("\n"),
-								Path.of("source/com/janilla/admin/frontend"), GPL2_PAYLOAD.split("\n"))),
-				Map.entry("janilla-acme-dashboard", MIT_VERCEL.split("\n")),
-				Map.entry("janilla-address-book", MIT_REACTROUTER.split("\n")),
-				Map.entry("janilla-blank-template", MIT_PAYLOAD.split("\n")),
+		var h = Map
+				.ofEntries(
+						Map.entry("janilla",
+								Map.of("", GPL2.split("\n"), Path.of("source/com/janilla/cms"),
+										GPL2_PAYLOAD.split("\n"))),
+						Map.entry("janilla-acme-dashboard", MIT_VERCEL.split("\n")),
+						Map.entry("janilla-address-book", MIT_REACTROUTER.split("\n")),
+						Map.entry("janilla-blank-template", MIT_PAYLOAD.split("\n")),
 //						Map.entry("janilla-cms", MIT.split("\n")),
-//						Map.entry("janilla-conduit", MIT.split("\n")),
-				Map.entry("janilla-ecommerce-template", MIT_PAYLOAD.split("\n")),
+						Map.entry("janilla-conduit", MIT.split("\n")),
+						Map.entry("janilla-ecommerce-template", MIT_PAYLOAD.split("\n")),
 //						Map.entry("janilla-ide", MIT.split("\n")),
-//						Map.entry("janilla-petclinic", APACHE2.split("\n")),
+						Map.entry("janilla-petclinic", APACHE2.split("\n")),
 //						Map.entry("janilla-templates", MIT.split("\n")),
-//						Map.entry("janilla-todomvc", MIT.split("\n")),
-//						Map.entry("janilla-website", MIT.split("\n")),
-				Map.entry("janilla-website-template", MIT_PAYLOAD.split("\n"))
+						Map.entry("janilla-todomvc", MIT.split("\n")),
+						Map.entry("janilla-website", MIT.split("\n")),
+						Map.entry("janilla-website-template", MIT_PAYLOAD.split("\n"))
 //						Map.entry("janillas", GPL2.split("\n"))
-		);
+				);
 		var s = Path.of(System.getProperty("user.home")).resolve("git");
 		Files.walkFileTree(s, new SimpleFileVisitor<>() {
 

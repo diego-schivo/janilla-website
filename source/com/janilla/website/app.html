@@ -1,10 +1,10 @@
+<!--${public}-->
 <!--${admin}-->
-<!--${header}-->
-<!--${content}-->
-<!--${footer}-->
 
-<template id="admin">
-  <cms-admin data-email="${email}" data-path="${path}"></cms-admin>
+<template id="public">
+  <!--${header}-->
+  <!--${content}-->
+  <!--${footer}-->
 </template>
 
 <template id="header">
@@ -29,7 +29,11 @@
 </template>
 
 <template id="page">
-  <page-element data-slug="${slug}"></page-element>
+  <page-element></page-element>
+</template>
+
+<template id="not-found">
+  <not-found></not-found>
 </template>
 
 <template id="footer">
@@ -38,6 +42,8 @@
   </footer>
 </template>
 
-<template id="not-found">
-  <not-found></not-found>
+<template id="admin">
+  <admin-element class="admin" data-path="${path}" data-api-url="${apiUrl}"
+    data-user-id="${userId}" data-user-admin="${userAdmin}">
+  </admin-element>
 </template>

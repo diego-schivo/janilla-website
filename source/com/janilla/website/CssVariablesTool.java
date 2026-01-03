@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024-2025 Diego Schivo
+ * Copyright (c) 2024-2026 Diego Schivo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,10 +39,10 @@ public class CssVariablesTool {
 	public static void main(String[] args) {
 //		var a = "git/janilla-blank-template/frontend/source/com/janilla/blanktemplate/frontend";
 //		var a = "git/janilla-ecommerce-template/frontend/source/com/janilla/ecommercetemplate/frontend";
-		var a = "git/janilla-website-template/frontend/source/com/janilla/websitetemplate/frontend";
-//		var a = "git/janilla-admin-frontend/source/com/janilla/admin/frontend";
-		var b = "site.css";
-//		var b = "admin.css";
+//		var a = "git/janilla-website-template/frontend/source/com/janilla/websitetemplate/frontend";
+		var a = "git/janilla/source/com/janilla/cms";
+//		var b = "site.css";
+		var b = "admin.css";
 		try {
 			var d = Path.of(System.getProperty("user.home")).resolve(a);
 			var nn = Files.lines(d.resolve(b)).filter(x -> x.startsWith("@import "))

@@ -23,7 +23,49 @@
  */
 package com.janilla.website;
 
+import java.net.URI;
 import java.util.List;
 
-public record Collections(List<User> users, List<Media> media, List<Example> examples) {
+import com.janilla.web.Handle;
+import com.janilla.web.NotFoundException;
+
+public class WebHandling {
+
+	protected final DataFetching dataFetching;
+
+	protected final IndexFactory indexFactory;
+
+	public WebHandling(DataFetching dataFetching, IndexFactory indexFactory) {
+		this.dataFetching = dataFetching;
+		this.indexFactory = indexFactory;
+	}
+
+	@Handle(method = "GET", path = "/admin(/[\\w\\d/-]*)?")
+	public Object admin(String path, CustomHttpExchange exchange) {
+//		IO.println("WebHandling.admin, path=" + path);
+		if (path == null || path.isEmpty())
+			path = "/";
+		switch (path) {
+		case "/":
+			if (exchange.sessionUser() == null)
+				return URI.create("/admin/login");
+			break;
+		case "/login":
+			if (((List<?>) dataFetching.users(0l, 1l)).isEmpty())
+				return URI.create("/admin/create-first-user");
+			break;
+		}
+		return indexFactory.index(exchange);
+	}
+
+	@Handle(method = "GET", path = "/")
+	public Object page(CustomHttpExchange exchange) {
+//		IO.println("WebHandling.page");
+		var p = dataFetching.page();
+		if (p == null)
+			throw new NotFoundException();
+		var i = indexFactory.index(exchange);
+		i.state().put("page", p);
+		return i;
+	}
 }

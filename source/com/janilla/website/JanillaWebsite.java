@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024-2025 Diego Schivo
+ * Copyright (c) 2024-2026 Diego Schivo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -59,8 +60,8 @@ import com.janilla.persistence.ApplicationPersistenceBuilder;
 import com.janilla.persistence.Persistence;
 import com.janilla.reflect.Reflection;
 import com.janilla.web.ApplicationHandlerFactory;
-import com.janilla.web.Invocable;
 import com.janilla.web.Handle;
+import com.janilla.web.Invocable;
 import com.janilla.web.NotFoundException;
 import com.janilla.web.Render;
 import com.janilla.web.RenderableFactory;
@@ -78,8 +79,8 @@ public class JanillaWebsite {
 		try {
 			JanillaWebsite a;
 			{
-				var f = new DiFactory(Java.getPackageClasses(JanillaWebsite.class.getPackageName()),
-						JanillaWebsite.INSTANCE::get);
+				var f = new DiFactory(Stream.of(JanillaWebsite.class.getPackageName(), "com.janilla.web")
+						.flatMap(x -> Java.getPackageClasses(x).stream()).toList(), INSTANCE::get);
 				a = f.create(JanillaWebsite.class,
 						Java.hashMap("diFactory", f, "configurationFile",
 								args.length > 0 ? Path.of(
@@ -115,19 +116,32 @@ public class JanillaWebsite {
 
 	protected final Path configurationFile;
 
+	protected final DataFetching dataFetching;
+
 	protected final Path databaseFile;
 
 	protected final DiFactory diFactory;
 
+	protected final Predicate<HttpExchange> drafts = x -> {
+		var u = x instanceof CustomHttpExchange y ? y.sessionUser() : null;
+		return u != null;
+	};
+
+	protected final List<Path> files;
+
 	protected final HttpHandler handler;
+
+	protected final Map<String, Object> hostExample = new ConcurrentHashMap<>();
+
+	protected final IndexFactory indexFactory;
+
+	protected final List<Invocable> invocables;
 
 	protected final Persistence persistence;
 
 	protected final RenderableFactory renderableFactory;
 
 	protected final TypeResolver typeResolver;
-
-	protected final Map<String, Object> hostExample = new ConcurrentHashMap<>();
 
 	public JanillaWebsite(DiFactory diFactory, Path configurationFile) {
 		this.diFactory = diFactory;
@@ -146,15 +160,19 @@ public class JanillaWebsite {
 			persistence = pb.build();
 		}
 
-		renderableFactory = new RenderableFactory();
+		dataFetching = diFactory.create(DataFetching.class);
+		indexFactory = diFactory.create(IndexFactory.class);
 
+		invocables = types().stream()
+				.flatMap(x -> Arrays.stream(x.getMethods())
+						.filter(y -> !Modifier.isStatic(y.getModifiers()) && !y.isBridge())
+						.map(y -> new Invocable(x, y)))
+				.toList();
+		files = Stream.of("com.janilla.frontend", "com.janilla.cms", JanillaWebsite.class.getPackageName())
+				.flatMap(x -> Java.getPackagePaths(x).stream().filter(Files::isRegularFile)).toList();
+		renderableFactory = diFactory.create(RenderableFactory.class);
 		{
-			var f = diFactory.create(ApplicationHandlerFactory.class, Map.of("methods", types().stream()
-					.flatMap(x -> Arrays.stream(x.getMethods()).filter(y -> !Modifier.isStatic(y.getModifiers()))
-							.map(y -> new Invocable(x, y)))
-					.toList(), "files",
-					Stream.of("com.janilla.frontend", JanillaWebsite.class.getPackageName())
-							.flatMap(x -> Java.getPackagePaths(x).stream().filter(Files::isRegularFile)).toList()));
+			var f = diFactory.create(ApplicationHandlerFactory.class);
 			handler = x -> {
 				var a = application(((HttpExchange) x).request().getAuthority());
 				var h2 = a == this ? (HttpHandler) y -> {
@@ -176,6 +194,10 @@ public class JanillaWebsite {
 		return configuration;
 	}
 
+	public DataFetching dataFetching() {
+		return dataFetching;
+	}
+
 	public Path databaseFile() {
 		return databaseFile;
 	}
@@ -184,8 +206,24 @@ public class JanillaWebsite {
 		return diFactory;
 	}
 
+	public Predicate<HttpExchange> drafts() {
+		return drafts;
+	}
+
+	public List<Path> files() {
+		return files;
+	}
+
 	public HttpHandler handler() {
 		return handler;
+	}
+
+	public IndexFactory indexFactory() {
+		return indexFactory;
+	}
+
+	public List<Invocable> invocables() {
+		return invocables;
 	}
 
 	public Persistence persistence() {
@@ -235,52 +273,52 @@ public class JanillaWebsite {
 		});
 	}
 
-	@Handle(method = "GET", path = "((?!/api/)/[\\w\\d/-]*)")
-	public Index index(String path, CustomHttpExchange exchange) {
-		switch (path) {
-		case "/admin":
-			if (exchange.sessionEmail() == null) {
-				var rs = exchange.response();
-				rs.setStatus(307);
-				rs.setHeaderValue("cache-control", "no-cache");
-				rs.setHeaderValue("location", "/admin/login");
-				return null;
-			}
-		case "/admin/login":
-			if (persistence.crud(User.class).count() == 0) {
-				var rs = exchange.response();
-				rs.setStatus(307);
-				rs.setHeaderValue("cache-control", "no-cache");
-				rs.setHeaderValue("location", "/admin/create-first-user");
-				return null;
-			}
-		}
-		var m = ADMIN.matcher(path);
-		if (m.matches())
-			return new Index("/admin.css", Map.of());
-		Map<String, Object> m3 = new LinkedHashMap<>();
-		m3.put("authority", configuration.getProperty("janilla-website.authority"));
-		m3.put("/api/header", persistence.crud(Header.class).read(1L));
-		m3.put("/api/page", persistence.crud(Page.class).read(1L));
-		m3.put("/api/footer", persistence.crud(Footer.class).read(1L));
-		return new Index("/style.css", m3);
-	}
+//	@Handle(method = "GET", path = "((?!/api/)/[\\w\\d/-]*)")
+//	public Index index(String path, CustomHttpExchange exchange) {
+//		switch (path) {
+//		case "/admin":
+//			if (exchange.sessionEmail() == null) {
+//				var rs = exchange.response();
+//				rs.setStatus(307);
+//				rs.setHeaderValue("cache-control", "no-cache");
+//				rs.setHeaderValue("location", "/admin/login");
+//				return null;
+//			}
+//		case "/admin/login":
+//			if (persistence.crud(User.class).count() == 0) {
+//				var rs = exchange.response();
+//				rs.setStatus(307);
+//				rs.setHeaderValue("cache-control", "no-cache");
+//				rs.setHeaderValue("location", "/admin/create-first-user");
+//				return null;
+//			}
+//		}
+//		var m = ADMIN.matcher(path);
+//		if (m.matches())
+//			return new Index("/admin.css", Map.of());
+//		Map<String, Object> m3 = new LinkedHashMap<>();
+//		m3.put("authority", configuration.getProperty("janilla-website.authority"));
+//		m3.put("/api/header", persistence.crud(Header.class).read(1L));
+//		m3.put("/api/page", persistence.crud(Page.class).read(1L));
+//		m3.put("/api/footer", persistence.crud(Footer.class).read(1L));
+//		return new Index("/style.css", m3);
+//	}
 
 	@Handle(method = "GET", path = "/api/schema")
 	public Map<String, Map<String, Map<String, Object>>> schema() {
 		return Cms.schema(Data.class);
 	}
 
-	@Render(template = "index.html")
-	public record Index(String href, @Render(renderer = DataRenderer.class) Map<String, Object> data) {
-	}
-
-	public static class DataRenderer<T> extends Renderer<T> {
-
-		@Override
-		public String apply(T value) {
-			return Json.format(INSTANCE.get().diFactory.create(ReflectionJsonIterator.class,
-					Map.of("object", value, "includeType", true)));
-		}
-	}
+//	@Render(template = "index.html")
+//	public record Index(String href, @Render(renderer = DataRenderer.class) Map<String, Object> data) {
+//	}
+//
+//	public static class DataRenderer<T> extends Renderer<T> {
+//
+//		@Override
+//		public String apply(T value) {
+//			return Json.format(INSTANCE.get().diFactory.create(ReflectionJsonIterator.class,
+//					Map.of("object", value, "includeType", true)));
+//		}
+//	}
 }

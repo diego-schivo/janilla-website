@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024-2025 Diego Schivo
+ * Copyright (c) 2024-2026 Diego Schivo
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
  */
 package com.janilla.website;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 import com.janilla.cms.GlobalApi;
@@ -33,8 +34,12 @@ import com.janilla.web.Handle;
 @Handle(path = "/api/page")
 public class PageApi extends GlobalApi<Long, Page> {
 
+	public static final AtomicReference<PageApi> INSTANCE = new AtomicReference<>();
+
 	public PageApi(Predicate<HttpExchange> drafts, Persistence persistence) {
 		super(Page.class, drafts, persistence);
+		if (!INSTANCE.compareAndSet(null, this))
+			throw new IllegalStateException();
 	}
 
 	@Override

@@ -23,27 +23,30 @@
  */
 package com.janilla.website;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Properties;
+import java.util.List;
 
-public class CustomProperties extends Properties {
+import com.janilla.cms.UserHttpExchange;
+import com.janilla.http.HttpServer;
 
-	private static final long serialVersionUID = 5717283962390578739L;
+public class DataFetching {
 
-	public CustomProperties(Path file) {
-		try {
-			try (var x = JanillaWebsite.class.getResourceAsStream("configuration.properties")) {
-				load(x);
-			}
-			if (file != null)
-				try (var x = Files.newInputStream(file)) {
-					load(x);
-				}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
+	public Object footer() {
+		return FooterApi.INSTANCE.get().read(HttpServer.HTTP_EXCHANGE.get());
+	}
+
+	public Object header() {
+		return HeaderApi.INSTANCE.get().read(HttpServer.HTTP_EXCHANGE.get());
+	}
+
+	public Object page() {
+		return PageApi.INSTANCE.get().read(HttpServer.HTTP_EXCHANGE.get());
+	}
+
+	public Object sessionUser() {
+		return UserApi.INSTANCE.get().me((UserHttpExchange) HttpServer.HTTP_EXCHANGE.get());
+	}
+
+	public List<?> users(Long skip, Long limit) {
+		return UserApi.INSTANCE.get().read(skip, limit);
 	}
 }
