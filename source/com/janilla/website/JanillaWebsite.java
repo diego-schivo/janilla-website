@@ -31,7 +31,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -53,8 +52,6 @@ import com.janilla.ioc.DiFactory;
 import com.janilla.java.DollarTypeResolver;
 import com.janilla.java.Java;
 import com.janilla.java.TypeResolver;
-import com.janilla.json.Json;
-import com.janilla.json.ReflectionJsonIterator;
 import com.janilla.net.Net;
 import com.janilla.persistence.ApplicationPersistenceBuilder;
 import com.janilla.persistence.Persistence;
@@ -63,9 +60,7 @@ import com.janilla.web.ApplicationHandlerFactory;
 import com.janilla.web.Handle;
 import com.janilla.web.Invocable;
 import com.janilla.web.NotFoundException;
-import com.janilla.web.Render;
 import com.janilla.web.RenderableFactory;
-import com.janilla.web.Renderer;
 
 public class JanillaWebsite {
 
@@ -144,6 +139,7 @@ public class JanillaWebsite {
 	protected final TypeResolver typeResolver;
 
 	public JanillaWebsite(DiFactory diFactory, Path configurationFile) {
+		IO.println("JanillaWebsite, configurationFile=" + configurationFile);
 		this.diFactory = diFactory;
 		this.configurationFile = configurationFile;
 		if (!INSTANCE.compareAndSet(null, this))
@@ -255,7 +251,9 @@ public class JanillaWebsite {
 			if (x != null)
 				try {
 					var c = Class.forName(x.application());
-					var f = new DiFactory(Java.getPackageClasses(c.getPackageName()),
+					var f = new DiFactory(
+							Stream.of(c.getPackageName(), "com.janilla.web")
+									.flatMap(y -> Java.getPackageClasses(y).stream()).toList(),
 							((AtomicReference<?>) c.getDeclaredField("INSTANCE").get(null))::get);
 					return f.create(c, Java.hashMap("diFactory", f, "configurationFile",
 							Optional.ofNullable(configurationFile).orElseGet(() -> {
@@ -273,52 +271,8 @@ public class JanillaWebsite {
 		});
 	}
 
-//	@Handle(method = "GET", path = "((?!/api/)/[\\w\\d/-]*)")
-//	public Index index(String path, CustomHttpExchange exchange) {
-//		switch (path) {
-//		case "/admin":
-//			if (exchange.sessionEmail() == null) {
-//				var rs = exchange.response();
-//				rs.setStatus(307);
-//				rs.setHeaderValue("cache-control", "no-cache");
-//				rs.setHeaderValue("location", "/admin/login");
-//				return null;
-//			}
-//		case "/admin/login":
-//			if (persistence.crud(User.class).count() == 0) {
-//				var rs = exchange.response();
-//				rs.setStatus(307);
-//				rs.setHeaderValue("cache-control", "no-cache");
-//				rs.setHeaderValue("location", "/admin/create-first-user");
-//				return null;
-//			}
-//		}
-//		var m = ADMIN.matcher(path);
-//		if (m.matches())
-//			return new Index("/admin.css", Map.of());
-//		Map<String, Object> m3 = new LinkedHashMap<>();
-//		m3.put("authority", configuration.getProperty("janilla-website.authority"));
-//		m3.put("/api/header", persistence.crud(Header.class).read(1L));
-//		m3.put("/api/page", persistence.crud(Page.class).read(1L));
-//		m3.put("/api/footer", persistence.crud(Footer.class).read(1L));
-//		return new Index("/style.css", m3);
-//	}
-
 	@Handle(method = "GET", path = "/api/schema")
 	public Map<String, Map<String, Map<String, Object>>> schema() {
 		return Cms.schema(Data.class);
 	}
-
-//	@Render(template = "index.html")
-//	public record Index(String href, @Render(renderer = DataRenderer.class) Map<String, Object> data) {
-//	}
-//
-//	public static class DataRenderer<T> extends Renderer<T> {
-//
-//		@Override
-//		public String apply(T value) {
-//			return Json.format(INSTANCE.get().diFactory.create(ReflectionJsonIterator.class,
-//					Map.of("object", value, "includeType", true)));
-//		}
-//	}
 }

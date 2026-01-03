@@ -127,13 +127,13 @@
 		{
 			"$type": "Example",
 			"id": 3,
-			"application": "com.janilla.petclinic.PetClinicApplication",
-			"title": "PetClinic",
-			"richText": "<p>(<a href=\"https://github.com/spring-projects/spring-petclinic\" target=\"_blank\">original project</a> by <a href=\"https://spring.io/\" target=\"_blank\">Spring</a>)</p>",
-			"demo": "petclinic",
-			"source": "janilla-petclinic",
-			"image": 6,
-			"video": "YdIv62obVsw"
+			"application": "com.janilla.blanktemplate.fullstack.BlankFullstack",
+			"title": "Blank Template",
+			"richText": "",
+			"demo": "blank-template",
+			"source": "janilla-blank-template",
+			"image": 9,
+			"video": ""
 		},
 		{
 			"$type": "Example",
@@ -149,28 +149,17 @@
 		{
 			"$type": "Example",
 			"id": 5,
-			"application": "com.janilla.todomvc.TodoMvc",
-			"title": "TodoMVC",
-			"richText": "<p>(<a href=\"https://github.com/tastejs/todomvc\" target=\"_blank\">original project</a> by <a href=\"https://tastejs.com/\" target=\"_blank\">TasteJS</a>)</p>",
-			"demo": "todomvc",
-			"source": "janilla-todomvc",
-			"image": 7,
-			"video": "-gPWaLrSRwE"
+			"application": "com.janilla.ecommercetemplate.fullstack.EcommerceFullstack",
+			"title": "Ecommerce Template",
+			"richText": "",
+			"demo": "ecommerce-template",
+			"source": "janilla-ecommerce-template",
+			"image": 9,
+			"video": ""
 		},
 		{
 			"$type": "Example",
 			"id": 6,
-			"application": "com.janilla.templates.website.WebsiteTemplate",
-			"title": "Website Template",
-			"richText": "<p>(<a href=\"https://github.com/payloadcms/payload/tree/main/templates/website\" target=\"_blank\">original project</a> by <a href=\"https://payloadcms.com/\" target=\"_blank\">Payload</a>)</p>",
-			"demo": "website-template",
-			"source": "janilla-templates",
-			"image": 9,
-			"video": "OCH76YVurNs"
-		},
-		{
-			"$type": "Example",
-			"id": 7,
 			"application": "",
 			"title": "Janilla website",
 			"richText": "",
@@ -181,14 +170,36 @@
 		},
 		{
 			"$type": "Example",
+			"id": 7,
+			"application": "com.janilla.petclinic.PetClinicApplication",
+			"title": "PetClinic",
+			"richText": "<p>(<a href=\"https://github.com/spring-projects/spring-petclinic\" target=\"_blank\">original project</a> by <a href=\"https://spring.io/\" target=\"_blank\">Spring</a>)</p>",
+			"demo": "petclinic",
+			"source": "janilla-petclinic",
+			"image": 6,
+			"video": "YdIv62obVsw"
+		},
+		{
+			"$type": "Example",
 			"id": 8,
-			"application": "com.janilla.templates.blank.BlankTemplate",
-			"title": "Blank Template",
-			"richText": "",
-			"demo": "blank-template",
-			"source": "janilla-templates",
+			"application": "com.janilla.todomvc.TodoMvc",
+			"title": "TodoMVC",
+			"richText": "<p>(<a href=\"https://github.com/tastejs/todomvc\" target=\"_blank\">original project</a> by <a href=\"https://tastejs.com/\" target=\"_blank\">TasteJS</a>)</p>",
+			"demo": "todomvc",
+			"source": "janilla-todomvc",
+			"image": 7,
+			"video": "-gPWaLrSRwE"
+		},
+		{
+			"$type": "Example",
+			"id": 9,
+			"application": "com.janilla.websitetemplate.fullstack.WebsiteFullstack",
+			"title": "Website Template",
+			"richText": "<p>(<a href=\"https://github.com/payloadcms/payload/tree/main/templates/website\" target=\"_blank\">original project</a> by <a href=\"https://payloadcms.com/\" target=\"_blank\">Payload</a>)</p>",
+			"demo": "website-template",
+			"source": "janilla-website-template",
 			"image": 9,
-			"video": ""
+			"video": "OCH76YVurNs"
 		}
 	],
 	"header": {
@@ -263,7 +274,8 @@
 					5,
 					6,
 					7,
-					8
+					8,
+					9
 				]
 			}
 		],
