@@ -41,6 +41,7 @@ export default class Features extends WebComponent {
 		const o = this.closest("page-element").data(this.dataset.path);
 		this.appendChild(this.interpolateDom({
 			$template: "",
+			...o,
 			items: o.items?.map(x => ({
 				$template: "item",
 				...x

@@ -139,7 +139,7 @@ public class JanillaWebsite {
 	protected final TypeResolver typeResolver;
 
 	public JanillaWebsite(DiFactory diFactory, Path configurationFile) {
-		IO.println("JanillaWebsite, configurationFile=" + configurationFile);
+//		IO.println("JanillaWebsite, configurationFile=" + configurationFile);
 		this.diFactory = diFactory;
 		this.configurationFile = configurationFile;
 		if (!INSTANCE.compareAndSet(null, this))

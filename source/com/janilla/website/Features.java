@@ -25,5 +25,5 @@ package com.janilla.website;
 
 import java.util.List;
 
-public record Features(List<Feature> items) {
+public record Features(String title, List<Feature> items) {
 }

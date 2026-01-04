@@ -58,7 +58,11 @@ h3 {
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: 1.75rem;
+
+  @media (min-width: 1024px) {
+    font-size: 2rem;
+  }
 }
 
 h3 {
@@ -67,6 +71,16 @@ h3 {
 
 a {
   color: inherit;
+}
+
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }
 
 @keyframes rotation {

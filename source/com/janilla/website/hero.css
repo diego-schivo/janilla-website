@@ -25,6 +25,16 @@ hero-element {
   position: relative;
   row-gap: 0;
 
+  h2 {
+    br {
+      @media (min-width: 1024px) {
+        &:nth-of-type(odd) {
+          display: none;
+        }
+      }
+    }
+  }
+
   .default-example {
     perspective: 30em;
     perspective-origin: top;
