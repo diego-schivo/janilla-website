@@ -38,11 +38,11 @@ public class CssVariablesTool {
 
 	public static void main(String[] args) {
 //		var a = "git/janilla-blank-template/frontend/source/com/janilla/blanktemplate/frontend";
-//		var a = "git/janilla-ecommerce-template/frontend/source/com/janilla/ecommercetemplate/frontend";
+		var a = "git/janilla-ecommerce-template/frontend/source/com/janilla/ecommercetemplate/frontend";
 //		var a = "git/janilla-website-template/frontend/source/com/janilla/websitetemplate/frontend";
-		var a = "git/janilla/source/com/janilla/cms";
-//		var b = "site.css";
-		var b = "admin.css";
+//		var a = "git/janilla/source/com/janilla/cms";
+		var b = "site.css";
+//		var b = "admin.css";
 		try {
 			var d = Path.of(System.getProperty("user.home")).resolve(a);
 			var nn = Files.lines(d.resolve(b)).filter(x -> x.startsWith("@import "))
@@ -94,7 +94,8 @@ public class CssVariablesTool {
 							var v2 = v.substring(
 									(v.contains("(") ? v.lastIndexOf(' ', v.indexOf('(')) : v.lastIndexOf(' ')) + 1);
 							if (!Set.of("auto", "inherit", "none", "transparent").contains(v2)
-									&& !Character.isDigit(v2.charAt(0)) && !v2.contains("-")) {
+//									&& !Character.isDigit(v2.charAt(0)) && !v2.contains("-")) {
+									&& !Character.isDigit(v2.charAt(0))) {
 								for (var i2 = 1;; i2++) {
 									var k = "--" + s0 + "-" + i2;
 									var v3 = m2.get(k);

@@ -244,16 +244,14 @@ class AddHeaderTool {
 						Map.entry("janilla-acme-dashboard", MIT_VERCEL.split("\n")),
 						Map.entry("janilla-address-book", MIT_REACTROUTER.split("\n")),
 						Map.entry("janilla-blank-template", MIT_PAYLOAD.split("\n")),
-//						Map.entry("janilla-cms", MIT.split("\n")),
 						Map.entry("janilla-conduit", MIT.split("\n")),
 						Map.entry("janilla-ecommerce-template", MIT_PAYLOAD.split("\n")),
+						Map.entry("janilla-frontend-resources", MIT.split("\n")),
 //						Map.entry("janilla-ide", MIT.split("\n")),
 						Map.entry("janilla-petclinic", APACHE2.split("\n")),
-//						Map.entry("janilla-templates", MIT.split("\n")),
 						Map.entry("janilla-todomvc", MIT.split("\n")),
 						Map.entry("janilla-website", MIT.split("\n")),
 						Map.entry("janilla-website-template", MIT_PAYLOAD.split("\n"))
-//						Map.entry("janillas", GPL2.split("\n"))
 				);
 		var s = Path.of(System.getProperty("user.home")).resolve("git");
 		Files.walkFileTree(s, new SimpleFileVisitor<>() {
