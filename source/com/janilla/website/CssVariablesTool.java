@@ -84,41 +84,41 @@ public class CssVariablesTool {
 
 			m2.clear();
 
-			for (var ll : m1.values()) {
-				for (var i = 0; i < ll.size(); i++) {
-					var ss = ll.get(i).split(":");
-					if (ss.length == 2) {
-						var s0 = ss[0].trim();
-						if (Set.of("background", "border", "color").contains(s0)) {
-							var v = ss[1].trim().replace(";", "");
-							var v2 = v.substring(
-									(v.contains("(") ? v.lastIndexOf(' ', v.indexOf('(')) : v.lastIndexOf(' ')) + 1);
-							if (!Set.of("auto", "inherit", "none", "transparent").contains(v2)
-//									&& !Character.isDigit(v2.charAt(0)) && !v2.contains("-")) {
-									&& !Character.isDigit(v2.charAt(0))) {
-								for (var i2 = 1;; i2++) {
-									var k = "--" + s0 + "-" + i2;
-									var v3 = m2.get(k);
-									if (v3 == null || v3.equals(v2)) {
-										if (v3 == null)
-											m2.put(k, v2);
-										ll.set(i, ss[0].substring(0, ss[0].indexOf(s0)) + s0 + ": "
-												+ v.replace(v2, "var(" + k + ")") + ";");
-										break;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			var i = 0;
-			for (var k : (Iterable<String>) (() -> m2.keySet().stream()
-					.sorted(Comparator.comparing((String x) -> x.substring(0, x.lastIndexOf('-')))
-							.thenComparingInt(x -> Integer.parseInt(x.substring(x.lastIndexOf('-') + 1))))
-					.iterator()))
-				ll0.add(ii[0] + i++, "  " + k + ": " + m2.get(k) + ";");
+//			for (var ll : m1.values()) {
+//				for (var i = 0; i < ll.size(); i++) {
+//					var ss = ll.get(i).split(":");
+//					if (ss.length == 2) {
+//						var s0 = ss[0].trim();
+//						if (Set.of("background", "border", "color").contains(s0)) {
+//							var v = ss[1].trim().replace(";", "");
+//							var v2 = v.substring(
+//									(v.contains("(") ? v.lastIndexOf(' ', v.indexOf('(')) : v.lastIndexOf(' ')) + 1);
+//							if (!Set.of("auto", "inherit", "none", "transparent").contains(v2)
+////									&& !Character.isDigit(v2.charAt(0)) && !v2.contains("-")) {
+//									&& !Character.isDigit(v2.charAt(0))) {
+//								for (var i2 = 1;; i2++) {
+//									var k = "--" + s0 + "-" + i2;
+//									var v3 = m2.get(k);
+//									if (v3 == null || v3.equals(v2)) {
+//										if (v3 == null)
+//											m2.put(k, v2);
+//										ll.set(i, ss[0].substring(0, ss[0].indexOf(s0)) + s0 + ": "
+//												+ v.replace(v2, "var(" + k + ")") + ";");
+//										break;
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//
+//			var i = 0;
+//			for (var k : (Iterable<String>) (() -> m2.keySet().stream()
+//					.sorted(Comparator.comparing((String x) -> x.substring(0, x.lastIndexOf('-')))
+//							.thenComparingInt(x -> Integer.parseInt(x.substring(x.lastIndexOf('-') + 1))))
+//					.iterator()))
+//				ll0.add(ii[0] + i++, "  " + k + ": " + m2.get(k) + ";");
 
 			for (var e : m1.entrySet())
 				Files.writeString(e.getKey(), String.join("\n", e.getValue()) + "\n");

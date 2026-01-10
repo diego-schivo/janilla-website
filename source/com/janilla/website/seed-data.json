@@ -226,7 +226,7 @@
 		"layout": [
 			{
 				"$type": "Hero",
-				"richText": "<h2><strong>Janilla</strong> is an advanced <br /> yet plain vanilla Java module <br /> pursuing Web Development <br /> <em>without</em> <a href=\"https://en.wikipedia.org/wiki/Overengineering\" target=\"_blank\">Overengineering</a></h2>"
+				"richText": "<h2><strong>Janilla</strong> is an advanced <br /> yet plain vanilla Java module <br /> pursuing <a href=\"https://en.wikipedia.org/wiki/Overengineering\" target=\"_blank\">Overengineering</a>-free <br /> Web Development</h2>"
 			},
 			{
 				"$type": "Features",
