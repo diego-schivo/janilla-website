@@ -107,8 +107,8 @@ export default class App extends WebComponent {
 
         this.appendChild(this.interpolateDom({
             $template: "",
-            public: {
-                $template: "public",
+            site: {
+                $template: "site",
 				header: s.header ? {
 					$template: "header",
 					navItems: s.header.navItems?.map(x => ({
