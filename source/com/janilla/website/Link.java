@@ -23,7 +23,7 @@
  */
 package com.janilla.website;
 
-import com.janilla.cms.Types;
+import com.janilla.backend.cms.Types;
 
 public record Link(String uri, String text, @Types(Media.class) Long image, Boolean newTab) {
 }

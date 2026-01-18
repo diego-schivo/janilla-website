@@ -40,15 +40,15 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.janilla.cms.CmsPersistence;
+import com.janilla.backend.cms.CmsPersistence;
 import com.janilla.ioc.DiFactory;
 import com.janilla.java.Converter;
 import com.janilla.java.Java;
 import com.janilla.java.TypeResolver;
 import com.janilla.json.Json;
-import com.janilla.persistence.Entity;
+import com.janilla.backend.persistence.Entity;
 import com.janilla.reflect.Reflection;
-import com.janilla.sqlite.SqliteDatabase;
+import com.janilla.backend.sqlite.SqliteDatabase;
 
 public class CustomPersistence extends CmsPersistence {
 

@@ -25,7 +25,7 @@ package com.janilla.website;
 
 import java.util.List;
 
-import com.janilla.cms.Types;
+import com.janilla.backend.cms.Types;
 
 public record ExampleApps(String title, List<@Types(Example.class) Long> examples) {
 }

@@ -23,7 +23,7 @@
  */
 package com.janilla.website;
 
-import com.janilla.cms.CmsConverter;
+import com.janilla.backend.cms.CmsConverter;
 import com.janilla.java.TypeResolver;
 
 public class CustomConverter extends CmsConverter {

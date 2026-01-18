@@ -26,9 +26,9 @@ package com.janilla.website;
 import java.util.Properties;
 import java.util.function.Predicate;
 
-import com.janilla.cms.CollectionApi;
+import com.janilla.backend.cms.CollectionApi;
 import com.janilla.http.HttpExchange;
-import com.janilla.persistence.Persistence;
+import com.janilla.backend.persistence.Persistence;
 import com.janilla.web.Handle;
 
 @Handle(path = "/api/examples")

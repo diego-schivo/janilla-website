@@ -23,7 +23,7 @@
  */
 package com.janilla.website;
 
-public enum UserRole implements com.janilla.cms.UserRole {
+public enum UserRole implements com.janilla.backend.cms.UserRole {
 
 	ADMIN
 }

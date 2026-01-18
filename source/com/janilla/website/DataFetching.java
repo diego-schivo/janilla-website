@@ -25,7 +25,7 @@ package com.janilla.website;
 
 import java.util.List;
 
-import com.janilla.cms.UserHttpExchange;
+import com.janilla.backend.cms.UserHttpExchange;
 import com.janilla.http.HttpServer;
 
 public class DataFetching {

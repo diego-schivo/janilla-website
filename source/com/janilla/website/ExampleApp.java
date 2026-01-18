@@ -25,7 +25,7 @@ package com.janilla.website;
 
 import java.util.List;
 
-import com.janilla.cms.Types;
+import com.janilla.backend.cms.Types;
 
 public record ExampleApp(String title, String richText, List<Link> links, @Types(Media.class) Long image,
 		String video) {

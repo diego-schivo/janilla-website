@@ -25,9 +25,9 @@ package com.janilla.website;
 
 import java.time.Instant;
 
-import com.janilla.cms.Document;
-import com.janilla.cms.DocumentStatus;
-import com.janilla.persistence.Store;
+import com.janilla.backend.cms.Document;
+import com.janilla.backend.cms.DocumentStatus;
+import com.janilla.backend.persistence.Store;
 
 @Store
 public record Footer(Long id, String richText, Instant createdAt, Instant updatedAt, DocumentStatus documentStatus,
